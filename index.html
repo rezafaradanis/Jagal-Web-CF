@@ -142,7 +142,7 @@
   .kpi b{display:block;font-size:25px;font-weight:900;}
   .kpi span{font-size:11px;color:var(--redup);text-transform:uppercase;letter-spacing:.5px;}
 
-  .grid-skuad{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:18px 14px;
+  .grid-skuad{padding-top:34px;display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:18px 14px;
     justify-items:center;}
 
   /* ── Shield player card, gaya Ultimate Team ───────────────────────── */
@@ -217,7 +217,7 @@
   th.sortir.aktif{color:var(--merah2);}
   th.sortir.aktif .panah-sortir{opacity:1;}
 
-  .kontrol-sortir{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .kontrol-sortir{position:relative;z-index:3;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
   .kontrol-sortir label{font-size:12px;color:var(--redup);font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
   .kontrol-sortir select{background:var(--bg2);color:var(--teks);border:1px solid var(--garis-lembut);
     border-radius:8px;padding:8px 10px;font-size:13px;font-weight:600;cursor:pointer;}
@@ -250,6 +250,10 @@
   .laga-detail table{font-size:12.5px;}
   .laga-detail th,.laga-detail td{padding:8px 10px;}
   .laga-detail .mom{color:var(--kuning);font-weight:800;}
+  .total-sepanjang{background:linear-gradient(180deg, var(--bg2-atas), transparent), var(--bg2);border:1px solid var(--garis-lembut);
+    border-radius:12px;padding:12px 16px;margin-bottom:12px;font-size:14px;color:var(--redup);line-height:1.8;}
+  .total-sepanjang span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
+  .total-sepanjang b{color:var(--teks);font-size:16px;} .total-sepanjang b.m{color:var(--hijau);} .total-sepanjang b.s{color:var(--kuning);} .total-sepanjang b.k{color:var(--merah2);}
   .catatan-rekor{font-size:12.5px;color:var(--redup);margin:-6px 0 14px;}
   .grid-rekor{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:24px;}
   .rekor-kartu{background:linear-gradient(180deg, var(--bg2-atas), transparent), var(--bg2);border:1px solid var(--garis-lembut);
@@ -482,8 +486,28 @@
   .modal-header .rating-lingkaran b{font-size:18px;font-weight:900;line-height:1;}
   .modal-header .rating-lingkaran span{font-size:7px;color:var(--redup);text-transform:uppercase;}
   .modal-body{padding:22px 24px 28px;}
-  .shield .lencana-api{position:absolute;z-index:3;top:31%;left:15.5%;font-size:18px;line-height:1;
-    filter:drop-shadow(0 1px 2px rgba(0,0,0,.45));}
+  /* ── Kartu ON FIRE: template kartu berapi (aset/kartu-onfire.webp) ──
+     Gambar lebih besar dari kartu (api di sekelilingnya), jadi dipasang sebagai <img>
+     yang meluber keluar kotak kartu. Perisai di gambar berada di x 105–400, y 50–480
+     (gambar 502×497) → posisi & ukuran di bawah dihitung dari angka itu. Posisi isi
+     kartu juga disesuaikan dengan pita nama & area statistik di template ini. */
+  html,body{overflow-x:clip;} /* api boleh keluar kartu, tapi halaman tidak ikut bisa digeser ke samping */
+  .shield-wrap{z-index:1;}
+  .shield-wrap.on-fire{z-index:0;} /* api menyelinap di BELAKANG kartu tetangga, tidak menutupinya */
+  .shield.kartu-api{--tinta:#2b1a02;animation:kartuNyala 1.6s ease-in-out infinite alternate;}
+  .shield .gambar-kartu-api{position:absolute;z-index:0;pointer-events:none;max-width:none;
+    left:-35.6%;top:-11.6%;width:170.2%;height:115.6%;}
+  .shield.kartu-api .rating-pos{top:12%;left:13%;}
+  .shield.kartu-api .foto-pemain{bottom:58%;height:40%;right:9%;}
+  .shield.kartu-api .foto-pemain.foto-kosong{bottom:62%;height:24%;right:15%;}
+  .shield.kartu-api .nama-pemain{top:42%;height:9%;color:#fff4d0;text-shadow:0 1px 2px rgba(60,20,0,.8);}
+  .shield.kartu-api .stat-baris{top:56.5%;height:21%;}
+  .shield.kartu-api .footer-shield{top:81%;}
+  @keyframes kartuNyala{
+    from{filter:drop-shadow(0 0 3px rgba(255,170,0,.6)) drop-shadow(0 10px 16px rgba(0,0,0,.45));}
+    to{filter:drop-shadow(0 0 10px rgba(255,90,0,.9)) drop-shadow(0 10px 16px rgba(0,0,0,.45));}
+  }
+  @media (prefers-reduced-motion: reduce){ .shield.kartu-api{animation:none;} }
   .label-onfire{display:inline-block;margin-top:10px;padding:4px 12px;border-radius:999px;font-size:11.5px;
     font-weight:800;letter-spacing:.4px;color:#ffb35c;background:rgba(255,120,30,.14);border:1px solid rgba(255,140,50,.35);}
   .form-kotak{margin-top:14px;background:rgba(255,255,255,.03);border:1px solid var(--garis-lembut);
@@ -729,7 +753,7 @@ async function tarikDataEA(){
   } : null;
 
   const LABEL = { leagueMatch:'Liga', playoffMatch:'Playoff', friendlyMatch:'Friendly' };
-  // Sumber laga: data EA terbaru (±50 per jenis) + arsip permanen di server kita.
+  // Sumber laga: data EA terbaru (EA hanya memberi ±10 laga terakhir per jenis) + arsip permanen di server kita.
   // Laga yang sama (matchId sama) hanya dihitung sekali; versi EA diutamakan.
   const sumberLaga = [];
   for(const tipe of ['leagueMatch','playoffMatch','friendlyMatch']){
@@ -853,7 +877,7 @@ function benderaPemain(p, tinggi=15){
   return `<img class="bendera" src="https://flagcdn.com/h40/${n[0]}.png" alt="${n[1]}" title="${n[1]}" style="height:${tinggi}px" onerror="this.remove()">`;
 }
 
-/* Kumpulan data per pemain dari laga-laga yang tersedia (maks. 50 per jenis laga):
+/* Kumpulan data per pemain dari laga-laga yang tersedia (data EA terbaru + arsip permanen):
    archetype yang paling sering dipakai & rincian save kiper. */
 function ringkasanLagaPemain(nama){
   const kunci = (nama||'').toLowerCase();
@@ -1296,9 +1320,9 @@ function render(){
     isi += squadTerurut.length ? `<div class="grid-skuad">` + squadTerurut.map((p)=>{
       const i = DATA.squad.indexOf(p);
       return `
-      <div class="shield-wrap" data-pemain="${i}">
-        <div class="shield ${tierShield(p)} ${fotoPemain(p.nama) ? 'ada-foto' : ''}">
-          ${sedangOnFire(p) ? `<span class="lencana-api" title="On fire: rajin cetak gol di laga-laga terakhir">🔥</span>` : ''}
+      <div class="shield-wrap${sedangOnFire(p) ? ' on-fire' : ''}" data-pemain="${i}"${sedangOnFire(p) ? ' title="On fire: rajin cetak gol di laga-laga terakhir"' : ''}>
+        <div class="shield ${sedangOnFire(p) ? 'kartu-api' : tierShield(p)} ${fotoPemain(p.nama) ? 'ada-foto' : ''}">
+          ${sedangOnFire(p) ? `<img class="gambar-kartu-api" src="/aset/kartu-onfire.webp" alt="">` : ''}
           <div class="rating-pos">
             <b>${Math.round(p.rating*10)}</b>
             <span>${p.pos}</span>
@@ -1820,7 +1844,9 @@ function tampilRekor(){
   const laga = m => m ? `vs ${escapeHtml(m.lawan)} · ${tglPendek(m)}` : '';
   const labelStreak = { win:'menang', draw:'seri', loss:'kalah' };
   let html = `<h2 class="subjudul">Rekor Klub</h2>
-    <p class="catatan-rekor">Dihitung dari ${r.jumlah} laga tersimpan${r.pertama ? ` sejak ${tglPendek(r.pertama)}` : ''}. Laga baru otomatis masuk arsip permanen, jadi tidak hilang walau EA hanya menyimpan 50 laga terakhir.</p>
+    ${(()=>{ const t = DATA.totals || {}; return t.main ? `<div class="total-sepanjang"><span>Sepanjang masa (data resmi EA)</span>
+      <b>${t.main}</b> laga · <b class="m">${t.menang}</b> menang · <b class="s">${t.seri}</b> seri · <b class="k">${t.kalah}</b> kalah · gol <b>${t.gol}–${t.kemasukan}</b></div>` : ''; })()}
+    <p class="catatan-rekor">Rekor di bawah dihitung dari ${r.jumlah} laga yang detailnya tersimpan${r.pertama ? ` (sejak ${tglPendek(r.pertama)})` : ''}. EA hanya membagikan detail ±10 laga terakhir per jenis laga, jadi laga yang lebih lama dari itu tidak bisa diambil lagi. Mulai sekarang setiap laga baru disimpan permanen, sehingga rekor ini akan terus lengkap ke depannya.</p>
     <div class="grid-rekor">
       ${kartu('Kemenangan terbesar', r.menangTerbesar?.skor, laga(r.menangTerbesar))}
       ${kartu('Kekalahan terbesar', r.kalahTerbesar?.skor, laga(r.kalahTerbesar))}
