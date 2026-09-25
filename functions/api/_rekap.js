@@ -143,9 +143,12 @@ export async function kirimGambarKeDiscord(webhook, mm, png) {
   }));
   form.append('files[0]', new Blob([png], { type: 'image/png' }), 'hasil-laga.png');
   try {
-    const r = await fetch(webhook, { method: 'POST', body: form });
+    // ?wait=true → Discord membalas data pesan yang dibuat (dipakai untuk memastikan pesannya ada).
+    const u = new URL(webhook); u.searchParams.set('wait', 'true');
+    const r = await fetch(u.toString(), { method: 'POST', body: form });
     if (!r.ok) { console.error('Discord menolak gambar —', r.status, await r.text()); return false; }
-    return true;
+    let pesan = {}; try { pesan = await r.json(); } catch {}
+    return { id: pesan.id || null, channel: pesan.channel_id || null, lampiran: (pesan.attachments || []).length };
   } catch (e) {
     console.error('Gagal kirim gambar ke Discord —', e.message);
     return false;
@@ -171,6 +174,16 @@ export async function bacaCatatan(env) {
 export async function simpanCatatan(env, catatan, sudah) {
   catatan.ids = [...sudah].slice(-MAKS_ID_DIINGAT);
   await env.JAGAL_KV.put(KUNCI_REKAP, JSON.stringify(catatan));
+}
+
+// Info webhook (nama, server & channel tujuan) — untuk diagnosa, tanpa membuka URL rahasianya.
+export async function infoWebhook(webhook) {
+  try {
+    const r = await fetch(webhook);
+    if (!r.ok) return { galat: `HTTP ${r.status}` };
+    const w = await r.json();
+    return { nama: w.name, server: w.guild_id, channel: w.channel_id };
+  } catch (e) { return { galat: e.message }; }
 }
 
 // Tinggi gambar kartu laga (px) — dipakai halaman /kartu-laga DAN laptop saat memotret.
