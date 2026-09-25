@@ -16,7 +16,7 @@
  *   DISCORD_WEBHOOK_REKAP  URL webhook channel rekap
  */
 
-import { KUNCI_DATA_LAPTOP, kirimKeDiscord, bacaCatatan, simpanCatatan, tinggiKartu } from './_rekap.js';
+import { KUNCI_DATA_LAPTOP, kirimKeDiscord, bacaCatatan, simpanCatatan, tinggiKartu, perbaruiArsip, mingguPerluDikirim } from './_rekap.js';
 // Saat pertama kali jalan, laga yang lebih lama dari ini tidak dikirim (supaya tidak membanjiri Discord).
 const BATAS_LAGA_AWAL_MS = 3 * 60 * 60 * 1000;
 
@@ -40,6 +40,22 @@ export async function onRequestPost({ request, env }) {
   const waktu = Date.now();
   await env.JAGAL_KV.put(KUNCI_DATA_LAPTOP, JSON.stringify({ waktu, entri: data }));
 
+  // Salin laga-laga ke arsip permanen.
+  let arsip;
+  try {
+    const daftar = [];
+    for (const item of entri) {
+      if (String(item?.jalur || '').replace(/^\/+/, '') !== 'clubs/matches') continue;
+      const tipe = new URLSearchParams(String(item.pencarian || '')).get('matchType') || '';
+      let isi; try { isi = typeof item.data === 'string' ? JSON.parse(item.data) : item.data; } catch { continue; }
+      for (const mm of Array.isArray(isi) ? isi : []) daftar.push({ mm, tipe });
+    }
+    arsip = await perbaruiArsip(env, daftar);
+  } catch (e) {
+    console.error('Arsip laga gagal —', e.message);
+    arsip = { galat: e.message };
+  }
+
   let rekap;
   try {
     // Skrip laptop versi baru (header x-rekap-gambar: 1) memotret kartu laga sendiri lalu
@@ -49,7 +65,12 @@ export async function onRequestPost({ request, env }) {
     console.error('Rekap Discord gagal —', e.message);
     rekap = { galat: e.message };
   }
-  return balas(200, { ok: true, tersimpan: Object.keys(data).length, total: entri.length, rekap });
+  // Rekap mingguan: kalau minggu lalu belum dikirim, beri tahu laptop (yang akan memotret & mengirimnya).
+  let mingguan = null;
+  if (request.headers.get('x-rekap-gambar') === '1' && env.DISCORD_WEBHOOK_REKAP) {
+    try { mingguan = await mingguPerluDikirim(env); } catch (e) { console.error('Cek rekap mingguan gagal —', e.message); }
+  }
+  return balas(200, { ok: true, tersimpan: Object.keys(data).length, total: entri.length, arsip, rekap, mingguan });
 }
 
 // Browser yang membuka alamat ini (GET) cukup diberi tahu cara pakainya.

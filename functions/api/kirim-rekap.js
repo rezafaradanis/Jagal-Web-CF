@@ -5,9 +5,11 @@
  * Tambahkan &tes=1 untuk uji coba (boleh kirim ulang laga yang sudah pernah dikirim).
  * Tambahkan &teks=1 (tanpa body) kalau laptop gagal memotret: rekap dikirim
  * dalam bentuk teks seperti biasa.
+ * ?mingguan=YYYY-MM-DD → kirim rekap mingguan (body = PNG dari /kartu-mingguan).
  * Header wajib: x-kunci-update (sama dengan env KUNCI_UPDATE).
  */
-import { cariLaga, kirimGambarKeDiscord, kirimKeDiscord, bacaCatatan, simpanCatatan, infoWebhook } from './_rekap.js';
+import { cariLaga, kirimGambarKeDiscord, kirimKeDiscord, bacaCatatan, simpanCatatan, infoWebhook,
+  dataMingguan, kirimMingguanKeDiscord, tandaiMingguan } from './_rekap.js';
 
 export async function onRequestPost({ request, env }) {
   if (!env.KUNCI_UPDATE || request.headers.get('x-kunci-update') !== env.KUNCI_UPDATE) return balas(401, { galat: 'Kunci tidak valid.' });
@@ -16,6 +18,21 @@ export async function onRequestPost({ request, env }) {
   if (!webhook) return balas(500, { galat: 'DISCORD_WEBHOOK_REKAP belum diatur.' });
 
   const url = new URL(request.url);
+
+  // ?mingguan=YYYY-MM-DD → rekap mingguan (body = PNG dari /kartu-mingguan).
+  const minggu = url.searchParams.get('mingguan');
+  if (minggu) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(minggu)) return balas(400, { galat: 'Format minggu salah.' });
+    const png = await request.arrayBuffer();
+    const t = new Uint8Array(png.slice(0, 2));
+    if (png.byteLength < 1000 || t[0] !== 0x89 || t[1] !== 0x50) return balas(400, { galat: 'Body bukan gambar PNG.' });
+    const d = await dataMingguan(env, minggu);
+    if (!d.laga.length) return balas(404, { galat: 'Tidak ada laga di minggu itu.' });
+    if (!(await kirimMingguanKeDiscord(webhook, d, png))) return balas(502, { galat: 'Discord menolak kiriman.' });
+    if (url.searchParams.get('tes') !== '1') await tandaiMingguan(env, minggu);
+    return balas(200, { ok: true });
+  }
+
   const id = url.searchParams.get('id');
   if (!id) return balas(400, { galat: 'Parameter id kosong.' });
 
