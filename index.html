@@ -792,12 +792,15 @@ const ARCHETYPE_EA = {
 };
 function namaArchetype(id){ return id != null ? (ARCHETYPE_EA[id] || null) : null; }
 
-/* Negara Pro in-game: ID negara EA → [kode bendera, nama]. */
+/* Negara Pro in-game: ID negara EA → [kode bendera, nama]. Semua ID dicek
+   terhadap gambar bendera resmi per ID (26 Sep 2026). */
 const NEGARA_EA = {
   160:['id','Indonesia'], 14:['gb-eng','Inggris'], 38:['pt','Portugal'], 82:['jm','Jamaika'],
   7:['be','Belgia'], 10:['hr','Kroasia'], 18:['fr','Prancis'], 21:['de','Jerman'], 27:['it','Italia'],
   34:['nl','Belanda'], 42:['gb-sct','Skotlandia'], 45:['es','Spanyol'], 50:['gb-wls','Wales'],
   52:['ar','Argentina'], 54:['br','Brasil'], 83:['mx','Meksiko'], 95:['us','Amerika Serikat'],
+  163:['jp','Jepang'], 167:['kr','Korea Selatan'], 173:['my','Malaysia'], 181:['ph','Filipina'],
+  184:['sg','Singapura'], 188:['th','Thailand'], 192:['vn','Vietnam'], 195:['au','Australia'],
 };
 function benderaPemain(p, tinggi=15){
   const n = NEGARA_EA[p.negara];
