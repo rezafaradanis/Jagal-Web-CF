@@ -932,27 +932,15 @@ function hitungRingkasan(squad, hasil, totals){
   const topGol = [...outfield].sort((a,b)=>b.gol-a.gol)[0] || null;
   const topAssist = [...outfield].sort((a,b)=>b.assist-a.assist)[0] || null;
 
-  // Player of the Season — skor gabungan:
-  //   50% rating rata-rata + 30% MOTM per laga + 20% (gol+assist) per laga.
-  // Tiap komponen dibagi nilai tertinggi di antara kandidat, lalu skor x100.
+  // Player of the Season — skor DIBEDAKAN PER POSISI (lihat RUMUS_POTS di bawah),
+  // supaya bek & kiper tidak kalah hanya karena jarang mencetak gol.
   // Syarat: main minimal 1/3 dari total laga klub (min. 3), supaya pemain yang
   // baru main sedikit laga tidak menang hanya karena satu laga bagus.
   const minLagaPOTS = Math.max(3, Math.round((totals?.main || 0) / 3));
   let kandidatPOTS = squad.filter(p=>p.main >= minLagaPOTS);
   if(!kandidatPOTS.length) kandidatPOTS = squad.filter(p=>p.main >= 3);
-  const perLaga = p => ({
-    rating: p.rating || 0,
-    motm: (p.motmMusim || 0) / p.main,
-    kontribusi: ((p.gol || 0) + (p.assist || 0)) / p.main,
-  });
-  const maks = { rating:0, motm:0, kontribusi:0 };
-  kandidatPOTS.forEach(p=>{ const v = perLaga(p); for(const k in maks) maks[k] = Math.max(maks[k], v[k]); });
-  const bagi = (v, m) => m > 0 ? v / m : 0;
-  const skorPOTS = p => {
-    const v = perLaga(p);
-    return Math.round(100 * (0.5*bagi(v.rating, maks.rating) + 0.3*bagi(v.motm, maks.motm) + 0.2*bagi(v.kontribusi, maks.kontribusi)));
-  };
-  const peringkatPOTS = kandidatPOTS.map(p=>({ ...p, skorPOTS: skorPOTS(p) }))
+  const skorPOTS = hitungSkorPOTS(kandidatPOTS);
+  const peringkatPOTS = kandidatPOTS.map(p=>({ ...p, skorPOTS: skorPOTS.get(p) }))
     .sort((a,b)=> b.skorPOTS - a.skorPOTS || b.rating - a.rating);
   const playerOfSeason = peringkatPOTS[0] || null;
   // Rating tertinggi memakai syarat laga minimum yang sama dengan POTS.
@@ -972,37 +960,78 @@ function hitungRingkasan(squad, hasil, totals){
   return { topGol, topAssist, topRating, playerOfSeason, top3POTS, minLagaPOTS, potsLini, distribusi, form, rataGol, rataKemasukan };
 }
 
-/* Pemain terbaik per lini — tiap lini dinilai dengan ukuran yang sesuai perannya.
-   Tiap komponen dibagi nilai tertinggi di lini itu, lalu skor x100.
+/* ── RUMUS PLAYER OF THE SEASON PER POSISI ──
+   Tiap posisi punya rumus sendiri (RUMUS_POTS). Posisi diambil dari laga yang
+   benar-benar dimainkan (arsip laga), bukan posisi favorit EA — pemain yang main
+   di beberapa posisi dinilai sesuai porsinya, mis. 60% CM + 40% ST.
+   Tiap komponen dibagi nilai tertinggi di antara kandidat (1.0 = terbaik di skuad),
+   dikali bobot, lalu x100. Rating dikoreksi per posisi (sama seperti OVR), jadi
+   kiper/bek yang rating EA-nya cenderung lebih rendah tidak dirugikan. */
+const posLagaDari = { GK:'goalkeeper', CB:'defender', CM:'midfielder', ST:'forward' };
+const KOMPONEN_POTS = {
+  rating:     (p, kor, pos) => (p.rating||0) + (kor[posLagaDari[pos]] || 0),
+  motm:       p => (p.motmMusim||0) / p.main,
+  kontribusi: p => ((p.gol||0) + (p.assist||0)) / p.main,
+  akurTembak: p => p.tembakanAkurasi || 0,
+  akurPass:   p => p.passAkurasi || 0,
+  tekel:      p => (p.tekel||0) / p.main,
+  // Akurasi tekel "dihaluskan": yang baru mencoba sedikit tekel ditarik ke ±40%,
+  // supaya 2 sukses dari 2 percobaan tidak langsung dianggap 100%.
+  akurTekel:  p => { const t = p.tekel||0, a = p.tekelAkurasi||0; const coba = a > 0 ? t / (a/100) : t; return (t + 4) / (coba + 10) * 100; },
+  cleanSheet: p => ((p.cleanSheetBek||0) + (p.gkCleanSheet||0)) / p.main,
+  menang:     p => p.winRate || 0,
+};
+const RUMUS_POTS = {
+  ST: { rating:0.35, kontribusi:0.35, motm:0.20, akurTembak:0.10 },
+  CM: { rating:0.35, kontribusi:0.20, motm:0.15, akurPass:0.15, tekel:0.15 },
+  CB: { rating:0.35, tekel:0.25, akurTekel:0.10, cleanSheet:0.15, motm:0.15 },
+  GK: { rating:0.40, cleanSheet:0.35, motm:0.15, menang:0.10 },
+};
+// Porsi main tiap posisi dari arsip laga, mis. { CM:0.6, ST:0.4 }.
+function porsiPosisi(p){
+  const L = lagaTerakhirPemain(p.nama, 500);
+  const hitung = {}; let n = 0;
+  L.forEach(x=>{ const k = POSISI_LAGA[x.posLaga]; if(k){ hitung[k] = (hitung[k]||0) + 1; n++; } });
+  if(n < 3) return { [RUMUS_POTS[p.pos] ? p.pos : 'CM']: 1 };
+  for(const k in hitung) hitung[k] /= n;
+  return hitung;
+}
+function posisiUtama(porsi){ return Object.entries(porsi).sort((a,b)=>b[1]-a[1])[0][0]; }
+function hitungSkorPOTS(kandidat){
+  const kor = koreksiPosisi();
+  const porsi = new Map(kandidat.map(p=>[p, porsiPosisi(p)]));
+  const maks = {};
+  for(const [k, f] of Object.entries(KOMPONEN_POTS))
+    maks[k] = Math.max(0, ...kandidat.flatMap(p=>Object.keys(porsi.get(p)).map(pos=>f(p, kor, pos))));
+  const peta = new Map();
+  kandidat.forEach(p=>{
+    let skor = 0;
+    for(const [pos, bagian] of Object.entries(porsi.get(p))){
+      for(const [k, bobot] of Object.entries(RUMUS_POTS[pos])) if(maks[k] > 0) skor += bagian * bobot * Math.max(0, KOMPONEN_POTS[k](p, kor, pos)) / maks[k];
+    }
+    peta.set(p, Math.round(100 * skor));
+  });
+  return peta;
+}
+
+/* Pemain terbaik per lini — memakai rumus per posisi yang sama dengan POTS.
    Syarat main: 1/3 dari laga pemain terbanyak DI LINI ITU (min. 3), karena
    jumlah laga tiap lini bisa sangat berbeda (mis. bek lebih jarang main). */
 const LINI_POTS = [
-  { kunci:'penyerang', label:'⚡ Penyerang Terbaik', posisi:['ST'], komponen:[
-      [0.40, p=>p.rating||0],
-      [0.25, p=>(p.motmMusim||0)/p.main],
-      [0.35, p=>((p.gol||0)+(p.assist||0))/p.main] ] },
-  { kunci:'gelandang', label:'🧠 Gelandang Terbaik', posisi:['CM'], komponen:[
-      [0.40, p=>p.rating||0],
-      [0.25, p=>(p.motmMusim||0)/p.main],
-      [0.20, p=>((p.gol||0)+(p.assist||0))/p.main],
-      [0.15, p=>p.passAkurasi||0] ] },
-  { kunci:'bertahan', label:'🛡️ Bertahan Terbaik', posisi:['CB','GK'], komponen:[
-      [0.45, p=>p.rating||0],
-      [0.20, p=>(p.motmMusim||0)/p.main],
-      [0.20, p=>((p.cleanSheetBek||0)+(p.gkCleanSheet||0))/p.main],
-      [0.15, p=>p.winRate||0] ] },
+  { kunci:'penyerang', label:'⚡ Penyerang Terbaik', posisi:['ST'] },
+  { kunci:'gelandang', label:'🧠 Gelandang Terbaik', posisi:['CM'] },
+  { kunci:'bertahan', label:'🛡️ Bertahan Terbaik', posisi:['CB','GK'] },
 ];
 function hitungPotsLini(squad){
   return LINI_POTS.map(lini=>{
-    const anggota = squad.filter(p=>lini.posisi.includes(p.pos) && p.main > 0);
+    // Lini ditentukan dari posisi yang PALING SERING dimainkan di arsip laga.
+    const anggota = squad.filter(p=>p.main > 0 && lini.posisi.includes(posisiUtama(porsiPosisi(p))));
     if(!anggota.length) return { ...lini, top3:[], minLaga:null };
     const minLaga = Math.max(3, Math.round(Math.max(...anggota.map(p=>p.main)) / 3));
     const kandidat = anggota.filter(p=>p.main >= minLaga);
-    const maks = lini.komponen.map(([,f])=>Math.max(0, ...kandidat.map(f)));
-    const top3 = kandidat.map(p=>({
-      ...p,
-      skorPOTS: Math.round(100 * lini.komponen.reduce((jml, [bobot, f], i)=>jml + bobot * (maks[i] > 0 ? f(p)/maks[i] : 0), 0)),
-    })).sort((a,b)=> b.skorPOTS - a.skorPOTS || b.rating - a.rating).slice(0, 3);
+    const skor = hitungSkorPOTS(kandidat);
+    const top3 = kandidat.map(p=>({ ...p, skorPOTS: skor.get(p) }))
+      .sort((a,b)=> b.skorPOTS - a.skorPOTS || b.rating - a.rating).slice(0, 3);
     return { ...lini, top3, minLaga };
   });
 }
