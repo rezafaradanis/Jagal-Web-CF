@@ -1295,10 +1295,11 @@ function formatNilai(v, persen){
 
 function nilaiSkuad(p, kolom){
   switch(kolom){
-    case 'rating': return p.rating||0;
-    case 'pos': return POS_URUT[p.pos] ?? 9;
+    // Overall = angka OVR yang tampil di kartu (bukan rating musim EA).
+    case 'rating': return ovrPemain(p).ovr * 1000 + (p.rating||0);
+    case 'pos': return POS_URUT[ovrPemain(p).pos] ?? 9;
     case 'main': return p.main||0;
-    case 'gol': return p.gk ? (p.gkCleanSheet||0) : (p.gol||0);
+    case 'gol': return ovrPemain(p).pos === 'GK' ? (p.gkCleanSheet||0) : (p.gol||0);
     case 'assist': return p.assist||0;
     case 'motmMusim': return p.motmMusim||0;
     default: return 0;
