@@ -1114,8 +1114,11 @@ function grafikForm(p){
 
 function tierShield(p){
   if(p.gk) return 'tier-gk';
-  if(p.rating >= 7.2) return 'tier-emas';
-  if(p.rating >= 6.0) return 'tier-perak';
+  // Pakai angka yang tampil di kartu (rating rata-rata × 10):
+  // 71 ke atas = emas, 60–70 = perak, di bawah 60 = perunggu.
+  const angka = Math.round((p.rating || 0) * 10);
+  if(angka >= 71) return 'tier-emas';
+  if(angka >= 60) return 'tier-perak';
   return 'tier-perunggu';
 }
 
