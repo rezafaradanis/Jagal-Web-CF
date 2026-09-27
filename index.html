@@ -1112,13 +1112,62 @@ function grafikForm(p){
     </div>`;
 }
 
+/* ── OVERALL (OVR) KARTU — adil untuk pemain yang pindah-pindah posisi ──
+   Rating EA per laga dipengaruhi posisi: di JAGAL rata-rata kiper jauh lebih rendah
+   daripada gelandang, jadi rating musim (rata-rata semua posisi) merugikan pemain yang
+   pernah jaga gawang lalu pindah ke depan (atau sebaliknya). Maka OVR dihitung begini:
+     1. Ambil maks. 10 laga terakhir pemain (data EA + arsip).
+     2. Tiap laga, rating disetarakan per posisi:
+          rating + (rata-rata semua pemain JAGAL − rata-rata posisi yang ia mainkan di laga itu)
+        Koreksi diperkecil kalau data posisi itu masih sedikit (× n/(n+10)) dan dibatasi ±1,5.
+     3. Laga terbaru lebih berbobot (×0,85 per laga ke belakang) → nilai FORM.
+     4. OVR = 10 × (bobot × FORM + (1 − bobot) × rating musim EA), bobot = n/(n+5)
+        (5 laga → 50% form, 10 laga → 67% form). Kalau detail laga < 3, OVR = rating musim × 10.
+   Posisi di kartu = posisi yang paling sering dimainkan di 5 laga terakhir. */
+let CACHE_OVR = { data:null, koreksi:null, peta:new Map() };
+function koreksiPosisi(){
+  const semua = [];
+  (DATA.hasil||[]).forEach(m=>(m.detail||[]).forEach(pl=>{ if(pl.rating > 0) semua.push(pl); }));
+  if(!semua.length) return {};
+  const rata = a => a.reduce((x,y)=>x+y,0) / a.length;
+  const umum = rata(semua.map(x=>x.rating));
+  const per = {};
+  semua.forEach(x=>(per[x.posLaga] ??= []).push(x.rating));
+  const k = {};
+  for(const [pos, arr] of Object.entries(per)){
+    const mentah = (umum - rata(arr)) * arr.length / (arr.length + 10);
+    k[pos] = Math.max(-1.5, Math.min(1.5, mentah));
+  }
+  return k;
+}
+function ovrPemain(p){
+  if(CACHE_OVR.data !== DATA) CACHE_OVR = { data:DATA, koreksi:koreksiPosisi(), peta:new Map() };
+  if(CACHE_OVR.peta.has(p.nama)) return CACHE_OVR.peta.get(p.nama);
+  const L = lagaTerakhirPemain(p.nama, 10).filter(x=>x.rating > 0);
+  const hitung = {};
+  L.slice(0,5).forEach(x=>{ const k = POSISI_LAGA[x.posLaga]; if(k) hitung[k] = (hitung[k]||0) + 1; });
+  const pos = Object.entries(hitung).sort((a,b)=>b[1]-a[1])[0]?.[0] || p.pos;
+  let hasil;
+  if(L.length >= 3){
+    let jml = 0, bobotTotal = 0;
+    L.forEach((x,i)=>{ const w = Math.pow(0.85, i); jml += w * (x.rating + (CACHE_OVR.koreksi[x.posLaga] || 0)); bobotTotal += w; });
+    const form = jml / bobotTotal;
+    const bobot = L.length / (L.length + 5);
+    const nilai = bobot * form + (1 - bobot) * (p.rating || form);
+    hasil = { ovr: Math.round(nilai * 10), pos, form, n: L.length };
+  } else {
+    hasil = { ovr: Math.round((p.rating || 0) * 10), pos, form: null, n: 0 };
+  }
+  CACHE_OVR.peta.set(p.nama, hasil);
+  return hasil;
+}
+
 function tierShield(p){
-  if(p.gk) return 'tier-gk';
-  // Pakai angka yang tampil di kartu (rating rata-rata × 10):
-  // 71 ke atas = emas, 60–70 = perak, di bawah 60 = perunggu.
-  const angka = Math.round((p.rating || 0) * 10);
-  if(angka >= 71) return 'tier-emas';
-  if(angka >= 60) return 'tier-perak';
+  const o = ovrPemain(p);
+  if(o.pos === 'GK') return 'tier-gk';
+  // 71 ke atas = emas, 60–70 = perak, di bawah 60 = perunggu (dari angka OVR di kartu).
+  if(o.ovr >= 71) return 'tier-emas';
+  if(o.ovr >= 60) return 'tier-perak';
   return 'tier-perunggu';
 }
 
@@ -1415,15 +1464,15 @@ function render(){
         <div class="shield ${sedangOnFire(p) ? 'kartu-api' : tierShield(p)} ${fotoPemain(p.nama) ? 'ada-foto' : ''}">
           ${sedangOnFire(p) ? `<span class="gambar-kartu-api"></span>` : ''}
           <div class="rating-pos">
-            <b>${Math.round(p.rating*10)}</b>
-            <span>${p.pos}</span>
+            <b>${ovrPemain(p).ovr}</b>
+            <span>${ovrPemain(p).pos}</span>
           </div>
           ${fotoPemain(p.nama)
             ? `<img class="foto-pemain" src="${fotoPemain(p.nama)}" alt="${escapeHtml(p.nama)}">`
             : `<img class="foto-pemain foto-kosong" src="/ikon/logo.png" alt="">`}
           <div class="nama-pemain">${escapeHtml(p.nama)}</div>
           <hr class="garis-shield">
-          ${p.gk ? `
+          ${ovrPemain(p).pos === 'GK' ? `
           <div class="stat-baris baris-4">
             <div><b>${p.main}</b><span>Main</span></div>
             <div><b>${p.gkCleanSheet??0}</b><span>CS</span></div>
@@ -2081,8 +2130,8 @@ function bukaModalPemain(p){
   isi.innerHTML = `
     <button class="modal-tutup" aria-label="Tutup">✕</button>
     <div class="modal-header">
-      <div class="rating-lingkaran"><b>${p.rating.toFixed(1)}</b><span>RTG</span></div>
-      <span class="pos-besar">${p.pos}</span>
+      <div class="rating-lingkaran" title="${ovrPemain(p).n >= 3 ? `OVR dari form ${ovrPemain(p).n} laga terakhir (disetarakan per posisi) + rating musim` : 'OVR = rating musim × 10'}"><b>${ovrPemain(p).ovr}</b><span>OVR</span></div>
+      <span class="pos-besar">${ovrPemain(p).pos}</span>
       <div class="nama-besar">${escapeHtml(p.nama)}</div>
       <div class="peran-besar">${p.peran}${negara ? ` · <span class="negara-modal">${benderaPemain(p, 12)} ${negara[1]}</span>` : ''}</div>
       ${sedangOnFire(p) ? `<div class="label-onfire">🔥 On fire · ${escapeHtml(statusOnFire(p).alasan)}</div>` : ''}
