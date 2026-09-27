@@ -1004,13 +1004,95 @@ function bacaFormGol(m){
   for(let i=1;i<=jumlah;i++) arr.push(+m['prevGoals'+i] || 0);
   return arr; // indeks 0 = laga terbaru
 }
-// 🔥 On fire: ≥3 gol dalam 5 laga terakhir, atau selalu mencetak gol di 3 laga terakhir.
-function sedangOnFire(p){
-  const f = p.formGol;
-  if(!f || f.length < 3) return false;
-  const gol5 = f.slice(0,5).reduce((a,b)=>a+b,0);
-  return gol5 >= 3 || f.slice(0,3).every(g=>g>0);
+/* 🔥 ON FIRE — syarat adil per posisi, dari laga-laga terakhir yang DIMAINKAN pemain itu.
+   Posisi dinilai dari posisi yang paling sering ia mainkan di 5 laga terakhir (data EA per laga),
+   bukan posisi favorit di profil. Minimal sudah main 3 laga. Cukup memenuhi SALAH SATU syarat:
+     Semua posisi : rating rata-rata ≥ 8.0 di 3 laga terakhir, atau ≥ 2x MOTM di 5 laga terakhir
+     Penyerang    : ≥ 3 gol di 5 laga, cetak gol di 3 laga beruntun, gol+assist ≥ 5 di 5 laga,
+                    atau tembakan tajam: ≥ 2 gol di 3 laga dengan konversi tembakan ≥ 50%
+     Gelandang    : ≥ 3 gol, ≥ 3 assist, atau gol+assist ≥ 4 di 5 laga terakhir,
+                    atau passing: ≥ 40 umpan di 3 laga dengan akurasi ≥ 88% dan rating ≥ 7.0
+                    (syarat gol/assist penyerang & gelandang juga butuh rating rata-rata ≥ 6.5)
+     Bek          : clean sheet ≥ 2 dari 3 laga; kebobolan ≤ 3 di 3 laga + rating rata-rata ≥ 7.3;
+                    ≥ 6 tekel sukses di 3 laga dengan akurasi ≥ 50%; akurasi tekel ≥ 70% (min. 5 sukses);
+                    atau passing ≥ 90% (min. 30 umpan di 3 laga) dengan rating ≥ 7.2
+     Kiper        : clean sheet ≥ 2 dari 3 laga; kebobolan ≤ 3 di 3 laga + rating rata-rata ≥ 7.3;
+                    ≥ 8 save di 3 laga dengan rating ≥ 7.0; atau persentase penyelamatan ≥ 70%
+                    (save ÷ (save + kebobolan), min. 6 save di 3 laga) dengan rating ≥ 7.0
+   Kalau detail per laga belum ada, dipakai data gol 10 laga terakhir dari EA (prevGoals). */
+const SYARAT_ONFIRE = { minMain:3, rating3:8.0, motm5:2 };
+const POSISI_LAGA = { goalkeeper:'GK', defender:'CB', midfielder:'CM', forward:'ST' };
+let CACHE_ONFIRE = { data:null, peta:new Map() };
+function lagaTerakhirPemain(nama, n){
+  const kunci = (nama||'').toLowerCase();
+  const hasil = [];
+  for(const m of [...(DATA.hasil||[])].sort((a,b)=>b.ts-a.ts)){
+    const pl = (m.detail||[]).find(x=>x.nama.toLowerCase() === kunci);
+    if(pl) hasil.push({ ...pl, cleanSheet: m.golLawan === 0, kebobolan: m.golLawan || 0 });
+    if(hasil.length >= n) break;
+  }
+  return hasil;
 }
+function statusOnFire(p){
+  if(CACHE_ONFIRE.data !== DATA){ CACHE_ONFIRE = { data:DATA, peta:new Map() }; }
+  if(CACHE_ONFIRE.peta.has(p.nama)) return CACHE_ONFIRE.peta.get(p.nama);
+  const simpan = v => (CACHE_ONFIRE.peta.set(p.nama, v), v);
+  const nyala = alasan => simpan({ aktif:true, alasan });
+  const L5 = lagaTerakhirPemain(p.nama, 5), L3 = L5.slice(0,3);
+  const jml = (d, k) => d.reduce((t,x)=>t + (x[k]||0), 0);
+
+  if(L5.length >= SYARAT_ONFIRE.minMain){
+    const hitung = {}; L5.forEach(x=>{ const k = POSISI_LAGA[x.posLaga]; if(k) hitung[k] = (hitung[k]||0) + 1; });
+    const posisi = Object.entries(hitung).sort((a,b)=>b[1]-a[1])[0]?.[0] || p.pos;
+    const rata3 = jml(L3,'rating') / L3.length;
+    if(rata3 >= SYARAT_ONFIRE.rating3) return nyala(`rating rata-rata ${rata3.toFixed(1)} di 3 laga terakhir`);
+    const motm = L5.filter(x=>x.mom).length;
+    if(motm >= SYARAT_ONFIRE.motm5) return nyala(`${motm}x MOTM di ${L5.length} laga terakhir`);
+    const gol = jml(L5,'gol'), assist = jml(L5,'assist');
+    // Gol/assist hanya dihitung kalau main-nya juga bagus (rating rata-rata ≥ 6.5 di 3 laga terakhir).
+    const mainBagus = rata3 >= 6.5;
+    if(posisi === 'ST' && mainBagus){
+      if(gol >= 3) return nyala(`${gol} gol di ${L5.length} laga terakhir`);
+      if(L3.every(x=>x.gol > 0)) return nyala('mencetak gol di 3 laga beruntun');
+      if(gol + assist >= 5) return nyala(`${gol} gol + ${assist} assist di ${L5.length} laga terakhir`);
+      const gol3 = jml(L3,'gol'), tembak3 = jml(L3,'tembakan');
+      if(gol3 >= 2 && tembak3 && gol3/tembak3 >= 0.5) return nyala(`tajam: ${gol3} gol dari ${tembak3} tembakan (${Math.round(gol3/tembak3*100)}%) di 3 laga terakhir`);
+    }
+    if(posisi === 'CM' && mainBagus){
+      if(gol >= 3) return nyala(`${gol} gol di ${L5.length} laga terakhir`);
+      if(assist >= 3) return nyala(`${assist} assist di ${L5.length} laga terakhir`);
+      if(gol + assist >= 4) return nyala(`${gol} gol + ${assist} assist di ${L5.length} laga terakhir`);
+      const ps = jml(L3,'passSukses'), pc = jml(L3,'passCoba');
+      if(pc >= 40 && ps/pc >= 0.88 && rata3 >= 7.0) return nyala(`akurasi passing ${Math.round(ps/pc*100)}% (${ps}/${pc}) di 3 laga terakhir`);
+    }
+    if(posisi === 'CB' || posisi === 'GK'){
+      const cs = L3.filter(x=>x.cleanSheet).length, kb = jml(L3,'kebobolan');
+      if(cs >= 2) return nyala(`${cs} clean sheet dari 3 laga terakhir`);
+      if(kb <= 3 && rata3 >= 7.3) return nyala(`hanya kebobolan ${kb} gol di 3 laga terakhir`);
+      if(posisi === 'CB'){
+        const tk = jml(L3,'tekel'), coba = jml(L3,'tekelCoba');
+        if(tk >= 6 && coba && tk/coba >= 0.5) return nyala(`${tk} tekel sukses (${Math.round(tk/coba*100)}%) di 3 laga terakhir`);
+        if(tk >= 5 && coba && tk/coba >= 0.7) return nyala(`akurasi tekel ${Math.round(tk/coba*100)}% (${tk}/${coba}) di 3 laga terakhir`);
+        const ps = jml(L3,'passSukses'), pc = jml(L3,'passCoba');
+        if(pc >= 30 && ps/pc >= 0.9 && rata3 >= 7.2) return nyala(`akurasi passing ${Math.round(ps/pc*100)}% (${ps}/${pc}) di 3 laga terakhir`);
+      } else {
+        const sv = jml(L3,'save');
+        if(sv >= 8 && rata3 >= 7.0) return nyala(`${sv} save di 3 laga terakhir`);
+        if(sv >= 6 && sv/(sv+kb) >= 0.7 && rata3 >= 7.0) return nyala(`menyelamatkan ${Math.round(sv/(sv+kb)*100)}% tembakan (${sv} save) di 3 laga terakhir`);
+      }
+    }
+    return simpan({ aktif:false });
+  }
+  // Cadangan: belum ada detail laga → pakai gol 10 laga terakhir dari EA.
+  const f = p.formGol;
+  if(f && f.length >= 3){
+    const gol5 = f.slice(0,5).reduce((a,b)=>a+b,0);
+    if(gol5 >= 3) return nyala(`${gol5} gol di 5 laga terakhir`);
+    if(f.slice(0,3).every(g=>g>0)) return nyala('mencetak gol di 3 laga beruntun');
+  }
+  return simpan({ aktif:false });
+}
+function sedangOnFire(p){ return statusOnFire(p).aktif; }
 function grafikForm(p){
   const f = p.formGol;
   if(!f || !f.length) return '';
@@ -1322,7 +1404,7 @@ function render(){
     isi += squadTerurut.length ? `<div class="grid-skuad">` + squadTerurut.map((p)=>{
       const i = DATA.squad.indexOf(p);
       return `
-      <div class="shield-wrap${sedangOnFire(p) ? ' on-fire' : ''}" data-pemain="${i}"${sedangOnFire(p) ? ' title="On fire: rajin cetak gol di laga-laga terakhir"' : ''}>
+      <div class="shield-wrap${sedangOnFire(p) ? ' on-fire' : ''}" data-pemain="${i}"${sedangOnFire(p) ? ` title="On fire: ${escapeHtml(statusOnFire(p).alasan)}"` : ''}>
         <div class="shield ${sedangOnFire(p) ? 'kartu-api' : tierShield(p)} ${fotoPemain(p.nama) ? 'ada-foto' : ''}">
           ${sedangOnFire(p) ? `<span class="gambar-kartu-api"></span>` : ''}
           <div class="rating-pos">
@@ -1996,7 +2078,7 @@ function bukaModalPemain(p){
       <span class="pos-besar">${p.pos}</span>
       <div class="nama-besar">${escapeHtml(p.nama)}</div>
       <div class="peran-besar">${p.peran}${negara ? ` · <span class="negara-modal">${benderaPemain(p, 12)} ${negara[1]}</span>` : ''}</div>
-      ${sedangOnFire(p) ? `<div class="label-onfire">🔥 On fire</div>` : ''}
+      ${sedangOnFire(p) ? `<div class="label-onfire">🔥 On fire · ${escapeHtml(statusOnFire(p).alasan)}</div>` : ''}
     </div>
     <div class="modal-body">
       <div class="modal-grid">${statUtama}</div>
