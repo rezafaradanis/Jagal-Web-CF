@@ -65,7 +65,8 @@ export const DISCORD_ID = {
   'xzxgumgum': '306951542924115968', // XzXgumgum
   'fhmdayat': '541098505037414411', // fhmdayat
   'critze07': '216445737880387584', // critze07
-  'pumba_brs': '1553585759867379732', // Pumba_brs (Discord: albus1247)
+  'pumba_brs': '568838699752882197', // Pumba_brs (Discord: albus1247)
+  'yurdyyy': '513550980906745859', // Yurdyyy
 };
 export function sebut(nama) {
   const id = DISCORD_ID[String(nama || '').trim().toLowerCase()];
