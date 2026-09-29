@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JAGAL VFC — EA SPORTS FC 27 Pro Clubs</title>
 <meta name="description" content="JAGAL VFC — klub EA SPORTS FC 27 Pro Clubs asal Indonesia. Skuad, statistik pemain, hasil laga, dan posisi divisi.">
+<!-- Preview saat link dibagikan (WhatsApp, Discord, dll.) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="JAGAL VFC">
+<meta property="og:title" content="JAGAL VFC — EA SPORTS FC 27 Pro Clubs">
+<meta property="og:description" content="Skuad, statistik pemain, hasil laga, dan rekor JAGAL VFC.">
+<meta property="og:url" content="https://jagal.fun/">
+<meta property="og:image" content="https://jagal.fun/aset/og-jagal-nocturne.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="JAGAL VFC x NOCTURNE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://jagal.fun/aset/og-jagal-nocturne.jpg">
+<meta name="theme-color" content="#0b0b0e">
 <link rel="icon" type="image/png" sizes="32x32" href="/ikon/favicon-32.png">
 <link rel="apple-touch-icon" href="/ikon/ikon-192.png">
 <style>
@@ -24,7 +37,7 @@
     content:"";position:fixed;inset:0;z-index:-2;
     background:
       linear-gradient(180deg, rgba(8,8,10,.88) 0%, rgba(8,8,10,.80) 40%, rgba(8,8,10,.94) 100%),
-      url('/aset/bg-global-logo.jpg');
+      url('/aset/bg-global-logo.webp');
     background-size:cover;background-position:center 30%;background-repeat:no-repeat;
     background-attachment:fixed;
   }
@@ -129,7 +142,7 @@
   .kpi b{display:block;font-size:25px;font-weight:900;}
   .kpi span{font-size:11px;color:var(--redup);text-transform:uppercase;letter-spacing:.5px;}
 
-  .grid-skuad{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:18px 14px;
+  .grid-skuad{padding-top:34px;display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:18px 14px;
     justify-items:center;}
 
   /* ── Shield player card, gaya Ultimate Team ───────────────────────── */
@@ -145,10 +158,10 @@
     filter:drop-shadow(0 10px 16px rgba(0,0,0,.45));transition:filter .18s ease;}
   .shield-wrap:hover .shield{filter:drop-shadow(0 16px 26px rgba(0,0,0,.6));}
 
-  .shield.tier-emas{background-image:url('/aset/kartu-emas.png');--tinta:#2b1f03;}
-  .shield.tier-perak{background-image:url('/aset/kartu-perak.png');--tinta:#1c232c;}
-  .shield.tier-perunggu{background-image:url('/aset/kartu-perunggu.png');--tinta:#2c1a0e;}
-  .shield.tier-gk{background-image:url('/aset/kartu-kiper.png');--tinta:#05281f;}
+  .shield.tier-emas{background-image:url('/aset/kartu-emas.webp');--tinta:#2b1f03;}
+  .shield.tier-perak{background-image:url('/aset/kartu-perak.webp');--tinta:#1c232c;}
+  .shield.tier-perunggu{background-image:url('/aset/kartu-perunggu.webp');--tinta:#2c1a0e;}
+  .shield.tier-gk{background-image:url('/aset/kartu-kiper.webp');--tinta:#05281f;}
 
   .shield .rating-pos{position:absolute;top:10%;left:12%;z-index:2;text-align:center;}
   .shield .rating-pos b{display:block;font-size:30px;font-weight:900;line-height:1;
@@ -179,6 +192,7 @@
     justify-content:center;gap:8px;}
   .shield .footer-shield svg{height:15px;width:auto;border-radius:2px;
     box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .shield .footer-shield img.bendera{height:15px;width:auto;border-radius:2px;display:block;}
   .shield .footer-shield .logo-badge{height:20px;width:20px;border-radius:50%;
     background:rgba(255,255,255,.88);display:flex;align-items:center;justify-content:center;
     box-shadow:0 1px 3px rgba(0,0,0,.3);}
@@ -203,7 +217,7 @@
   th.sortir.aktif{color:var(--merah2);}
   th.sortir.aktif .panah-sortir{opacity:1;}
 
-  .kontrol-sortir{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
+  .kontrol-sortir{position:relative;z-index:3;display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;}
   .kontrol-sortir label{font-size:12px;color:var(--redup);font-weight:700;text-transform:uppercase;letter-spacing:.3px;}
   .kontrol-sortir select{background:var(--bg2);color:var(--teks);border:1px solid var(--garis-lembut);
     border-radius:8px;padding:8px 10px;font-size:13px;font-weight:600;cursor:pointer;}
@@ -236,6 +250,49 @@
   .laga-detail table{font-size:12.5px;}
   .laga-detail th,.laga-detail td{padding:8px 10px;}
   .laga-detail .mom{color:var(--kuning);font-weight:800;}
+  .memuat-detail{font-size:12px;color:var(--redup);padding:8px 12px 12px;}
+  .total-sepanjang{background:linear-gradient(180deg, var(--bg2-atas), transparent), var(--bg2);border:1px solid var(--garis-lembut);
+    border-radius:12px;padding:12px 16px;margin-bottom:12px;font-size:14px;color:var(--redup);line-height:1.8;}
+  .total-sepanjang span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
+  .total-sepanjang b{color:var(--teks);font-size:16px;} .total-sepanjang b.m{color:var(--hijau);} .total-sepanjang b.s{color:var(--kuning);} .total-sepanjang b.k{color:var(--merah2);}
+  .catatan-rekor{font-size:12.5px;color:var(--redup);margin:-6px 0 14px;}
+  .grid-rekor{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:24px;}
+  .rekor-kartu{background:linear-gradient(180deg, var(--bg2-atas), transparent), var(--bg2);border:1px solid var(--garis-lembut);
+    border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0;}
+  .rekor-kartu span{font-size:10.5px;color:var(--redup);text-transform:uppercase;letter-spacing:.5px;font-weight:700;}
+  .rekor-kartu b{font-size:19px;font-weight:900;overflow-wrap:anywhere;}
+  .rekor-kartu i{font-style:normal;font-size:12px;color:var(--redup);overflow-wrap:anywhere;}
+  .hattrick{font-size:13px;color:var(--redup);margin:-12px 0 24px;line-height:1.7;}
+  .hattrick b{color:var(--teks);}
+  .tbl-h2h td.m{color:var(--hijau);font-weight:800;} .tbl-h2h td.k{color:var(--merah2);font-weight:800;}
+  .h2h-lawan{display:flex;align-items:center;gap:8px;font-weight:700;}
+  .logo-mini{width:22px;height:22px;object-fit:contain;flex-shrink:0;}
+  .btn-lagi{display:block;margin:10px auto 24px;background:var(--bg2);color:var(--teks);border:1px solid var(--garis-lembut);
+    border-radius:10px;padding:10px 18px;font-weight:700;font-size:13px;cursor:pointer;}
+  .btn-lagi:hover{border-color:var(--merah2);color:var(--merah2);}
+  .subjudul small{font-size:12px;color:var(--redup);font-weight:600;}
+  .laga .logo-lawan{width:34px;height:34px;object-fit:contain;flex-shrink:0;}
+  .papan-laga{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:16px 10px 10px;max-width:620px;margin:0 auto;}
+  .tim-laga{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;font-weight:800;font-size:13px;min-width:0;}
+  .tim-laga span{overflow-wrap:anywhere;}
+  .tim-laga .logo-tim{width:52px;height:52px;object-fit:contain;}
+  .skor-laga{font-size:28px;font-weight:900;letter-spacing:1px;}
+  .stat-tv{padding:6px 14px 14px;display:flex;flex-direction:column;gap:10px;max-width:620px;margin:0 auto;}
+  .stat-tv-angka{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;}
+  .stat-tv-angka span{color:var(--redup);font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;}
+  .stat-tv-angka b{min-width:44px;font-weight:800;color:var(--redup);}
+  .stat-tv-angka b:last-child{text-align:right;}
+  .stat-tv-angka b.unggul{color:var(--teks);}
+  .stat-tv-bar{display:flex;gap:3px;height:6px;margin-top:4px;}
+  .stat-tv-bar i{display:block;border-radius:3px;min-width:3px;}
+  .stat-tv-bar i.kami{background:var(--merah2);}
+  .stat-tv-bar i.lawan{background:rgba(255,255,255,.28);}
+  .judul-tabel-laga{font-size:11px;font-weight:800;color:var(--redup);text-transform:uppercase;letter-spacing:.5px;padding:10px 12px 0;}
+  .rinci-save{font-size:12px;color:var(--redup);padding:4px 12px 10px;}
+  .rinci-save b{color:var(--teks);}
+  .lawan-laga{margin:4px 6px 8px;border-top:1px solid var(--garis-lembut);}
+  .lawan-laga summary{cursor:pointer;padding:12px 6px;font-size:12.5px;color:var(--redup);font-weight:700;}
+  .lawan-laga summary b{color:var(--kuning);}
 
   footer{border-top:1px solid var(--garis-lembut);padding:26px 20px;text-align:center;
     color:var(--redup);font-size:12px;background:rgba(8,8,10,.5);}
@@ -430,6 +487,54 @@
   .modal-header .rating-lingkaran b{font-size:18px;font-weight:900;line-height:1;}
   .modal-header .rating-lingkaran span{font-size:7px;color:var(--redup);text-transform:uppercase;}
   .modal-body{padding:22px 24px 28px;}
+  /* ── Kartu ON FIRE: template kartu berapi (aset/kartu-onfire.webp) ──
+     Gambar lebih besar dari kartu (api di sekelilingnya), jadi dipasang sebagai <img>
+     yang meluber keluar kotak kartu. Perisai di gambar berada di x 105–400, y 50–480
+     (gambar 502×497) → posisi & ukuran di bawah dihitung dari angka itu. Posisi isi
+     kartu juga disesuaikan dengan pita nama & area statistik di template ini. */
+  html,body{overflow-x:clip;} /* api boleh keluar kartu, tapi halaman tidak ikut bisa digeser ke samping */
+  .shield-wrap{z-index:1;}
+  .shield-wrap.on-fire{z-index:0;} /* api menyelinap di BELAKANG kartu tetangga, tidak menutupinya */
+  .shield.kartu-api{--tinta:#2b1a02;animation:kartuNyala 1.6s ease-in-out infinite alternate;}
+  .shield .gambar-kartu-api{position:absolute;z-index:0;pointer-events:none;max-width:none;
+    background:url('/aset/kartu-onfire.webp') center/100% 100% no-repeat;
+    left:-35.6%;top:-11.6%;width:170.2%;height:115.6%;}
+  .shield.kartu-api .rating-pos{top:12%;left:13%;}
+  .shield.kartu-api .foto-pemain{bottom:58%;height:40%;right:9%;}
+  .shield.kartu-api .foto-pemain.foto-kosong{bottom:62%;height:24%;right:15%;}
+  .shield.kartu-api .nama-pemain{top:42%;height:9%;color:#fff4d0;text-shadow:0 1px 2px rgba(60,20,0,.8);}
+  .shield.kartu-api .stat-baris{top:56.5%;height:21%;}
+  .shield.kartu-api .footer-shield{top:81%;}
+  @keyframes kartuNyala{
+    from{filter:drop-shadow(0 0 3px rgba(255,170,0,.6)) drop-shadow(0 10px 16px rgba(0,0,0,.45));}
+    to{filter:drop-shadow(0 0 10px rgba(255,90,0,.9)) drop-shadow(0 10px 16px rgba(0,0,0,.45));}
+  }
+  @media (prefers-reduced-motion: reduce){ .shield.kartu-api{animation:none;} }
+  .label-onfire{display:inline-block;margin-top:10px;padding:4px 12px;border-radius:999px;font-size:11.5px;
+    font-weight:800;letter-spacing:.4px;color:#ffb35c;background:rgba(255,120,30,.14);border:1px solid rgba(255,140,50,.35);}
+  .form-kotak{margin-top:14px;background:rgba(255,255,255,.03);border:1px solid var(--garis-lembut);
+    border-radius:12px;padding:14px 14px 10px;}
+  .form-judul{display:flex;justify-content:space-between;align-items:baseline;font-size:10.5px;color:var(--redup);
+    text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px;}
+  .form-judul b{font-size:13px;color:#fff;text-transform:none;letter-spacing:0;}
+  .form-grafik{display:flex;align-items:flex-end;gap:6px;height:74px;}
+  .form-kolom{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;}
+  .form-angka{font-size:11px;font-weight:800;margin-bottom:3px;min-height:13px;}
+  .form-batang{width:100%;max-width:22px;border-radius:4px 4px 2px 2px;background:var(--merah2);}
+  .form-batang.nol{background:rgba(255,255,255,.14);}
+  .form-kolom.terbaru .form-batang{box-shadow:0 0 0 2px rgba(255,255,255,.55);}
+  .form-ket{display:flex;justify-content:space-between;font-size:9.5px;color:var(--redup);margin-top:6px;}
+  .negara-modal{display:inline-flex;align-items:center;gap:5px;text-transform:none;}
+  .negara-modal svg,.negara-modal img{height:12px;width:auto;border-radius:2px;}
+  .arch-kotak{margin-top:14px;font-size:12.5px;color:var(--redup);background:rgba(255,255,255,.03);
+    border:1px solid var(--garis-lembut);border-radius:12px;padding:12px 14px;}
+  .arch-kotak span{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;}
+  .arch-kotak b{color:var(--teks);}
+  .arch-kotak i{font-style:normal;font-size:11px;}
+  .grid-save{grid-template-columns:repeat(3,1fr)!important;gap:8px!important;}
+  .grid-save .modal-stat{padding:10px;}
+  .grid-save .modal-stat b{font-size:17px;}
+  .grid-save .modal-stat span{font-size:9.5px;}
   .modal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
   .modal-stat{background:rgba(255,255,255,.03);border:1px solid var(--garis-lembut);
     border-radius:12px;padding:12px 14px;}
@@ -481,7 +586,7 @@
 </header>
 
 <div class="hero-strip">
-  <img src="/aset/bg-hero-jersey.jpg" alt="">
+  <img src="/aset/bg-hero-jersey.webp" alt="">
   <div class="hero-teks"><span class="eyebrow">More Than A Game</span></div>
 </div>
 
@@ -500,7 +605,7 @@
    ══════════════════════════════════════════════════════════ */
 const CONFIG = {
   club: { id: '438867', nama: 'JAGAL', platform: 'common-gen5' },
-  proxy: '/.netlify/functions/ea',
+  proxy: '/api/ea',
   discordInvite: 'https://discord.gg/tvSBTcgcN',
   instagram: 'https://www.instagram.com/jagalesport24',
   streamers: [
@@ -512,7 +617,7 @@ const CONFIG = {
   // Environment Variable), tidak pernah ditulis di file ini. File ini dikirim
   // apa adanya ke browser pengunjung, jadi apa pun yang ditulis di sini bisa
   // dilihat siapa saja lewat "View Source".
-  trialEndpoint: '/.netlify/functions/trial',
+  trialEndpoint: '/api/trial',
 };
 
 /* ══════════════════════════════════════════════════════════
@@ -629,6 +734,11 @@ async function tarikDataEA(){
       tembakanAkurasi: angkaAtauNull(m.shotSuccessRate),
       kartuMerah: angkaAtauNull(m.redCards),
       motmMusim: +m.manOfTheMatch || 0,
+      // Gol di 10 laga terakhir pemain ini (prevGoals1 = laga terbaru). Dicek cocok
+      // dengan data clubs/matches 26 Sep 2026.
+      formGol: bacaFormGol(m),
+      // Kode negara Pro in-game (ID negara EA, mis. 160 = Indonesia).
+      negara: m.proNationality ? +m.proNationality : null,
     };
   }).filter(m=>m.main > 0).sort((a,b)=>b.main-a.main).map((m,i)=>({...m, no:i+1}));
 
@@ -645,54 +755,172 @@ async function tarikDataEA(){
   } : null;
 
   const LABEL = { leagueMatch:'Liga', playoffMatch:'Playoff', friendlyMatch:'Friendly' };
-  const sudahDilihat = new Set();
-  let hasil = [];
+  // Sumber laga: data EA terbaru (EA hanya memberi ±10 laga terakhir per jenis) + arsip permanen di server kita.
+  // Laga yang sama (matchId sama) hanya dihitung sekali; versi EA diutamakan.
+  const sumberLaga = [];
   for(const tipe of ['leagueMatch','playoffMatch','friendlyMatch']){
     try{
       const mt = await eaGet(`/clubs/matches?matchType=${tipe}&platform=${platform}&clubIds=${id}&maxResultCount=50`);
-      (mt||[]).forEach(mm=>{
-        if(!mm.matchId || sudahDilihat.has(mm.matchId)) return;
-        sudahDilihat.add(mm.matchId);
-        const kami = mm.clubs?.[id];
-        const lawanId = Object.keys(mm.clubs||{}).find(k=>k !== String(id));
-        const lawan = mm.clubs?.[lawanId];
-        if(!kami || !lawan) return;
-        const a = +kami.goals, b = +lawan.goals;
-
-        // Box score per pemain — dari clubs/matches, field "players" per klub.
-        const pemainRaw = mm.players?.[id] || null;
-        // Nama field sudah dicocokkan dengan data asli EA (dicek 25 Sep 2026).
-        // EA tidak menyediakan kartu kuning per laga.
-        const detail = pemainRaw ? Object.values(pemainRaw).map(pl=>({
-          nama: pl.playername || 'Pemain',
-          gol: +pl.goals || 0,
-          assist: +pl.assists || 0,
-          tembakan: +pl.shots || 0,
-          passSukses: +pl.passesmade || 0,
-          passCoba: +pl.passattempts || 0,
-          tekel: +pl.tacklesmade || 0,
-          save: +pl.saves || 0,
-          kartuMerah: +pl.redcards || 0,
-          rating: Math.round((+pl.rating || 0)*10)/10,
-          mom: pl.mom === '1' || pl.mom === 1,
-        })).sort((x,y)=>y.rating-x.rating) : null;
-
-        hasil.push({
-          ts: mm.timestamp*1000,
-          tgl: new Date(mm.timestamp*1000).toISOString().slice(0,10),
-          lawan: lawan.details?.name || 'Lawan',
-          skor: `${a} – ${b}`,
-          hasil: a>b ? 'win' : a<b ? 'loss' : 'draw',
-          tipe: LABEL[tipe] || 'Pro Clubs',
-          detail,
-        });
-      });
+      (mt||[]).forEach(mm=>sumberLaga.push([mm, tipe]));
     }catch(e){ /* opsional */ }
   }
+  try{
+    const r = await fetch('/api/arsip');
+    if(r.ok){
+      const ar = await r.json();
+      ARSIP_MULAI = ar.mulai || null;
+      // Format ringkas (v2): array per laga → diubah ke bentuk data EA supaya parser sama.
+      (ar.laga||[]).forEach(x=> Array.isArray(x) ? sumberLaga.push([dariArsipRingkas(x, id), x[2]]) : sumberLaga.push([x, x._tipe]));
+    }
+  }catch(e){ /* arsip opsional */ }
+
+  const sudahDilihat = new Set();
+  let hasil = [];
+  sumberLaga.forEach(([mm, tipe])=>{
+    if(!mm.matchId || sudahDilihat.has(String(mm.matchId))) return;
+    const laga = bentukLaga(mm, tipe, id, LABEL);
+    if(!laga) return;
+    sudahDilihat.add(String(mm.matchId));
+    hasil.push(laga);
+  });
   hasil.sort((x,y)=>y.ts-x.ts);
 
   if(!squad.length && !hasil.length) return null;
   return { squad, totals, hasil, divisi };
+}
+
+const LABEL_TIPE_LAGA = { leagueMatch:'Liga', playoffMatch:'Playoff', friendlyMatch:'Friendly' };
+// Satu laga (bentuk data EA) → objek laga yang dipakai situs.
+function bentukLaga(mm, tipe, id, LABEL = LABEL_TIPE_LAGA){
+  const kami = mm.clubs?.[id];
+  const lawanId = Object.keys(mm.clubs||{}).find(k=>k !== String(id));
+  const lawan = mm.clubs?.[lawanId];
+  if(!kami || !lawan) return null;
+  const a = +kami.goals, b = +lawan.goals;
+  // Box score per pemain kedua tim — dari clubs/matches, field "players" per klub.
+  // Nama field sudah dicocokkan dengan data asli EA (dicek 26 Sep 2026). EA tidak menyediakan kartu kuning per laga.
+  const detail = bacaPemainLaga(mm.players?.[id]);
+  const detailLawan = bacaPemainLaga(mm.players?.[lawanId]);
+  return {
+    id: String(mm.matchId),
+    tipeAsli: tipe,
+    ringkas: !!mm._ringkas, // dari arsip ringkas: pemain lawan diambil saat laga diklik
+    ts: mm.timestamp*1000,
+    tgl: new Date(mm.timestamp*1000).toISOString().slice(0,10),
+    lawan: lawan.details?.name || 'Lawan',
+    golKami: a, golLawan: b,
+    skor: `${a} – ${b}`,
+    hasil: a>b ? 'win' : a<b ? 'loss' : 'draw',
+    tipe: LABEL[tipe] || 'Pro Clubs',
+    detail,
+    detailLawan,
+    statKami: jumlahStatTim(detail),
+    statLawan: jumlahStatTim(detailLawan),
+    // JAGAL pakai logo sendiri (logo EA-nya hanya logo bawaan game).
+    logoKami: '/ikon/logo.png',
+    logoLawan: urlLogoKlub(lawan.details?.customKit?.crestAssetId),
+    menangDnf: kami.winnerByDnf === '1' || lawan.winnerByDnf === '1',
+  };
+}
+// Arsip format ringkas (lihat functions/api/arsip.js) → bentuk data EA.
+function dariArsipRingkas(x, id){
+  const [matchId, ts, tipe, golKami, golLawan, namaLawan, crest, dnf, pemain] = x;
+  const players = {};
+  (pemain||[]).forEach((p,i)=>{
+    const [nama,pos,arch,gol,assist,tembakan,ps,pc,tk,tc,sv,kb,merah,r10,mom] = p;
+    players['p'+i] = { playername:nama, pos, archetypeid: arch, goals:gol, assists:assist, shots:tembakan,
+      passesmade:ps, passattempts:pc, tacklesmade:tk, tackleattempts:tc, saves:sv, goalsconceded:kb,
+      redcards:merah, rating: r10/10, mom: mom ? '1' : '0' };
+  });
+  return { matchId, timestamp: ts, _tipe: tipe, _ringkas: true,
+    clubs: { [id]: { goals:String(golKami), winnerByDnf: dnf ? '1' : '0' },
+             lawan: { goals:String(golLawan), winnerByDnf:'0', details:{ name:namaLawan, customKit:{ crestAssetId:crest } } } },
+    players: { [id]: players } };
+}
+
+// Statistik tiap pemain di satu laga (dipakai untuk JAGAL maupun lawan).
+function bacaPemainLaga(raw){
+  if(!raw) return null;
+  return Object.values(raw).map(pl=>({
+    nama: pl.playername || 'Pemain',
+    posLaga: pl.pos || '',
+    archetype: pl.archetypeid != null && pl.archetypeid !== '' ? +pl.archetypeid : null,
+    gol: +pl.goals || 0,
+    assist: +pl.assists || 0,
+    tembakan: +pl.shots || 0,
+    passSukses: +pl.passesmade || 0,
+    passCoba: +pl.passattempts || 0,
+    tekel: +pl.tacklesmade || 0,
+    tekelCoba: +pl.tackleattempts || 0,
+    save: +pl.saves || 0,
+    // Rincian save kiper
+    saveRinci: {
+      parry: +pl.parrySaves || 0, punch: +pl.punchSaves || 0, reflex: +pl.reflexSaves || 0,
+      diving: +pl.ballDiveSaves || 0, crossing: +pl.crossSaves || 0,
+    },
+    kemasukan: +pl.goalsconceded || 0,
+    kartuMerah: +pl.redcards || 0,
+    rating: Math.round((+pl.rating || 0)*10)/10,
+    mom: pl.mom === '1' || pl.mom === 1,
+  })).sort((x,y)=>y.rating-x.rating);
+}
+function jumlahStatTim(daftar){
+  if(!daftar || !daftar.length) return null;
+  const t = { tembakan:0, passSukses:0, passCoba:0, tekel:0, tekelCoba:0, save:0, kartuMerah:0 };
+  daftar.forEach(pl=>{ for(const k in t) t[k] += pl[k] || 0; });
+  return t;
+}
+// Logo klub Pro Clubs dari server gambar EA (dicek 26 Sep 2026, ukuran 256px).
+function urlLogoKlub(crestId){
+  return crestId ? `https://eafc24.content.easports.com/fifa/fltOnlineAssets/24B23FDE-7835-41C2-87A2-F453DFDB2E82/2024/fcweb/crests/256x256/l${crestId}.png` : null;
+}
+function imgLogo(url, kelas){
+  return url ? `<img class="${kelas}" src="${url}" alt="" loading="lazy" onerror="this.remove()">` : '';
+}
+
+/* Nama archetype dari ID EA (urutan dikonfirmasi admin JAGAL, 26 Sep 2026). */
+const ARCHETYPE_EA = {
+  1:'Shot Stopper', 2:'Sweeper Keeper', 3:'Progressor', 4:'Boss', 5:'Marauder', 6:'Disruptor',
+  7:'Recycler', 8:'Maestro', 9:'Creator', 10:'Spark', 11:'Magician', 12:'Finisher', 13:'Target',
+};
+function namaArchetype(id){ return id != null ? (ARCHETYPE_EA[id] || null) : null; }
+
+/* Negara Pro in-game: ID negara EA → [kode bendera, nama]. Semua ID dicek
+   terhadap gambar bendera resmi per ID (26 Sep 2026). */
+const NEGARA_EA = {
+  160:['id','Indonesia'], 14:['gb-eng','Inggris'], 38:['pt','Portugal'], 82:['jm','Jamaika'],
+  7:['be','Belgia'], 10:['hr','Kroasia'], 18:['fr','Prancis'], 21:['de','Jerman'], 27:['it','Italia'],
+  34:['nl','Belanda'], 42:['gb-sct','Skotlandia'], 45:['es','Spanyol'], 50:['gb-wls','Wales'],
+  52:['ar','Argentina'], 54:['br','Brasil'], 83:['mx','Meksiko'], 95:['us','Amerika Serikat'],
+  163:['jp','Jepang'], 167:['kr','Korea Selatan'], 173:['my','Malaysia'], 181:['ph','Filipina'],
+  184:['sg','Singapura'], 188:['th','Thailand'], 192:['vn','Vietnam'], 195:['au','Australia'],
+};
+function benderaPemain(p, tinggi=15){
+  const n = NEGARA_EA[p.negara];
+  if(!n) return '';
+  if(n[0] === 'id') return SVG_BENDERA_ID;
+  return `<img class="bendera" src="https://flagcdn.com/h40/${n[0]}.png" loading="lazy" alt="${n[1]}" title="${n[1]}" style="height:${tinggi}px" onerror="this.remove()">`;
+}
+
+/* Kumpulan data per pemain dari laga-laga yang tersedia (data EA terbaru + arsip permanen):
+   archetype yang paling sering dipakai & rincian save kiper. */
+function ringkasanLagaPemain(nama){
+  const kunci = (nama||'').toLowerCase();
+  const arch = {}; const save = { laga:0, total:0, kemasukan:0, parry:0, punch:0, reflex:0, diving:0, crossing:0 };
+  let laga = 0;
+  (DATA.hasil||[]).forEach(m=>{
+    const pl = (m.detail||[]).find(x=>x.nama.toLowerCase() === kunci);
+    if(!pl) return;
+    laga++;
+    const nm = namaArchetype(pl.archetype);
+    if(nm) arch[nm] = (arch[nm]||0) + 1;
+    if(pl.posLaga === 'goalkeeper'){
+      save.laga++; save.total += pl.save; save.kemasukan += pl.kemasukan;
+      for(const k of ['parry','punch','reflex','diving','crossing']) save[k] += pl.saveRinci[k];
+    }
+  });
+  const archUrut = Object.entries(arch).sort((a,b)=>b[1]-a[1]);
+  return { laga, archUrut, save };
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -704,27 +932,15 @@ function hitungRingkasan(squad, hasil, totals){
   const topGol = [...outfield].sort((a,b)=>b.gol-a.gol)[0] || null;
   const topAssist = [...outfield].sort((a,b)=>b.assist-a.assist)[0] || null;
 
-  // Player of the Season — skor gabungan:
-  //   50% rating rata-rata + 30% MOTM per laga + 20% (gol+assist) per laga.
-  // Tiap komponen dibagi nilai tertinggi di antara kandidat, lalu skor x100.
+  // Player of the Season — skor DIBEDAKAN PER POSISI (lihat RUMUS_POTS di bawah),
+  // supaya bek & kiper tidak kalah hanya karena jarang mencetak gol.
   // Syarat: main minimal 1/3 dari total laga klub (min. 3), supaya pemain yang
   // baru main sedikit laga tidak menang hanya karena satu laga bagus.
   const minLagaPOTS = Math.max(3, Math.round((totals?.main || 0) / 3));
   let kandidatPOTS = squad.filter(p=>p.main >= minLagaPOTS);
   if(!kandidatPOTS.length) kandidatPOTS = squad.filter(p=>p.main >= 3);
-  const perLaga = p => ({
-    rating: p.rating || 0,
-    motm: (p.motmMusim || 0) / p.main,
-    kontribusi: ((p.gol || 0) + (p.assist || 0)) / p.main,
-  });
-  const maks = { rating:0, motm:0, kontribusi:0 };
-  kandidatPOTS.forEach(p=>{ const v = perLaga(p); for(const k in maks) maks[k] = Math.max(maks[k], v[k]); });
-  const bagi = (v, m) => m > 0 ? v / m : 0;
-  const skorPOTS = p => {
-    const v = perLaga(p);
-    return Math.round(100 * (0.5*bagi(v.rating, maks.rating) + 0.3*bagi(v.motm, maks.motm) + 0.2*bagi(v.kontribusi, maks.kontribusi)));
-  };
-  const peringkatPOTS = kandidatPOTS.map(p=>({ ...p, skorPOTS: skorPOTS(p) }))
+  const skorPOTS = hitungSkorPOTS(kandidatPOTS);
+  const peringkatPOTS = kandidatPOTS.map(p=>({ ...p, skorPOTS: skorPOTS.get(p) }))
     .sort((a,b)=> b.skorPOTS - a.skorPOTS || b.rating - a.rating);
   const playerOfSeason = peringkatPOTS[0] || null;
   // Rating tertinggi memakai syarat laga minimum yang sama dengan POTS.
@@ -744,37 +960,78 @@ function hitungRingkasan(squad, hasil, totals){
   return { topGol, topAssist, topRating, playerOfSeason, top3POTS, minLagaPOTS, potsLini, distribusi, form, rataGol, rataKemasukan };
 }
 
-/* Pemain terbaik per lini — tiap lini dinilai dengan ukuran yang sesuai perannya.
-   Tiap komponen dibagi nilai tertinggi di lini itu, lalu skor x100.
+/* ── RUMUS PLAYER OF THE SEASON PER POSISI ──
+   Tiap posisi punya rumus sendiri (RUMUS_POTS). Posisi diambil dari laga yang
+   benar-benar dimainkan (arsip laga), bukan posisi favorit EA — pemain yang main
+   di beberapa posisi dinilai sesuai porsinya, mis. 60% CM + 40% ST.
+   Tiap komponen dibagi nilai tertinggi di antara kandidat (1.0 = terbaik di skuad),
+   dikali bobot, lalu x100. Rating dikoreksi per posisi (sama seperti OVR), jadi
+   kiper/bek yang rating EA-nya cenderung lebih rendah tidak dirugikan. */
+const posLagaDari = { GK:'goalkeeper', CB:'defender', CM:'midfielder', ST:'forward' };
+const KOMPONEN_POTS = {
+  rating:     (p, kor, pos) => (p.rating||0) + (kor[posLagaDari[pos]] || 0),
+  motm:       p => (p.motmMusim||0) / p.main,
+  kontribusi: p => ((p.gol||0) + (p.assist||0)) / p.main,
+  akurTembak: p => p.tembakanAkurasi || 0,
+  akurPass:   p => p.passAkurasi || 0,
+  tekel:      p => (p.tekel||0) / p.main,
+  // Akurasi tekel "dihaluskan": yang baru mencoba sedikit tekel ditarik ke ±40%,
+  // supaya 2 sukses dari 2 percobaan tidak langsung dianggap 100%.
+  akurTekel:  p => { const t = p.tekel||0, a = p.tekelAkurasi||0; const coba = a > 0 ? t / (a/100) : t; return (t + 4) / (coba + 10) * 100; },
+  cleanSheet: p => ((p.cleanSheetBek||0) + (p.gkCleanSheet||0)) / p.main,
+  menang:     p => p.winRate || 0,
+};
+const RUMUS_POTS = {
+  ST: { rating:0.35, kontribusi:0.35, motm:0.20, akurTembak:0.10 },
+  CM: { rating:0.35, kontribusi:0.20, motm:0.15, akurPass:0.15, tekel:0.15 },
+  CB: { rating:0.35, tekel:0.25, akurTekel:0.10, cleanSheet:0.15, motm:0.15 },
+  GK: { rating:0.40, cleanSheet:0.35, motm:0.15, menang:0.10 },
+};
+// Porsi main tiap posisi dari arsip laga, mis. { CM:0.6, ST:0.4 }.
+function porsiPosisi(p){
+  const L = lagaTerakhirPemain(p.nama, 500);
+  const hitung = {}; let n = 0;
+  L.forEach(x=>{ const k = POSISI_LAGA[x.posLaga]; if(k){ hitung[k] = (hitung[k]||0) + 1; n++; } });
+  if(n < 3) return { [RUMUS_POTS[p.pos] ? p.pos : 'CM']: 1 };
+  for(const k in hitung) hitung[k] /= n;
+  return hitung;
+}
+function posisiUtama(porsi){ return Object.entries(porsi).sort((a,b)=>b[1]-a[1])[0][0]; }
+function hitungSkorPOTS(kandidat){
+  const kor = koreksiPosisi();
+  const porsi = new Map(kandidat.map(p=>[p, porsiPosisi(p)]));
+  const maks = {};
+  for(const [k, f] of Object.entries(KOMPONEN_POTS))
+    maks[k] = Math.max(0, ...kandidat.flatMap(p=>Object.keys(porsi.get(p)).map(pos=>f(p, kor, pos))));
+  const peta = new Map();
+  kandidat.forEach(p=>{
+    let skor = 0;
+    for(const [pos, bagian] of Object.entries(porsi.get(p))){
+      for(const [k, bobot] of Object.entries(RUMUS_POTS[pos])) if(maks[k] > 0) skor += bagian * bobot * Math.max(0, KOMPONEN_POTS[k](p, kor, pos)) / maks[k];
+    }
+    peta.set(p, Math.round(100 * skor));
+  });
+  return peta;
+}
+
+/* Pemain terbaik per lini — memakai rumus per posisi yang sama dengan POTS.
    Syarat main: 1/3 dari laga pemain terbanyak DI LINI ITU (min. 3), karena
    jumlah laga tiap lini bisa sangat berbeda (mis. bek lebih jarang main). */
 const LINI_POTS = [
-  { kunci:'penyerang', label:'⚡ Penyerang Terbaik', posisi:['ST'], komponen:[
-      [0.40, p=>p.rating||0],
-      [0.25, p=>(p.motmMusim||0)/p.main],
-      [0.35, p=>((p.gol||0)+(p.assist||0))/p.main] ] },
-  { kunci:'gelandang', label:'🧠 Gelandang Terbaik', posisi:['CM'], komponen:[
-      [0.40, p=>p.rating||0],
-      [0.25, p=>(p.motmMusim||0)/p.main],
-      [0.20, p=>((p.gol||0)+(p.assist||0))/p.main],
-      [0.15, p=>p.passAkurasi||0] ] },
-  { kunci:'bertahan', label:'🛡️ Bertahan Terbaik', posisi:['CB','GK'], komponen:[
-      [0.45, p=>p.rating||0],
-      [0.20, p=>(p.motmMusim||0)/p.main],
-      [0.20, p=>((p.cleanSheetBek||0)+(p.gkCleanSheet||0))/p.main],
-      [0.15, p=>p.winRate||0] ] },
+  { kunci:'penyerang', label:'⚡ Penyerang Terbaik', posisi:['ST'] },
+  { kunci:'gelandang', label:'🧠 Gelandang Terbaik', posisi:['CM'] },
+  { kunci:'bertahan', label:'🛡️ Bertahan Terbaik', posisi:['CB','GK'] },
 ];
 function hitungPotsLini(squad){
   return LINI_POTS.map(lini=>{
-    const anggota = squad.filter(p=>lini.posisi.includes(p.pos) && p.main > 0);
+    // Lini ditentukan dari posisi yang PALING SERING dimainkan di arsip laga.
+    const anggota = squad.filter(p=>p.main > 0 && lini.posisi.includes(posisiUtama(porsiPosisi(p))));
     if(!anggota.length) return { ...lini, top3:[], minLaga:null };
     const minLaga = Math.max(3, Math.round(Math.max(...anggota.map(p=>p.main)) / 3));
     const kandidat = anggota.filter(p=>p.main >= minLaga);
-    const maks = lini.komponen.map(([,f])=>Math.max(0, ...kandidat.map(f)));
-    const top3 = kandidat.map(p=>({
-      ...p,
-      skorPOTS: Math.round(100 * lini.komponen.reduce((jml, [bobot, f], i)=>jml + bobot * (maks[i] > 0 ? f(p)/maks[i] : 0), 0)),
-    })).sort((a,b)=> b.skorPOTS - a.skorPOTS || b.rating - a.rating).slice(0, 3);
+    const skor = hitungSkorPOTS(kandidat);
+    const top3 = kandidat.map(p=>({ ...p, skorPOTS: skor.get(p) }))
+      .sort((a,b)=> b.skorPOTS - a.skorPOTS || b.rating - a.rating).slice(0, 3);
     return { ...lini, top3, minLaga };
   });
 }
@@ -790,10 +1047,179 @@ function stripForm(form){
 /* ══════════════════════════════════════════════════════════
    4c. SHIELD PLAYER CARD — helper tier warna & bendera
    ══════════════════════════════════════════════════════════ */
+// ── Form 10 laga terakhir (dari prevGoals1..10 EA) ──
+function bacaFormGol(m){
+  if(m.prevGoals1 === undefined) return null;
+  const jumlah = Math.min(10, +m.gamesPlayed || 0);
+  if(!jumlah) return null;
+  const arr = [];
+  for(let i=1;i<=jumlah;i++) arr.push(+m['prevGoals'+i] || 0);
+  return arr; // indeks 0 = laga terbaru
+}
+/* 🔥 ON FIRE — syarat adil per posisi, dari laga-laga terakhir yang DIMAINKAN pemain itu.
+   Posisi dinilai dari posisi yang paling sering ia mainkan di 5 laga terakhir (data EA per laga),
+   bukan posisi favorit di profil. Minimal sudah main 3 laga. Cukup memenuhi SALAH SATU syarat:
+     Semua posisi : rating rata-rata ≥ 8.0 di 3 laga terakhir, atau ≥ 2x MOTM di 5 laga terakhir
+     Penyerang    : ≥ 3 gol di 5 laga, cetak gol di 3 laga beruntun, gol+assist ≥ 5 di 5 laga,
+                    atau tembakan tajam: ≥ 2 gol di 3 laga dengan konversi tembakan ≥ 50%
+     Gelandang    : ≥ 3 gol, ≥ 3 assist, atau gol+assist ≥ 4 di 5 laga terakhir,
+                    atau passing: ≥ 40 umpan di 3 laga dengan akurasi ≥ 88% dan rating ≥ 7.0
+                    (syarat gol/assist penyerang & gelandang juga butuh rating rata-rata ≥ 6.5)
+     Bek          : clean sheet ≥ 2 dari 3 laga; kebobolan ≤ 3 di 3 laga + rating rata-rata ≥ 7.3;
+                    ≥ 6 tekel sukses di 3 laga dengan akurasi ≥ 50%; akurasi tekel ≥ 70% (min. 5 sukses);
+                    atau passing ≥ 90% (min. 30 umpan di 3 laga) dengan rating ≥ 7.2
+     Kiper        : clean sheet ≥ 2 dari 3 laga; kebobolan ≤ 3 di 3 laga + rating rata-rata ≥ 7.3;
+                    ≥ 8 save di 3 laga dengan rating ≥ 7.0; atau persentase penyelamatan ≥ 70%
+                    (save ÷ (save + kebobolan), min. 6 save di 3 laga) dengan rating ≥ 7.0
+   Kalau detail per laga belum ada, dipakai data gol 10 laga terakhir dari EA (prevGoals). */
+const SYARAT_ONFIRE = { minMain:3, rating3:8.0, motm5:2 };
+const POSISI_LAGA = { goalkeeper:'GK', defender:'CB', midfielder:'CM', forward:'ST' };
+let CACHE_ONFIRE = { data:null, peta:new Map() };
+function lagaTerakhirPemain(nama, n){
+  const kunci = (nama||'').toLowerCase();
+  const hasil = [];
+  for(const m of [...(DATA.hasil||[])].sort((a,b)=>b.ts-a.ts)){
+    const pl = (m.detail||[]).find(x=>x.nama.toLowerCase() === kunci);
+    if(pl) hasil.push({ ...pl, cleanSheet: m.golLawan === 0, kebobolan: m.golLawan || 0 });
+    if(hasil.length >= n) break;
+  }
+  return hasil;
+}
+function statusOnFire(p){
+  if(CACHE_ONFIRE.data !== DATA){ CACHE_ONFIRE = { data:DATA, peta:new Map() }; }
+  if(CACHE_ONFIRE.peta.has(p.nama)) return CACHE_ONFIRE.peta.get(p.nama);
+  const simpan = v => (CACHE_ONFIRE.peta.set(p.nama, v), v);
+  const nyala = alasan => simpan({ aktif:true, alasan });
+  const L5 = lagaTerakhirPemain(p.nama, 5), L3 = L5.slice(0,3);
+  const jml = (d, k) => d.reduce((t,x)=>t + (x[k]||0), 0);
+
+  if(L5.length >= SYARAT_ONFIRE.minMain){
+    const hitung = {}; L5.forEach(x=>{ const k = POSISI_LAGA[x.posLaga]; if(k) hitung[k] = (hitung[k]||0) + 1; });
+    const posisi = Object.entries(hitung).sort((a,b)=>b[1]-a[1])[0]?.[0] || p.pos;
+    const rata3 = jml(L3,'rating') / L3.length;
+    if(rata3 >= SYARAT_ONFIRE.rating3) return nyala(`rating rata-rata ${rata3.toFixed(1)} di 3 laga terakhir`);
+    const motm = L5.filter(x=>x.mom).length;
+    if(motm >= SYARAT_ONFIRE.motm5) return nyala(`${motm}x MOTM di ${L5.length} laga terakhir`);
+    const gol = jml(L5,'gol'), assist = jml(L5,'assist');
+    // Gol/assist hanya dihitung kalau main-nya juga bagus (rating rata-rata ≥ 6.5 di 3 laga terakhir).
+    const mainBagus = rata3 >= 6.5;
+    if(posisi === 'ST' && mainBagus){
+      if(gol >= 3) return nyala(`${gol} gol di ${L5.length} laga terakhir`);
+      if(L3.every(x=>x.gol > 0)) return nyala('mencetak gol di 3 laga beruntun');
+      if(gol + assist >= 5) return nyala(`${gol} gol + ${assist} assist di ${L5.length} laga terakhir`);
+      const gol3 = jml(L3,'gol'), tembak3 = jml(L3,'tembakan');
+      if(gol3 >= 2 && tembak3 && gol3/tembak3 >= 0.5) return nyala(`tajam: ${gol3} gol dari ${tembak3} tembakan (${Math.round(gol3/tembak3*100)}%) di 3 laga terakhir`);
+    }
+    if(posisi === 'CM' && mainBagus){
+      if(gol >= 3) return nyala(`${gol} gol di ${L5.length} laga terakhir`);
+      if(assist >= 3) return nyala(`${assist} assist di ${L5.length} laga terakhir`);
+      if(gol + assist >= 4) return nyala(`${gol} gol + ${assist} assist di ${L5.length} laga terakhir`);
+      const ps = jml(L3,'passSukses'), pc = jml(L3,'passCoba');
+      if(pc >= 40 && ps/pc >= 0.88 && rata3 >= 7.0) return nyala(`akurasi passing ${Math.round(ps/pc*100)}% (${ps}/${pc}) di 3 laga terakhir`);
+    }
+    if(posisi === 'CB' || posisi === 'GK'){
+      const cs = L3.filter(x=>x.cleanSheet).length, kb = jml(L3,'kebobolan');
+      if(cs >= 2) return nyala(`${cs} clean sheet dari 3 laga terakhir`);
+      if(kb <= 3 && rata3 >= 7.3) return nyala(`hanya kebobolan ${kb} gol di 3 laga terakhir`);
+      if(posisi === 'CB'){
+        const tk = jml(L3,'tekel'), coba = jml(L3,'tekelCoba');
+        if(tk >= 6 && coba && tk/coba >= 0.5) return nyala(`${tk} tekel sukses (${Math.round(tk/coba*100)}%) di 3 laga terakhir`);
+        if(tk >= 5 && coba && tk/coba >= 0.7) return nyala(`akurasi tekel ${Math.round(tk/coba*100)}% (${tk}/${coba}) di 3 laga terakhir`);
+        const ps = jml(L3,'passSukses'), pc = jml(L3,'passCoba');
+        if(pc >= 30 && ps/pc >= 0.9 && rata3 >= 7.2) return nyala(`akurasi passing ${Math.round(ps/pc*100)}% (${ps}/${pc}) di 3 laga terakhir`);
+      } else {
+        const sv = jml(L3,'save');
+        if(sv >= 8 && rata3 >= 7.0) return nyala(`${sv} save di 3 laga terakhir`);
+        if(sv >= 6 && sv/(sv+kb) >= 0.7 && rata3 >= 7.0) return nyala(`menyelamatkan ${Math.round(sv/(sv+kb)*100)}% tembakan (${sv} save) di 3 laga terakhir`);
+      }
+    }
+    return simpan({ aktif:false });
+  }
+  // Cadangan: belum ada detail laga → pakai gol 10 laga terakhir dari EA.
+  const f = p.formGol;
+  if(f && f.length >= 3){
+    const gol5 = f.slice(0,5).reduce((a,b)=>a+b,0);
+    if(gol5 >= 3) return nyala(`${gol5} gol di 5 laga terakhir`);
+    if(f.slice(0,3).every(g=>g>0)) return nyala('mencetak gol di 3 laga beruntun');
+  }
+  return simpan({ aktif:false });
+}
+function sedangOnFire(p){ return statusOnFire(p).aktif; }
+function grafikForm(p){
+  const f = p.formGol;
+  if(!f || !f.length) return '';
+  const urut = f.slice().reverse(); // kiri = paling lama, kanan = terbaru
+  const maks = Math.max(1, ...urut);
+  const total = f.reduce((a,b)=>a+b,0);
+  const batang = urut.map((g,i)=>`
+      <div class="form-kolom${i===urut.length-1?' terbaru':''}">
+        <span class="form-angka">${g||''}</span>
+        <div class="form-batang${g?'':' nol'}" style="height:${g? Math.max(12, g/maks*100) : 4}%"></div>
+      </div>`).join('');
+  return `
+    <div class="form-kotak">
+      <div class="form-judul">Gol ${f.length} Laga Terakhir <b>${total} gol</b></div>
+      <div class="form-grafik">${batang}</div>
+      <div class="form-ket"><span>lama</span><span>terbaru →</span></div>
+    </div>`;
+}
+
+/* ── OVERALL (OVR) KARTU — adil untuk pemain yang pindah-pindah posisi ──
+   Rating EA per laga dipengaruhi posisi: di JAGAL rata-rata kiper jauh lebih rendah
+   daripada gelandang, jadi rating musim (rata-rata semua posisi) merugikan pemain yang
+   pernah jaga gawang lalu pindah ke depan (atau sebaliknya). Maka OVR dihitung begini:
+     1. Ambil maks. 10 laga terakhir pemain (data EA + arsip).
+     2. Tiap laga, rating disetarakan per posisi:
+          rating + (rata-rata semua pemain JAGAL − rata-rata posisi yang ia mainkan di laga itu)
+        Koreksi diperkecil kalau data posisi itu masih sedikit (× n/(n+10)) dan dibatasi ±1,5.
+     3. Laga terbaru lebih berbobot (×0,85 per laga ke belakang) → nilai FORM.
+     4. OVR = 10 × (bobot × FORM + (1 − bobot) × rating musim EA), bobot = n/(n+5)
+        (5 laga → 50% form, 10 laga → 67% form). Kalau detail laga < 3, OVR = rating musim × 10.
+   Posisi di kartu = posisi yang paling sering dimainkan di 5 laga terakhir. */
+let CACHE_OVR = { data:null, koreksi:null, peta:new Map() };
+function koreksiPosisi(){
+  const semua = [];
+  (DATA.hasil||[]).forEach(m=>(m.detail||[]).forEach(pl=>{ if(pl.rating > 0) semua.push(pl); }));
+  if(!semua.length) return {};
+  const rata = a => a.reduce((x,y)=>x+y,0) / a.length;
+  const umum = rata(semua.map(x=>x.rating));
+  const per = {};
+  semua.forEach(x=>(per[x.posLaga] ??= []).push(x.rating));
+  const k = {};
+  for(const [pos, arr] of Object.entries(per)){
+    const mentah = (umum - rata(arr)) * arr.length / (arr.length + 10);
+    k[pos] = Math.max(-1.5, Math.min(1.5, mentah));
+  }
+  return k;
+}
+function ovrPemain(p){
+  if(CACHE_OVR.data !== DATA) CACHE_OVR = { data:DATA, koreksi:koreksiPosisi(), peta:new Map() };
+  if(CACHE_OVR.peta.has(p.nama)) return CACHE_OVR.peta.get(p.nama);
+  const L = lagaTerakhirPemain(p.nama, 10).filter(x=>x.rating > 0);
+  const hitung = {};
+  L.slice(0,5).forEach(x=>{ const k = POSISI_LAGA[x.posLaga]; if(k) hitung[k] = (hitung[k]||0) + 1; });
+  const pos = Object.entries(hitung).sort((a,b)=>b[1]-a[1])[0]?.[0] || p.pos;
+  let hasil;
+  if(L.length >= 3){
+    let jml = 0, bobotTotal = 0;
+    L.forEach((x,i)=>{ const w = Math.pow(0.85, i); jml += w * (x.rating + (CACHE_OVR.koreksi[x.posLaga] || 0)); bobotTotal += w; });
+    const form = jml / bobotTotal;
+    const bobot = L.length / (L.length + 5);
+    const nilai = bobot * form + (1 - bobot) * (p.rating || form);
+    hasil = { ovr: Math.round(nilai * 10), pos, form, n: L.length };
+  } else {
+    hasil = { ovr: Math.round((p.rating || 0) * 10), pos, form: null, n: 0 };
+  }
+  CACHE_OVR.peta.set(p.nama, hasil);
+  return hasil;
+}
+
 function tierShield(p){
-  if(p.gk) return 'tier-gk';
-  if(p.rating >= 7.2) return 'tier-emas';
-  if(p.rating >= 6.0) return 'tier-perak';
+  const o = ovrPemain(p);
+  if(o.pos === 'GK') return 'tier-gk';
+  // 71 ke atas = emas, 60–70 = perak, di bawah 60 = perunggu (dari angka OVR di kartu).
+  if(o.ovr >= 71) return 'tier-emas';
+  if(o.ovr >= 60) return 'tier-perak';
   return 'tier-perunggu';
 }
 
@@ -804,12 +1230,18 @@ const SVG_BENDERA_ID = `<svg width="22" height="15" viewBox="0 0 3 2" xmlns="htt
 // Foto pemain untuk kartu shield di Skuad — kunci pakai nama EA (huruf kecil semua)
 // supaya cocok baik dengan data manual maupun data live dari EA.
 const FOTO_PEMAIN = {
-  'keenarok': 'aset/keenarok-card.png',
-  'kngsmn21': 'aset/WhatsApp_Image_2026-09-25_at_1s1.27.06_PM-removebg-preview.png',
-  'doubleh5435': 'aset/doubleh5435-card.png',
-  'youngcrowheart': 'aset/WhatsApp_Image_2026-09-23_at_2.s07.13_AM-removebg-preview.png',
-  'n0oootz': 'aset/WhatsApp_Image_2026-09-25_at_11.27.06_PM-removebg-preview.png',
-  'leoawinz': 'aset/WhatsApp_Image_2026-09-25_at_11.27.05_PM-removebg-preview.png',
+  'keenarok': 'aset/keenarok-card.webp',
+  'kngsmn21': 'aset/kngsmn21-card.webp',
+  'doubleh5435': 'aset/doubleh5435-card.webp',
+  'youngcrowheart': 'aset/youngcrowheart-card.webp',
+  'n0oootz': 'aset/n0oootz-card.webp',
+  'leoawinz': 'aset/leoawinz-card.webp',
+  'latern7': 'aset/latern7-card.webp',
+  'critze07': 'aset/critze07-card.webp',
+  'yurdyyy': 'aset/yurdyyy-card.webp.png',
+  'n3rdgeeky': 'aset/n3rdgeeky-card.webp.png',
+  'pumba_brs': 'aset/pumba_brs-card.png',
+  'driftking696911': 'aset/driftking696911-card.png',
 };
 function fotoPemain(nama){
   return FOTO_PEMAIN[(nama||'').trim().toLowerCase()] || null;
@@ -861,6 +1293,11 @@ let SUMBER = 'cadangan';
 // Kapan data EA yang sedang tampil diambil (ms). Diisi dari header X-Data-Waktu
 // fungsi ea. Kalau beberapa data berbeda umur, dipakai yang PALING LAMA.
 let WAKTU_DATA_EA = null;
+// Sejak kapan arsip laga permanen mulai mencatat (dari /api/arsip).
+let ARSIP_MULAI = null;
+// Jumlah laga yang ditampilkan di daftar Hasil Laga (bertambah saat klik "Tampilkan lagi").
+let BATAS_HASIL = 30;
+let BATAS_H2H = 10;
 
 // Status sortir tabel Statistik & grid Skuad — disimpan di luar render() supaya
 // tetap ingat pilihan user walau halaman di-render ulang (misal pas data EA masuk).
@@ -912,10 +1349,11 @@ function formatNilai(v, persen){
 
 function nilaiSkuad(p, kolom){
   switch(kolom){
-    case 'rating': return p.rating||0;
-    case 'pos': return POS_URUT[p.pos] ?? 9;
+    // Overall = angka OVR yang tampil di kartu (bukan rating musim EA).
+    case 'rating': return ovrPemain(p).ovr * 1000 + (p.rating||0);
+    case 'pos': return POS_URUT[ovrPemain(p).pos] ?? 9;
     case 'main': return p.main||0;
-    case 'gol': return p.gk ? (p.gkCleanSheet||0) : (p.gol||0);
+    case 'gol': return ovrPemain(p).pos === 'GK' ? (p.gkCleanSheet||0) : (p.gol||0);
     case 'assist': return p.assist||0;
     case 'motmMusim': return p.motmMusim||0;
     default: return 0;
@@ -1077,18 +1515,19 @@ function render(){
     isi += squadTerurut.length ? `<div class="grid-skuad">` + squadTerurut.map((p)=>{
       const i = DATA.squad.indexOf(p);
       return `
-      <div class="shield-wrap" data-pemain="${i}">
-        <div class="shield ${tierShield(p)} ${fotoPemain(p.nama) ? 'ada-foto' : ''}">
+      <div class="shield-wrap${sedangOnFire(p) ? ' on-fire' : ''}" data-pemain="${i}"${sedangOnFire(p) ? ` title="On fire: ${escapeHtml(statusOnFire(p).alasan)}"` : ''}>
+        <div class="shield ${sedangOnFire(p) ? 'kartu-api' : tierShield(p)} ${fotoPemain(p.nama) ? 'ada-foto' : ''}">
+          ${sedangOnFire(p) ? `<span class="gambar-kartu-api"></span>` : ''}
           <div class="rating-pos">
-            <b>${Math.round(p.rating*10)}</b>
-            <span>${p.pos}</span>
+            <b>${ovrPemain(p).ovr}</b>
+            <span>${ovrPemain(p).pos}</span>
           </div>
           ${fotoPemain(p.nama)
-            ? `<img class="foto-pemain" src="${fotoPemain(p.nama)}" alt="${escapeHtml(p.nama)}">`
-            : `<img class="foto-pemain foto-kosong" src="/ikon/logo.png" alt="">`}
+            ? `<img class="foto-pemain" src="${fotoPemain(p.nama)}" alt="${escapeHtml(p.nama)}" loading="lazy" decoding="async">`
+            : `<img class="foto-pemain foto-kosong" src="/ikon/logo.png" alt="" loading="lazy" decoding="async">`}
           <div class="nama-pemain">${escapeHtml(p.nama)}</div>
           <hr class="garis-shield">
-          ${p.gk ? `
+          ${ovrPemain(p).pos === 'GK' ? `
           <div class="stat-baris baris-4">
             <div><b>${p.main}</b><span>Main</span></div>
             <div><b>${p.gkCleanSheet??0}</b><span>CS</span></div>
@@ -1102,8 +1541,8 @@ function render(){
             <div><b>${p.motmMusim??0}</b><span>MOTM</span></div>
           </div>`}
           <div class="footer-shield">
-            ${SVG_BENDERA_ID}
-            <span class="logo-badge"><img src="/ikon/logo.png" alt="JAGAL VFC"></span>
+            ${benderaPemain(p)}
+            <span class="logo-badge"><img src="/ikon/logo.png" alt="JAGAL VFC" loading="lazy" decoding="async"></span>
           </div>
         </div>
         <div class="lihat-detail">Lihat Detail →</div>
@@ -1205,37 +1644,41 @@ function render(){
       isi += `<div class="sorot" style="margin-bottom:24px;">${stripForm(r5.form)}</div>`;
     }
 
-    isi += `<h2 class="subjudul">Hasil Laga</h2>`;
-    isi += DATA.hasil.length ? DATA.hasil.map((m,i)=>`
+    isi += tampilRekor();
+    isi += `<h2 class="subjudul">Hasil Laga${DATA.hasil.length ? ` <small>(${DATA.hasil.length} laga)</small>` : ''}</h2>`;
+    isi += DATA.hasil.length ? DATA.hasil.slice(0, BATAS_HASIL).map((m,i)=>`
       <div class="laga ${m.hasil}${m.detail ? ' bisa-klik' : ''}" ${m.detail ? `data-laga="${i}"` : ''}>
         <div class="hasil"></div>
+        ${imgLogo(m.logoLawan, 'logo-lawan')}
         <div class="info">
           <div class="lawan">vs ${escapeHtml(m.lawan)}</div>
-          <div class="tgl">${m.tgl}${m.tipe ? ' · ' + m.tipe : ''}</div>
+          <div class="tgl">${m.tgl}${m.tipe ? ' · ' + m.tipe : ''}${m.menangDnf ? ' · lawan keluar (DNF)' : ''}</div>
         </div>
         <div class="skor">${m.skor}</div>
         ${m.detail ? `<div class="laga-panah">›</div>` : ''}
       </div>
-      <div class="laga-detail" id="detail-${i}"></div>`).join('') : `<div class="kosong">Belum ada hasil laga.</div>`;
+      <div class="laga-detail" id="detail-${i}"></div>`).join('')
+      + (DATA.hasil.length > BATAS_HASIL ? `<button class="btn-lagi" id="btnHasilLagi">Tampilkan ${Math.min(30, DATA.hasil.length - BATAS_HASIL)} laga lagi</button>` : '')
+      : `<div class="kosong">Belum ada hasil laga.</div>`;
   }
 
   if(h.hal === 'jersey'){
     isi += `<p class="sub-hal">Home, Away, dan Third kit JAGAL VFC untuk mengarungi musim di EA SPORTS FC 27. Klik gambar untuk memperbesar.</p>`;
     const KIT = [
-      { file:'jersey-home-2026.jpg', label:'Home Kit' },
-      { file:'jersey-away-2026.jpg', label:'Away Kit' },
-      { file:'jersey-third-2026.jpg', label:'Third Kit' },
+      { file:'jersey-home-2026.webp', label:'Home Kit' },
+      { file:'jersey-away-2026.webp', label:'Away Kit' },
+      { file:'jersey-third-2026.webp', label:'Third Kit' },
     ];
     isi += `<div class="grid-jersey">` + KIT.map(k=>`
       <div class="jersey-item">
-        <img class="jersey-poster" src="/aset/${k.file}" alt="JAGAL VFC ${k.label} musim 2026/27">
+        <img class="jersey-poster" loading="lazy" decoding="async" src="/aset/${k.file}" alt="JAGAL VFC ${k.label} musim 2026/27">
         <div class="jersey-label">${k.label}</div>
       </div>`).join('') + `</div>`;
   }
 
   if(h.hal === 'mitra'){
     isi += `<p class="sub-hal">Kerja sama resmi JAGAL VFC.</p>`;
-    isi += `<div class="mitra-hero"><img src="/aset/bg-hero-mitra.jpg" alt="Partnership Nocturne VFC dan JAGAL VFC"></div>`;
+    isi += `<div class="mitra-hero"><img src="/aset/bg-hero-mitra.webp" alt="Partnership Nocturne VFC dan JAGAL VFC"></div>`;
     isi += `<div class="mitra-kartu">
       <h2>Nocturne VFC × JAGAL VFC</h2>
       <p>JAGAL VFC merupakan tim akademi dari Nocturne VFC. Kedua klub telah
@@ -1417,6 +1860,8 @@ function render(){
   }
 
   if(h.hal === 'hasil'){
+    document.getElementById('btnHasilLagi')?.addEventListener('click', ()=>{ BATAS_HASIL += 30; const y = window.scrollY; render(); window.scrollTo(0, y); });
+    document.getElementById('btnH2hLagi')?.addEventListener('click', ()=>{ BATAS_H2H = 9999; const y = window.scrollY; render(); window.scrollTo(0, y); });
     main.querySelectorAll('.laga.bisa-klik').forEach(kartu=>{
       kartu.addEventListener('click', ()=>{
         const i = kartu.dataset.laga;
@@ -1430,20 +1875,16 @@ function render(){
         }
         if(!kotak.dataset.terisi){
           const m = DATA.hasil[i];
-          // Kolom Save & kartu merah hanya muncul kalau ada yang bukan nol di laga itu.
-          const adaSave = m.detail.some(pl=>pl.save > 0);
-          const adaMerah = m.detail.some(pl=>pl.kartuMerah > 0);
-          kotak.innerHTML = `<div class="tbl-wrap" style="border:none;box-shadow:none;"><table><thead><tr>
-            <th>Pemain</th><th>Gol</th><th>Assist</th><th>Tembakan</th><th>Passing</th><th>Tekel</th>
-            ${adaSave ? '<th>Save</th>' : ''}${adaMerah ? '<th>🟥</th>' : ''}<th>Rating</th>
-            </tr></thead><tbody>` + m.detail.map(pl=>`
-            <tr><td>${escapeHtml(pl.nama)}${pl.mom ? ' <span class="mom">★ MOTM</span>' : ''}</td>
-            <td>${pl.gol}</td><td>${pl.assist}</td><td>${pl.tembakan ?? 0}</td>
-            <td>${pl.passCoba ? `${pl.passSukses}/${pl.passCoba}` : (pl.passSukses ?? 0)}</td>
-            <td>${pl.tekel}</td>
-            ${adaSave ? `<td>${pl.save}</td>` : ''}${adaMerah ? `<td>${pl.kartuMerah}</td>` : ''}
-            <td>${pl.rating.toFixed(1)}</td></tr>`
-          ).join('') + `</tbody></table></div>`;
+          kotak.innerHTML = isiDetailLaga(m);
+          // Laga lama dari arsip ringkas: ambil detail lengkap (pemain lawan, rincian save) lalu isi ulang.
+          if(m.ringkas){
+            kotak.insertAdjacentHTML('beforeend', `<div class="memuat-detail">Memuat detail lawan…</div>`);
+            fetch('/api/arsip?id=' + encodeURIComponent(m.id)).then(r=>r.ok ? r.json() : null).then(lengkap=>{
+              const baru = lengkap && bentukLaga(lengkap, lengkap._tipe || m.tipeAsli, CONFIG.club.id);
+              if(baru){ Object.assign(m, baru, { ringkas:false }); }
+              kotak.innerHTML = isiDetailLaga(m);
+            }).catch(()=>{ kotak.querySelector('.memuat-detail')?.remove(); });
+          }
           kotak.dataset.terisi = '1';
         }
         kotak.classList.add('buka');
@@ -1544,6 +1985,167 @@ document.getElementById('jerseyLightbox').addEventListener('click', function(){
 });
 
 /* ══════════════════════════════════════════════════════════
+   5a. REKOR — dihitung dari semua laga (data EA + arsip permanen)
+   ══════════════════════════════════════════════════════════ */
+function hitungRekor(hasil){
+  hasil = hasil.filter(m=>m.golKami != null); // data cadangan manual tidak punya angka gol terpisah
+  if(!hasil.length) return null;
+  const urut = [...hasil].sort((a,b)=>a.ts-b.ts); // lama → baru
+  const selisih = m => m.golKami - m.golLawan;
+  const pilih = (daftar, f) => daftar.reduce((t,m)=> (t===null || f(m) > f(t)) ? m : t, null);
+  const menang = urut.filter(m=>m.hasil==='win');
+  const kalah = urut.filter(m=>m.hasil==='loss');
+  const menangTerbesar = pilih(menang, m=>selisih(m)*100 + m.golKami);
+  const kalahTerbesar = pilih(kalah, m=>-selisih(m)*100 + m.golLawan);
+  const golTerbanyak = pilih(urut, m=>m.golKami*100 - m.golLawan);
+
+  // Streak
+  let terpanjang = { n:0, akhir:null, jenis:'win' }, tanpaKalah = { n:0, akhir:null };
+  let n = 0, nTk = 0;
+  urut.forEach(m=>{
+    n = m.hasil==='win' ? n+1 : 0;
+    if(n > terpanjang.n) terpanjang = { n, akhir:m };
+    nTk = m.hasil!=='loss' ? nTk+1 : 0;
+    if(nTk > tanpaKalah.n) tanpaKalah = { n:nTk, akhir:m };
+  });
+  let sekarang = { n:0, jenis:null };
+  for(let i=urut.length-1;i>=0;i--){
+    const h = urut[i].hasil;
+    if(sekarang.jenis===null) sekarang.jenis = h;
+    if(h !== sekarang.jenis) break;
+    sekarang.n++;
+  }
+
+  // Rekor pemain dalam satu laga
+  const semuaPemain = [];
+  urut.forEach(m=>(m.detail||[]).forEach(pl=>semuaPemain.push({ ...pl, laga:m })));
+  const ratingTertinggi = pilih(semuaPemain, p=>p.rating);
+  const golPemain = pilih(semuaPemain, p=>p.gol*100 + p.rating);
+  const assistPemain = pilih(semuaPemain, p=>p.assist*100 + p.rating);
+  const savePemain = pilih(semuaPemain.filter(p=>p.save>0), p=>p.save*100 + p.rating);
+  const hattrick = semuaPemain.filter(p=>p.gol>=3).sort((a,b)=>b.laga.ts-a.laga.ts);
+
+  // Head-to-head per lawan
+  const h2h = {};
+  urut.forEach(m=>{
+    const k = m.lawan;
+    h2h[k] ??= { lawan:k, logo:m.logoLawan, main:0, m:0, s:0, k:0, gol:0, kemasukan:0 };
+    const r = h2h[k];
+    r.main++; r.gol += m.golKami; r.kemasukan += m.golLawan;
+    if(m.hasil==='win') r.m++; else if(m.hasil==='draw') r.s++; else r.k++;
+    if(m.logoLawan) r.logo = m.logoLawan;
+  });
+  const daftarH2h = Object.values(h2h).sort((a,b)=> b.main-a.main || (b.m-b.k)-(a.m-a.k));
+
+  return { jumlah:urut.length, pertama:urut[0], menangTerbesar, kalahTerbesar, golTerbanyak,
+    terpanjang, tanpaKalah, sekarang, ratingTertinggi, golPemain, assistPemain, savePemain, hattrick, daftarH2h };
+}
+
+function tampilRekor(){
+  const r = hitungRekor(DATA.hasil);
+  if(!r) return '';
+  const tglPendek = m => new Date(m.ts).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+  const kartu = (judul, isi, ket) => isi ? `<div class="rekor-kartu"><span>${judul}</span><b>${isi}</b><i>${ket||''}</i></div>` : '';
+  const laga = m => m ? `vs ${escapeHtml(m.lawan)} · ${tglPendek(m)}` : '';
+  const labelStreak = { win:'menang', draw:'seri', loss:'kalah' };
+  let html = `<h2 class="subjudul">Rekor Klub</h2>
+    ${(()=>{ const t = DATA.totals || {}; return t.main ? `<div class="total-sepanjang"><span>Sepanjang masa (data resmi EA)</span>
+      <b>${t.main}</b> laga · <b class="m">${t.menang}</b> menang · <b class="s">${t.seri}</b> seri · <b class="k">${t.kalah}</b> kalah · gol <b>${t.gol}–${t.kemasukan}</b></div>` : ''; })()}
+    <p class="catatan-rekor">Rekor di bawah dihitung dari ${r.jumlah} laga yang detailnya tersimpan${r.pertama ? ` (sejak ${tglPendek(r.pertama)})` : ''}. EA hanya membagikan detail ±10 laga terakhir per jenis laga, jadi laga yang lebih lama dari itu tidak bisa diambil lagi. Mulai sekarang setiap laga baru disimpan permanen, sehingga rekor ini akan terus lengkap ke depannya.</p>
+    <div class="grid-rekor">
+      ${kartu('Kemenangan terbesar', r.menangTerbesar?.skor, laga(r.menangTerbesar))}
+      ${kartu('Kekalahan terbesar', r.kalahTerbesar?.skor, laga(r.kalahTerbesar))}
+      ${kartu('Gol terbanyak 1 laga', r.golTerbanyak ? r.golTerbanyak.golKami + ' gol' : '', laga(r.golTerbanyak))}
+      ${kartu('Menang beruntun terpanjang', r.terpanjang.n ? r.terpanjang.n + ' laga' : '', r.terpanjang.akhir ? 'berakhir ' + tglPendek(r.terpanjang.akhir) : '')}
+      ${kartu('Tak terkalahkan terpanjang', r.tanpaKalah.n ? r.tanpaKalah.n + ' laga' : '', r.tanpaKalah.akhir ? 'berakhir ' + tglPendek(r.tanpaKalah.akhir) : '')}
+      ${kartu('Streak saat ini', r.sekarang.n ? r.sekarang.n + ' ' + labelStreak[r.sekarang.jenis] : '', 'beruntun')}
+    </div>
+    <h2 class="subjudul">Rekor Pemain (1 Laga)</h2>
+    <div class="grid-rekor">
+      ${kartu('Rating tertinggi', r.ratingTertinggi ? `${escapeHtml(r.ratingTertinggi.nama)} · ${r.ratingTertinggi.rating.toFixed(1)}` : '', laga(r.ratingTertinggi?.laga))}
+      ${r.golPemain?.gol ? kartu('Gol terbanyak', `${escapeHtml(r.golPemain.nama)} · ${r.golPemain.gol} gol`, laga(r.golPemain.laga)) : ''}
+      ${r.assistPemain?.assist ? kartu('Assist terbanyak', `${escapeHtml(r.assistPemain.nama)} · ${r.assistPemain.assist} assist`, laga(r.assistPemain.laga)) : ''}
+      ${r.savePemain ? kartu('Save terbanyak', `${escapeHtml(r.savePemain.nama)} · ${r.savePemain.save} save`, laga(r.savePemain.laga)) : ''}
+    </div>`;
+  if(r.hattrick.length){
+    html += `<div class="hattrick">⚽⚽⚽ <b>Hattrick:</b> ` + r.hattrick.slice(0,10).map(p=>`${escapeHtml(p.nama)} (${p.gol} gol vs ${escapeHtml(p.laga.lawan)})`).join(' · ') + `</div>`;
+  }
+  html += `<h2 class="subjudul">Rekor Melawan Klub Lain</h2>
+    <div class="tbl-wrap"><table class="tbl-h2h"><thead><tr><th>Lawan</th><th>Main</th><th>M</th><th>S</th><th>K</th><th>Gol</th></tr></thead><tbody>`
+    + r.daftarH2h.slice(0, BATAS_H2H).map(x=>`<tr><td class="h2h-lawan">${imgLogo(x.logo,'logo-mini')}${escapeHtml(x.lawan)}</td><td>${x.main}</td><td class="${x.m?'m':''}">${x.m}</td><td>${x.s}</td><td class="${x.k?'k':''}">${x.k}</td><td>${x.gol}–${x.kemasukan}</td></tr>`).join('')
+    + `</tbody></table></div>`
+    + (r.daftarH2h.length > BATAS_H2H ? `<button class="btn-lagi" id="btnH2hLagi">Tampilkan semua (${r.daftarH2h.length} klub)</button>` : '');
+  return html;
+}
+
+/* ══════════════════════════════════════════════════════════
+   5b. DETAIL LAGA — statistik tim ala siaran TV + tabel pemain kedua tim
+   ══════════════════════════════════════════════════════════ */
+function tabelPemainLaga(daftar, denganArchetype){
+  if(!daftar || !daftar.length) return '';
+  // Kolom Save, kartu merah & archetype hanya muncul kalau ada datanya di laga itu.
+  const adaSave = daftar.some(pl=>pl.save > 0);
+  const adaMerah = daftar.some(pl=>pl.kartuMerah > 0);
+  const adaArch = denganArchetype && daftar.some(pl=>namaArchetype(pl.archetype));
+  const kiper = daftar.filter(pl=>pl.posLaga === 'goalkeeper' && pl.save > 0);
+  const rinciSave = kiper.map(pl=>{
+    const r = pl.saveRinci;
+    const bagian = [['Parry',r.parry],['Punch',r.punch],['Reflex',r.reflex],['Diving',r.diving],['Crossing',r.crossing]]
+      .filter(([,v])=>v>0).map(([k,v])=>`${k} <b>${v}</b>`).join(' · ');
+    return bagian ? `<div class="rinci-save">🧤 ${escapeHtml(pl.nama)}: ${pl.save} save — ${bagian}</div>` : '';
+  }).join('');
+  return `<div class="tbl-wrap" style="border:none;box-shadow:none;"><table><thead><tr>
+    <th>Pemain</th>${adaArch ? '<th>Archetype</th>' : ''}<th>Gol</th><th>Assist</th><th>Tembakan</th><th>Passing</th><th>Tekel</th>
+    ${adaSave ? '<th>Save</th>' : ''}${adaMerah ? '<th>🟥</th>' : ''}<th>Rating</th>
+    </tr></thead><tbody>` + daftar.map(pl=>`
+    <tr><td>${escapeHtml(pl.nama)}${pl.mom ? ' <span class="mom">★ MOTM</span>' : ''}</td>
+    ${adaArch ? `<td>${namaArchetype(pl.archetype) || '–'}</td>` : ''}
+    <td>${pl.gol}</td><td>${pl.assist}</td><td>${pl.tembakan ?? 0}</td>
+    <td>${pl.passCoba ? `${pl.passSukses}/${pl.passCoba}` : (pl.passSukses ?? 0)}</td>
+    <td>${pl.tekelCoba ? `${pl.tekel}/${pl.tekelCoba}` : pl.tekel}</td>
+    ${adaSave ? `<td>${pl.save}</td>` : ''}${adaMerah ? `<td>${pl.kartuMerah}</td>` : ''}
+    <td>${pl.rating.toFixed(1)}</td></tr>`
+  ).join('') + `</tbody></table></div>` + rinciSave;
+}
+
+function isiDetailLaga(m){
+  const k = m.statKami, l = m.statLawan;
+  const [golA, golB] = m.skor.split('–').map(x=>x.trim());
+  let html = `<div class="papan-laga">
+      <div class="tim-laga">${imgLogo(m.logoKami, 'logo-tim')}<span>JAGAL</span></div>
+      <div class="skor-laga">${golA} – ${golB}</div>
+      <div class="tim-laga">${imgLogo(m.logoLawan, 'logo-tim')}<span>${escapeHtml(m.lawan)}</span></div>
+    </div>`;
+  if(k && l){
+    const persen = (a,b) => b ? Math.round(a/b*100) : null;
+    const baris = [
+      ['Tembakan', k.tembakan, l.tembakan],
+      ['Passing sukses', k.passSukses, l.passSukses],
+      ['Akurasi passing', persen(k.passSukses,k.passCoba), persen(l.passSukses,l.passCoba), '%'],
+      ['Tekel sukses', k.tekel, l.tekel],
+      ['Akurasi tekel', persen(k.tekel,k.tekelCoba), persen(l.tekel,l.tekelCoba), '%'],
+      ['Save kiper', k.save, l.save],
+      ['Kartu merah', k.kartuMerah, l.kartuMerah],
+    ].filter(([nama,a,b])=> a != null && b != null && !(nama === 'Kartu merah' && !a && !b));
+    html += `<div class="stat-tv">` + baris.map(([nama,a,b,sat=''])=>{
+      const total = a + b;
+      const pa = total ? a/total*100 : 50;
+      return `<div class="stat-tv-baris">
+        <div class="stat-tv-angka"><b class="${a>b?'unggul':''}">${a}${sat}</b><span>${nama}</span><b class="${b>a?'unggul':''}">${b}${sat}</b></div>
+        <div class="stat-tv-bar"><i class="kami" style="width:${pa}%"></i><i class="lawan" style="width:${100-pa}%"></i></div>
+      </div>`;
+    }).join('') + `</div>`;
+  }
+  html += `<div class="judul-tabel-laga">Pemain JAGAL</div>` + tabelPemainLaga(m.detail, true);
+  if(m.detailLawan && m.detailLawan.length){
+    const momLawan = m.detailLawan.find(pl=>pl.mom);
+    html += `<details class="lawan-laga"><summary>Pemain ${escapeHtml(m.lawan)}${momLawan ? ` · MOTM: <b>${escapeHtml(momLawan.nama)}</b>` : ''}</summary>`
+      + tabelPemainLaga(m.detailLawan, true) + `</details>`;
+  }
+  return html;
+}
+
+/* ══════════════════════════════════════════════════════════
    6. POPUP DETAIL PEMAIN
    ══════════════════════════════════════════════════════════ */
 function bukaModalPemain(p){
@@ -1574,16 +2176,35 @@ function bukaModalPemain(p){
     kotakStat(p.kartuMerah, 'Kartu Merah'),
   ].join('');
 
+  const lagaP = ringkasanLagaPemain(p.nama);
+  const negara = NEGARA_EA[p.negara];
+  const sv = lagaP.save;
+  const kotakSave = (p.gk && sv.laga) ? `
+      <div class="form-kotak">
+        <div class="form-judul">Save Kiper · ${sv.laga} laga terakhir <b>${sv.total} save</b></div>
+        <div class="modal-grid grid-save" style="margin-top:10px;">
+          ${kotakStat((sv.total/sv.laga).toFixed(1), 'Save/Laga')}
+          ${kotakStat((sv.kemasukan/sv.laga).toFixed(1), 'Kebobolan/Laga')}
+          ${[['parry','Parry'],['punch','Punch'],['reflex','Reflex'],['diving','Diving'],['crossing','Crossing']]
+            .map(([k,l])=>kotakStat(sv[k], l)).join('')}
+        </div>
+      </div>` : '';
+  const kotakArch = lagaP.archUrut.length ? `
+      <div class="arch-kotak"><span>Archetype</span>${lagaP.archUrut.slice(0,3).map(([nm,n])=>`<b>${nm}</b> <i>${n} laga</i>`).join(' · ')}</div>` : '';
+
   isi.innerHTML = `
     <button class="modal-tutup" aria-label="Tutup">✕</button>
     <div class="modal-header">
-      <div class="rating-lingkaran"><b>${p.rating.toFixed(1)}</b><span>RTG</span></div>
-      <span class="pos-besar">${p.pos}</span>
+      <div class="rating-lingkaran" title="${ovrPemain(p).n >= 3 ? `OVR dari form ${ovrPemain(p).n} laga terakhir (disetarakan per posisi) + rating musim` : 'OVR = rating musim × 10'}"><b>${ovrPemain(p).ovr}</b><span>OVR</span></div>
+      <span class="pos-besar">${ovrPemain(p).pos}</span>
       <div class="nama-besar">${escapeHtml(p.nama)}</div>
-      <div class="peran-besar">${p.peran}</div>
+      <div class="peran-besar">${p.peran}${negara ? ` · <span class="negara-modal">${benderaPemain(p, 12)} ${negara[1]}</span>` : ''}</div>
+      ${sedangOnFire(p) ? `<div class="label-onfire">🔥 On fire · ${escapeHtml(statusOnFire(p).alasan)}</div>` : ''}
     </div>
     <div class="modal-body">
       <div class="modal-grid">${statUtama}</div>
+      ${kotakArch}
+      ${p.gk ? kotakSave : grafikForm(p)}
     </div>`;
 
   overlay.classList.add('buka');
