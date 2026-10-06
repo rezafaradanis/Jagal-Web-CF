@@ -2444,7 +2444,7 @@ function tampilPenghargaan(laga){
     ['🅰️','Raja Assist', p=>p.assist > 0, p=>p.assist*1000 - p.main, p=>`${p.assist} assist`, p=>`${p.main} laga`],
     ['🔥','Kontribusi Gol', p=>cukup(p) && p.gol + p.assist > 0, p=>(p.gol+p.assist)/p.main, p=>`${bulat((p.gol+p.assist)/p.main,2)}/laga`, p=>`${p.gol}G ${p.assist}A dari ${p.main} laga`],
     ['⭐','Raja MOTM', p=>p.motm > 0, p=>p.motm*1000 - p.main, p=>`${p.motm}× MOTM`, p=>`${p.main} laga`],
-    ['🧠','Maestro Passing', p=>cukup(p) && p.passCoba >= 10 * minMain, p=>p.passAkurasi, p=>`${bulat(p.passAkurasi,0)}%`, p=>`${p.passSukses}/${p.passCoba} pass`],
+    ['🧠','Maestro Passing', p=>cukup(p) && p.passAkurasi != null && (p.ea ? p.passSukses : p.passCoba) >= 10 * minMain, p=>p.passAkurasi, p=>`${bulat(p.passAkurasi,0)}%`, p=>p.ea ? `${p.passSukses} pass sukses · ${p.main} laga` : `${p.passSukses}/${p.passCoba} pass`],
     ['🛡️','Tembok', p=>cukup(p) && p.tekel > 0, p=>p.tekel/p.main, p=>`${bulat(p.tekel/p.main)} tekel/laga`, p=>`akurasi ${bulat(p.tekelAkurasi,0)}%`],
     ['🧤','Sarung Tangan Emas', p=>modeEA ? p.csGK > 0 : p.lagaGK > 0, p=>p.csGK*1000 + (p.lagaGK ? p.save/p.lagaGK : 0), p=>`${p.csGK} clean sheet`, p=>p.lagaGK ? `${p.lagaGK} laga kiper (arsip) · ${bulat(p.save/p.lagaGK)} save/laga` : `${p.main} laga`],
     ['🏃','Paling Setia', ()=>true, p=>p.main, p=>`${p.main} laga`, p=>`win rate ${bulat(p.winRate,0)}%`],
