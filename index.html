@@ -574,6 +574,98 @@
     .sorot-angka{font-size:40px;}
     .sorot-foto{height:140px;}
   }
+
+  /* ── Halaman Analisis ── */
+  .tab-analisis{display:flex;gap:6px;overflow-x:auto;margin:0 0 16px;padding-bottom:2px;scrollbar-width:none;}
+  .tab-analisis::-webkit-scrollbar{display:none;}
+  .tab-analisis button{flex-shrink:0;background:var(--bg2);color:var(--redup);border:1px solid var(--garis-lembut);
+    border-radius:999px;padding:9px 15px;font-size:13px;font-weight:800;cursor:pointer;}
+  .tab-analisis button.aktif{background:var(--merah);border-color:var(--merah);color:#fff;}
+  .an-jumlah{font-size:12px;color:var(--redup);}
+  .h2h-pilih{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:12px;}
+  .h2h-pilih span{font-weight:900;color:var(--redup);font-size:12px;}
+  .h2h-pilih select{width:100%;min-width:0;background:var(--bg2);color:var(--teks);border:1px solid var(--garis-lembut);
+    border-radius:8px;padding:9px 8px;font-size:13px;font-weight:700;}
+  .h2h-kepala{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin:6px 0 10px;}
+  .h2h-pemain{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;min-width:0;}
+  .h2h-pemain img{height:110px;width:auto;max-width:100%;object-fit:contain;}
+  .h2h-pemain img.tanpa-foto{height:64px;opacity:.5;margin:23px 0;}
+  .h2h-pemain b{font-size:15px;font-weight:900;overflow-wrap:anywhere;}
+  .h2h-pemain.kiri b{color:var(--merah2);}
+  .h2h-pemain span{font-size:11px;color:var(--redup);}
+  .h2h-vs{font-weight:900;font-size:20px;color:var(--redup);}
+  .h2h-vonis{text-align:center;font-size:13px;color:var(--redup);margin-bottom:12px;}
+  .h2h-vonis b{color:var(--teks);}
+  .h2h-bar .stat-tv{padding:14px;}
+  .h2h-bareng{font-size:13px;color:var(--redup);background:var(--bg2);border:1px solid var(--garis-lembut);
+    border-radius:12px;padding:12px 14px;margin:12px 0;line-height:1.6;}
+  .h2h-bareng b{color:var(--teks);}
+  .sesi-kepala{display:flex;gap:16px;align-items:center;margin:4px 0 16px;}
+  .nilai-sesi{width:82px;height:82px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    flex-shrink:0;border:2px solid currentColor;background:rgba(255,255,255,.03);}
+  .nilai-sesi b{font-size:40px;font-weight:900;line-height:1;}
+  .nilai-sesi span{font-size:10.5px;font-weight:700;opacity:.8;}
+  .n-A{color:var(--hijau);} .n-B{color:#7fd36b;} .n-C{color:var(--kuning);} .n-D{color:#f08a3c;} .n-E{color:var(--merah2);}
+  .sesi-info{display:flex;flex-direction:column;gap:3px;min-width:0;}
+  .sesi-info b{font-size:16px;}
+  .sesi-info span{font-size:12.5px;color:var(--redup);}
+  .sesi-info i{font-style:normal;font-weight:800;} .sesi-info i.m{color:var(--hijau);} .sesi-info i.s{color:var(--kuning);} .sesi-info i.k{color:var(--merah2);}
+  .kpi-sesi{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:14px;}
+  .kpi-sesi .kpi{padding:12px 6px;} .kpi-sesi .kpi b{font-size:20px;} .kpi-sesi .kpi span{font-size:9.5px;}
+  .grid-catatan{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .catatan-sesi{background:var(--bg2);border:1px solid var(--garis-lembut);border-radius:12px;padding:12px 14px;border-left:3px solid;}
+  .catatan-sesi.buruk{border-left-color:var(--merah2);} .catatan-sesi.bagus{border-left-color:var(--hijau);}
+  .catatan-sesi h3{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--redup);}
+  .catatan-sesi ul{margin:0;padding-left:18px;font-size:13px;line-height:1.55;}
+  .catatan-sesi li{margin-bottom:4px;} .catatan-sesi p{margin:0;font-size:13px;color:var(--redup);}
+  .daftar-sesi{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+  .pemain-sesi{display:grid;grid-template-columns:1fr auto;gap:2px 10px;background:var(--bg2);border:1px solid var(--garis-lembut);
+    border-radius:10px;padding:10px 12px;}
+  .ps-nama{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0;}
+  .ps-nama b{font-size:14px;overflow-wrap:anywhere;} .ps-nama small{font-size:11px;color:var(--redup);}
+  .lencana{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;background:var(--merah);color:#fff;border-radius:999px;padding:2px 7px;}
+  .ps-angka{grid-row:span 2;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;}
+  .ps-angka b{font-size:20px;font-weight:900;}
+  .ps-ket{font-size:12px;color:var(--redup);}
+  em.naik,em.turun{font-style:normal;font-size:11px;font-weight:800;} em.naik{color:var(--hijau);} em.turun{color:var(--merah2);}
+  .laga-ringkas{cursor:default;}
+  .profil-atas{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:12px;margin-bottom:14px;}
+  .profil-radar{padding:10px;}
+  .radar{width:100%;max-width:380px;height:auto;display:block;margin:0 auto;}
+  .legenda-radar{display:flex;gap:14px;justify-content:center;font-size:11px;color:var(--redup);flex-wrap:wrap;}
+  .legenda-radar i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+  .profil-ringkas{display:flex;flex-direction:column;gap:10px;}
+  .profil-kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .profil-kpi .kpi{padding:12px 8px;}
+  .profil-poin{font-size:13px;background:var(--bg2);border:1px solid var(--garis-lembut);border-radius:12px;padding:12px 14px;}
+  .profil-poin.bagus{border-left:3px solid var(--hijau);} .profil-poin.buruk{border-left:3px solid var(--merah2);}
+  .daftar-profil{display:flex;flex-direction:column;gap:12px;background:var(--bg2);border:1px solid var(--garis-lembut);
+    border-radius:12px;padding:14px;margin-bottom:12px;}
+  .pb-atas{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;}
+  .pb-atas span{font-weight:900;font-size:16px;}
+  .pb-bar{position:relative;height:8px;border-radius:4px;background:rgba(255,255,255,.07);margin:6px 0 5px;}
+  .pb-bar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--merah),var(--merah2));}
+  .pb-bar u{position:absolute;top:-3px;width:2px;height:14px;background:#fff;opacity:.7;transform:translateX(-1px);}
+  .pb-ket{font-size:11.5px;color:var(--redup);}
+  .grid-award{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;margin-bottom:14px;}
+  .award-kartu{background:linear-gradient(180deg, var(--bg2-atas), transparent), var(--bg2);border:1px solid var(--garis-lembut);
+    border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0;}
+  .aw-atas{display:flex;align-items:center;gap:8px;}
+  .aw-ikon{font-size:20px;} .aw-judul{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--redup);}
+  .aw-juara{display:flex;align-items:center;gap:10px;min-width:0;}
+  .aw-juara img{height:64px;width:auto;max-width:52px;object-fit:contain;flex-shrink:0;}
+  .aw-juara div{display:flex;flex-direction:column;min-width:0;}
+  .aw-juara b{font-size:16px;font-weight:900;overflow-wrap:anywhere;}
+  .aw-juara strong{font-size:14px;color:var(--merah2);font-weight:900;}
+  .aw-juara i{font-style:normal;font-size:11.5px;color:var(--redup);}
+  .aw-sisa{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--redup);border-top:1px solid var(--garis-lembut);padding-top:6px;}
+  .award-iseng{margin-bottom:12px;}
+  .award-iseng summary{cursor:pointer;font-weight:800;font-size:14px;padding:10px 0;color:var(--redup);}
+  @media (max-width:640px){
+    .grid-catatan,.profil-atas{grid-template-columns:1fr;}
+    .h2h-pemain img{height:86px;}
+    .h2h-pemain img.tanpa-foto{height:52px;margin:17px 0;}
+  }
 </style>
 </head>
 <body>
@@ -1365,6 +1457,7 @@ const HALAMAN = {
   '/':         { hal:'skuad',     judul:'Skuad',              label:'SKUAD',    eyebrow:'JAGAL VFC · Musim 2026/27' },
   '/statistik':{ hal:'statistik', judul:'Statistik Pemain',   label:'STATISTIK', eyebrow:'Rekap Angka' },
   '/hasil':    { hal:'hasil',     judul:'Divisi & Hasil Laga', label:'HASIL LAGA', eyebrow:'EA Pro Clubs' },
+  '/analisis': { hal:'analisis',  judul:'Analisis Tim',       label:'ANALISIS',  eyebrow:'Review & Data Klub' },
   '/jersey':   { hal:'jersey',    judul:'Jersey Musim 2026/27', label:'JERSEY',  eyebrow:'Home · Away · Third' },
   '/mitra':    { hal:'mitra',     judul:'Mitra',              label:'MITRA',     eyebrow:'Kerja Sama Resmi' },
   '/ipl':      { hal:'ipl',       judul:'Indonesia Premier League', label:'IPL', eyebrow:'Kompetisi Mendatang' },
@@ -1663,6 +1756,12 @@ function render(){
       : `<div class="kosong">Belum ada hasil laga.</div>`;
   }
 
+  if(h.hal === 'analisis'){
+    isi += `<p class="sub-hal">Bandingkan pemain, review tiap sesi main, lihat profil kekuatan tim, dan penghargaan — semua dari laga yang tersimpan.</p>`;
+    isi += pillSumber();
+    isi += tampilAnalisis();
+  }
+
   if(h.hal === 'jersey'){
     isi += `<p class="sub-hal">Home, Away, dan Third kit JAGAL VFC untuk mengarungi musim di EA SPORTS FC 27. Klik gambar untuk memperbesar.</p>`;
     const KIT = [
@@ -1935,6 +2034,8 @@ function render(){
     });
   }
 
+  if(h.hal === 'analisis') pasangAnalisis(main);
+
   if(h.hal === 'trial'){
     const form = document.getElementById('formTrial');
     form.addEventListener('submit', kirimFormTrial);
@@ -1984,6 +2085,412 @@ document.getElementById('jerseyLightbox').addEventListener('click', function(){
   this.classList.remove('buka');
   this.querySelector('img').src = '';
 });
+
+/* ══════════════════════════════════════════════════════════
+   5c. ANALISIS — H2H pemain, laporan sesi, profil tim, penghargaan.
+   Semua dihitung di browser dari laga yang detailnya tersimpan
+   (data EA terbaru + arsip permanen), tanpa endpoint tambahan.
+   ══════════════════════════════════════════════════════════ */
+let ANALISIS = { tab:'h2h', jenis:'semua', a:null, b:null, rentangH2h:'semua', sesi:0, periode:'semua' };
+const TAB_ANALISIS = { h2h:'H2H Pemain', sesi:'Laporan Sesi', profil:'Profil Tim', award:'Penghargaan' };
+const JENIS_ANALISIS = { semua:'Semua laga', kompetitif:'Liga & Playoff', friendly:'Friendly' };
+// Laga yang jaraknya kurang dari ini dianggap satu sesi main (satu malam).
+const JEDA_SESI_MS = 3 * 3600 * 1000;
+
+function lagaAnalisis(){
+  return (DATA.hasil||[])
+    .filter(m=>m.detail && m.detail.length && m.ts && m.golKami != null)
+    .filter(m=> ANALISIS.jenis === 'semua' ? true
+      : ANALISIS.jenis === 'friendly' ? m.tipeAsli === 'friendlyMatch' : m.tipeAsli !== 'friendlyMatch')
+    .sort((a,b)=>b.ts-a.ts);
+}
+function lagaDenganPemain(laga, kunci){
+  return laga.filter(m=>m.detail.some(x=>x.nama.toLowerCase() === kunci));
+}
+
+// Total & rata-rata per pemain dari sekumpulan laga (urut baru → lama, nama terbaru dipakai).
+function agregatPemain(laga){
+  const kor = koreksiPosisi();
+  const peta = new Map();
+  for(const m of laga){
+    for(const pl of m.detail){
+      const k = pl.nama.toLowerCase();
+      let p = peta.get(k);
+      if(!p){
+        p = { kunci:k, nama:pl.nama, main:0, m:0, s:0, k:0, gol:0, assist:0, tembakan:0, passSukses:0, passCoba:0,
+          tekel:0, tekelCoba:0, merah:0, motm:0, cs:0, lagaGK:0, csGK:0, save:0, kemasukanGK:0,
+          totalRating:0, totalRatingKor:0, nRating:0, pos:{} };
+        peta.set(k, p);
+      }
+      p.main++;
+      p[m.hasil === 'win' ? 'm' : m.hasil === 'draw' ? 's' : 'k']++;
+      p.gol += pl.gol; p.assist += pl.assist; p.tembakan += pl.tembakan||0;
+      p.passSukses += pl.passSukses||0; p.passCoba += pl.passCoba||0;
+      p.tekel += pl.tekel||0; p.tekelCoba += pl.tekelCoba||0;
+      p.merah += pl.kartuMerah||0; if(pl.mom) p.motm++;
+      if(m.golLawan === 0) p.cs++;
+      if(pl.posLaga === 'goalkeeper'){
+        p.lagaGK++; p.save += pl.save||0; p.kemasukanGK += m.golLawan||0;
+        if(m.golLawan === 0) p.csGK++;
+      }
+      if(pl.rating > 0){ p.totalRating += pl.rating; p.totalRatingKor += pl.rating + (kor[pl.posLaga]||0); p.nRating++; }
+      const ps = POSISI_LAGA[pl.posLaga]; if(ps) p.pos[ps] = (p.pos[ps]||0) + 1;
+    }
+  }
+  return [...peta.values()].map(p=>({
+    ...p,
+    rating: p.nRating ? p.totalRating / p.nRating : 0,
+    ratingKor: p.nRating ? p.totalRatingKor / p.nRating : 0,
+    posUtama: Object.entries(p.pos).sort((a,b)=>b[1]-a[1])[0]?.[0] || '–',
+    winRate: p.main ? p.m / p.main * 100 : 0,
+    passAkurasi: p.passCoba ? p.passSukses / p.passCoba * 100 : null,
+    tekelAkurasi: p.tekelCoba ? p.tekel / p.tekelCoba * 100 : null,
+    konversi: p.tembakan ? p.gol / p.tembakan * 100 : null,
+  }));
+}
+
+// Statistik tim dari sekumpulan laga.
+function statTim(laga){
+  const t = { main:0, m:0, s:0, k:0, gol:0, kemasukan:0, cs:0, tembakan:0, passSukses:0, passCoba:0,
+    tekel:0, tekelCoba:0, merah:0, totalRating:0, nRating:0, tembakanLawan:0, nLawan:0 };
+  for(const m of laga){
+    t.main++; t[m.hasil === 'win' ? 'm' : m.hasil === 'draw' ? 's' : 'k']++;
+    t.gol += m.golKami; t.kemasukan += m.golLawan; if(m.golLawan === 0) t.cs++;
+    const s = m.statKami || {};
+    t.tembakan += s.tembakan||0; t.passSukses += s.passSukses||0; t.passCoba += s.passCoba||0;
+    t.tekel += s.tekel||0; t.tekelCoba += s.tekelCoba||0; t.merah += s.kartuMerah||0;
+    m.detail.forEach(pl=>{ if(pl.rating > 0){ t.totalRating += pl.rating; t.nRating++; } });
+    if(m.statLawan){ t.tembakanLawan += m.statLawan.tembakan||0; t.nLawan++; }
+  }
+  const n = t.main || 1;
+  return { ...t,
+    golPL: t.gol/n, kemasukanPL: t.kemasukan/n, tembakanPL: t.tembakan/n, passPL: t.passSukses/n, tekelPL: t.tekel/n,
+    konversi: t.tembakan ? t.gol/t.tembakan*100 : null,
+    passAkurasi: t.passCoba ? t.passSukses/t.passCoba*100 : null,
+    tekelAkurasi: t.tekelCoba ? t.tekel/t.tekelCoba*100 : null,
+    ppg: (t.m*3 + t.s)/n, winRate: t.m/n*100, csRate: t.cs/n*100,
+    rating: t.nRating ? t.totalRating/t.nRating : null,
+    tembakanLawanPL: t.nLawan ? t.tembakanLawan/t.nLawan : null,
+  };
+}
+
+const bulat = (v, d=1) => v == null || isNaN(v) ? '–' : (Math.round(v * 10**d) / 10**d).toFixed(d);
+const tglWIB = (ms, opsi) => new Date(ms).toLocaleDateString('id-ID', { timeZone:'Asia/Jakarta', ...opsi });
+
+function tampilAnalisis(){
+  const laga = lagaAnalisis();
+  let html = `<div class="tab-analisis">` + Object.entries(TAB_ANALISIS).map(([k,l])=>
+    `<button type="button" data-tab="${k}" class="${ANALISIS.tab === k ? 'aktif' : ''}">${l}</button>`).join('') + `</div>`;
+  html += `<div class="kontrol-sortir"><label>Jenis laga:</label><select id="anJenis">` +
+    Object.entries(JENIS_ANALISIS).map(([k,l])=>`<option value="${k}"${ANALISIS.jenis === k ? ' selected' : ''}>${l}</option>`).join('') +
+    `</select><span class="an-jumlah">${laga.length} laga tersimpan</span></div>`;
+  if(!laga.length) return html + `<div class="kosong">Belum ada laga dengan detail pemain${ANALISIS.jenis !== 'semua' ? ' untuk jenis laga ini' : ''}. Data akan muncul setelah data EA termuat.</div>`;
+  if(ANALISIS.tab === 'h2h') html += tampilH2hPemain(laga);
+  if(ANALISIS.tab === 'sesi') html += tampilSesi(laga);
+  if(ANALISIS.tab === 'profil') html += tampilProfil(laga);
+  if(ANALISIS.tab === 'award') html += tampilPenghargaan(laga);
+  return html;
+}
+
+/* ── H2H PEMAIN ── */
+function tampilH2hPemain(laga){
+  const semua = agregatPemain(laga).sort((a,b)=>b.main-a.main);
+  if(semua.length < 2) return `<div class="kosong">Butuh minimal dua pemain untuk dibandingkan.</div>`;
+  if(!semua.some(p=>p.kunci === ANALISIS.a)) ANALISIS.a = (semua.find(p=>p.posUtama !== 'GK') || semua[0]).kunci;
+  // Lawan bawaan: pemain paling sering main di posisi yang sama, supaya perbandingannya adil.
+  if(!semua.some(p=>p.kunci === ANALISIS.b) || ANALISIS.b === ANALISIS.a){
+    const pa = semua.find(p=>p.kunci === ANALISIS.a);
+    ANALISIS.b = (semua.find(p=>p.kunci !== pa.kunci && p.posUtama === pa.posUtama) || semua.find(p=>p.kunci !== pa.kunci)).kunci;
+  }
+
+  const ambil = kunci => {
+    let L = lagaDenganPemain(laga, kunci);
+    if(ANALISIS.rentangH2h === '10') L = L.slice(0, 10);
+    if(ANALISIS.rentangH2h === '30') L = L.filter(m=>Date.now() - m.ts <= 30*86400000);
+    return { p: agregatPemain(L).find(x=>x.kunci === kunci), L };
+  };
+  const A = ambil(ANALISIS.a), B = ambil(ANALISIS.b);
+  const opsi = sel => semua.map(p=>`<option value="${escapeHtml(p.kunci)}"${p.kunci === sel ? ' selected' : ''}>${escapeHtml(p.nama)} (${p.main})</option>`).join('');
+  let html = `<div class="h2h-pilih">
+      <select id="anA">${opsi(ANALISIS.a)}</select>
+      <span>vs</span>
+      <select id="anB">${opsi(ANALISIS.b)}</select>
+    </div>
+    <div class="kontrol-sortir"><label>Rentang:</label><select id="anRentang">
+      <option value="semua"${ANALISIS.rentangH2h === 'semua' ? ' selected' : ''}>Semua laga tersimpan</option>
+      <option value="10"${ANALISIS.rentangH2h === '10' ? ' selected' : ''}>10 laga terakhir masing-masing</option>
+      <option value="30"${ANALISIS.rentangH2h === '30' ? ' selected' : ''}>30 hari terakhir</option>
+    </select></div>`;
+  if(!A.p || !B.p) return html + `<div class="kosong">Salah satu pemain belum main di rentang ini.</div>`;
+
+  const kartu = (x, sisi) => {
+    const foto = fotoPemain(x.p.nama);
+    return `<div class="h2h-pemain ${sisi}">
+      <img src="${foto ? '/' + foto.replace(/^\//,'') : '/ikon/logo.png'}" alt="" class="${foto ? '' : 'tanpa-foto'}" loading="lazy">
+      <b>${escapeHtml(x.p.nama)}</b>
+      <span>${x.p.posUtama} · ${x.p.main} laga · ${x.p.m}M ${x.p.s}S ${x.p.k}K</span>
+    </div>`;
+  };
+  const a = A.p, b = B.p;
+  const pl = (v, n) => n ? v / n : 0;
+  // [label, nilai A, nilai B, desimal, satuan, makin kecil makin bagus?]
+  const baris = [
+    ['Rating rata-rata', a.rating, b.rating, 2, ''],
+    ['Win rate', a.winRate, b.winRate, 0, '%'],
+    ['Gol / laga', pl(a.gol,a.main), pl(b.gol,b.main), 2, ''],
+    ['Assist / laga', pl(a.assist,a.main), pl(b.assist,b.main), 2, ''],
+    ['Gol + assist / laga', pl(a.gol+a.assist,a.main), pl(b.gol+b.assist,b.main), 2, ''],
+    ['Tembakan / laga', pl(a.tembakan,a.main), pl(b.tembakan,b.main), 1, ''],
+    ['Konversi tembakan', a.konversi, b.konversi, 0, '%'],
+    ['Passing sukses / laga', pl(a.passSukses,a.main), pl(b.passSukses,b.main), 1, ''],
+    ['Akurasi passing', a.passAkurasi, b.passAkurasi, 0, '%'],
+    ['Tekel sukses / laga', pl(a.tekel,a.main), pl(b.tekel,b.main), 1, ''],
+    ['Akurasi tekel', a.tekelAkurasi, b.tekelAkurasi, 0, '%'],
+    ['MOTM', a.motm, b.motm, 0, ''],
+    ['Clean sheet tim saat main', pl(a.cs,a.main)*100, pl(b.cs,b.main)*100, 0, '%'],
+  ];
+  if(a.lagaGK || b.lagaGK) baris.push(['Save / laga (kiper)', a.lagaGK ? a.save/a.lagaGK : null, b.lagaGK ? b.save/b.lagaGK : null, 1, '']);
+  if(a.merah || b.merah) baris.push(['Kartu merah', a.merah, b.merah, 0, '', true]);
+
+  let menangA = 0, menangB = 0;
+  const bar = baris.filter(([,x,y])=>x != null || y != null).map(([nama, x, y, d, sat, kecil])=>{
+    const va = x ?? 0, vb = y ?? 0;
+    const lebihA = kecil ? va < vb : va > vb, lebihB = kecil ? vb < va : vb > va;
+    if(lebihA) menangA++; if(lebihB) menangB++;
+    const total = va + vb, pa = total ? va/total*100 : 50;
+    return `<div class="stat-tv-baris">
+      <div class="stat-tv-angka"><b class="${lebihA ? 'unggul' : ''}">${x == null ? '–' : bulat(x, d) + sat}</b><span>${nama}</span><b class="${lebihB ? 'unggul' : ''}">${y == null ? '–' : bulat(y, d) + sat}</b></div>
+      <div class="stat-tv-bar"><i class="kami" style="width:${pa}%"></i><i class="lawan h2h-b" style="width:${100-pa}%"></i></div>
+    </div>`;
+  }).join('');
+
+  const bareng = A.L.filter(m=>B.L.includes(m));
+  const tb = statTim(bareng);
+  const unggul = menangA === menangB ? 'Imbang' : `<b>${escapeHtml(menangA > menangB ? a.nama : b.nama)}</b> unggul`;
+  html += `<div class="h2h-kepala">${kartu(A,'kiri')}<div class="h2h-vs">VS</div>${kartu(B,'kanan')}</div>
+    <div class="h2h-vonis">${unggul} · ${menangA}–${menangB} kategori</div>
+    <div class="tbl-wrap h2h-bar"><div class="stat-tv">${bar}</div></div>
+    <div class="h2h-bareng">${bareng.length
+      ? `🤝 <b>Main bareng ${bareng.length} laga</b>: ${tb.m} menang, ${tb.s} seri, ${tb.k} kalah · gol ${tb.gol}–${tb.kemasukan} · win rate ${bulat(tb.winRate,0)}%`
+      : '🤝 Belum pernah main di laga yang sama pada rentang ini.'}</div>
+    <p class="catatan-rekor">Dihitung dari laga yang detailnya tersimpan. Rating EA dipengaruhi posisi, jadi bandingkan pemain di posisi yang mirip untuk hasil yang adil.</p>`;
+  return html;
+}
+
+/* ── LAPORAN SESI ── */
+function kelompokSesi(laga){
+  const sesi = []; let cur = null;
+  for(const m of [...laga].sort((a,b)=>a.ts-b.ts)){
+    if(!cur || m.ts - cur.akhir > JEDA_SESI_MS){ cur = { laga:[], mulai:m.ts, akhir:m.ts }; sesi.push(cur); }
+    cur.laga.push(m); cur.akhir = m.ts;
+  }
+  sesi.forEach(s=>s.laga.reverse());
+  return sesi.reverse(); // terbaru dulu
+}
+function nilaiSesi(t){
+  const jepit = v => Math.max(0, Math.min(1, v));
+  const skor = 0.6 * (t.ppg / 3) + 0.25 * jepit(((t.gol - t.kemasukan) / t.main + 3) / 6) + 0.15 * jepit(((t.rating ?? 6.5) - 5) / 3);
+  const huruf = skor >= 0.75 ? 'A' : skor >= 0.6 ? 'B' : skor >= 0.45 ? 'C' : skor >= 0.3 ? 'D' : 'E';
+  return { skor: Math.round(skor * 100), huruf };
+}
+function catatanSesi(t, base){
+  const buruk = [], bagus = [];
+  const beda = (a, b) => a != null && b != null ? a - b : 0;
+  if(beda(t.kemasukanPL, base.kemasukanPL) > 0.5) buruk.push(`Kebobolan <b>${bulat(t.kemasukanPL)}</b>/laga, biasanya ${bulat(base.kemasukanPL)}. Rapatkan jarak lini belakang dan tengah.`);
+  if(t.tembakanLawanPL != null && base.tembakanLawanPL != null && beda(t.tembakanLawanPL, base.tembakanLawanPL) > 2)
+    buruk.push(`Lawan melepas <b>${bulat(t.tembakanLawanPL)}</b> tembakan/laga (biasanya ${bulat(base.tembakanLawanPL)}). Tekanan ke pembawa bola kurang.`);
+  if(beda(t.passAkurasi, base.passAkurasi) < -3) buruk.push(`Akurasi passing <b>${bulat(t.passAkurasi,0)}%</b>, biasanya ${bulat(base.passAkurasi,0)}%. Kurangi umpan paksa, sirkulasi lebih sabar.`);
+  if(t.tembakan >= 4 && beda(t.konversi, base.konversi) < -6) buruk.push(`Konversi tembakan cuma <b>${bulat(t.konversi,0)}%</b> (biasanya ${bulat(base.konversi,0)}%). Cari posisi tembak yang lebih bersih.`);
+  if(beda(t.tembakanPL, base.tembakanPL) < -1.5) buruk.push(`Hanya <b>${bulat(t.tembakanPL)}</b> tembakan/laga (biasanya ${bulat(base.tembakanPL)}). Serangan jarang sampai ke kotak penalti.`);
+  if(beda(t.tekelAkurasi, base.tekelAkurasi) < -6) buruk.push(`Akurasi tekel <b>${bulat(t.tekelAkurasi,0)}%</b> (biasanya ${bulat(base.tekelAkurasi,0)}%). Jaga posisi, jangan buru-buru menekel.`);
+  if(t.merah) buruk.push(`<b>${t.merah}</b> kartu merah di sesi ini.`);
+
+  if(t.cs) bagus.push(`<b>${t.cs}</b> clean sheet.`);
+  if(beda(t.golPL, base.golPL) > 0.5) bagus.push(`Produktif: <b>${bulat(t.golPL)}</b> gol/laga (biasanya ${bulat(base.golPL)}).`);
+  if(t.tembakan >= 4 && beda(t.konversi, base.konversi) > 6) bagus.push(`Tajam: konversi tembakan <b>${bulat(t.konversi,0)}%</b>.`);
+  if(beda(t.passAkurasi, base.passAkurasi) > 3) bagus.push(`Passing rapi: <b>${bulat(t.passAkurasi,0)}%</b> akurasi.`);
+  if(t.main >= 3 && t.winRate >= 60) bagus.push(`Win rate <b>${bulat(t.winRate,0)}%</b>.`);
+  return { buruk: buruk.slice(0,3), bagus: bagus.slice(0,3) };
+}
+function tampilSesi(laga){
+  const sesi = kelompokSesi(laga);
+  if(ANALISIS.sesi >= sesi.length) ANALISIS.sesi = 0;
+  const s = sesi[ANALISIS.sesi];
+  const label = x => { const t = statTim(x.laga); return `${tglWIB(x.mulai, { weekday:'short', day:'numeric', month:'short' })} · ${t.main} laga · ${t.m}M ${t.s}S ${t.k}K`; };
+  const t = statTim(s.laga), base = statTim(laga), n = nilaiSesi(t), c = catatanSesi(t, base);
+  const pemainBase = new Map(agregatPemain(laga).map(p=>[p.kunci, p]));
+  const pemain = agregatPemain(s.laga).sort((a,b)=>b.rating-a.rating || b.main-a.main);
+  const minTerbaik = Math.max(1, Math.ceil(t.main / 2));
+  const terbaik = [...pemain].filter(p=>p.main >= minTerbaik).sort((a,b)=>b.ratingKor-a.ratingKor)[0];
+
+  let html = `<div class="kontrol-sortir"><label>Sesi:</label><select id="anSesi">` +
+    sesi.map((x,i)=>`<option value="${i}"${i === ANALISIS.sesi ? ' selected' : ''}>${label(x)}</option>`).join('') + `</select></div>`;
+  html += `<div class="sesi-kepala">
+      <div class="nilai-sesi n-${n.huruf}"><b>${n.huruf}</b><span>${n.skor}/100</span></div>
+      <div class="sesi-info">
+        <b>${tglWIB(s.mulai, { weekday:'long', day:'numeric', month:'long', year:'numeric' })}</b>
+        <span>${formatWaktuWIB(s.mulai, false)} – ${formatWaktuWIB(s.akhir, false)}</span>
+        <span>${t.main} laga · <i class="m">${t.m}M</i> <i class="s">${t.s}S</i> <i class="k">${t.k}K</i> · gol ${t.gol}–${t.kemasukan}</span>
+      </div>
+    </div>
+    <div class="grid-kpi kpi-sesi">
+      <div class="kpi"><b>${bulat(t.golPL)}</b><span>Gol/laga</span></div>
+      <div class="kpi"><b>${bulat(t.kemasukanPL)}</b><span>Bobol/laga</span></div>
+      <div class="kpi"><b>${bulat(t.passAkurasi,0)}%</b><span>Akurasi pass</span></div>
+      <div class="kpi"><b>${bulat(t.rating)}</b><span>Rating tim</span></div>
+    </div>
+    <div class="grid-catatan">
+      <div class="catatan-sesi buruk"><h3>Yang perlu dibenahi</h3>${c.buruk.length ? `<ul>${c.buruk.map(x=>`<li>${x}</li>`).join('')}</ul>` : '<p>Tidak ada yang menonjol buruk dibanding biasanya.</p>'}</div>
+      <div class="catatan-sesi bagus"><h3>Yang sudah bagus</h3>${c.bagus.length ? `<ul>${c.bagus.map(x=>`<li>${x}</li>`).join('')}</ul>` : '<p>Belum ada yang menonjol di atas rata-rata.</p>'}</div>
+    </div>
+    <h2 class="subjudul">Pemain di Sesi Ini</h2>
+    <div class="daftar-sesi">` + pemain.map(p=>{
+      const b = pemainBase.get(p.kunci);
+      const delta = b && b.main > p.main ? p.rating - b.rating : null;
+      const panah = delta == null ? '' : `<em class="${delta >= 0 ? 'naik' : 'turun'}">${delta >= 0 ? '▲' : '▼'} ${bulat(Math.abs(delta))}</em>`;
+      const bagian = [`${p.main} laga`];
+      if(p.posUtama === 'GK') bagian.push(`${p.save} save`, `${p.csGK} CS`);
+      else { if(p.gol || p.assist) bagian.push(`${p.gol}G ${p.assist}A`); if(p.passCoba) bagian.push(`pass ${bulat(p.passAkurasi,0)}%`); if(p.tekel) bagian.push(`${p.tekel} tekel`); }
+      return `<div class="pemain-sesi">
+        <div class="ps-nama"><b>${escapeHtml(p.nama)}</b>${p === terbaik ? '<span class="lencana">Terbaik sesi</span>' : ''}<small>${p.posUtama}${p.motm ? ` · ${'⭐'.repeat(Math.min(p.motm, 5))}` : ''}</small></div>
+        <div class="ps-angka"><b>${bulat(p.rating)}</b>${panah}</div>
+        <div class="ps-ket">${bagian.join(' · ')}</div>
+      </div>`;
+    }).join('') + `</div>
+    <p class="catatan-rekor">Nilai A–E dari poin per laga (60%), selisih gol (25%) dan rating tim (15%). "Biasanya" = rata-rata semua laga tersimpan. ▲▼ = rating sesi dibanding rata-rata pemain itu.</p>
+    <h2 class="subjudul">Laga di Sesi Ini</h2>` +
+    s.laga.map(m=>`<div class="laga ${m.hasil} laga-ringkas">
+        <div class="hasil"></div>${imgLogo(m.logoLawan, 'logo-lawan')}
+        <div class="info"><div class="lawan">vs ${escapeHtml(m.lawan)}</div><div class="tgl">${formatWaktuWIB(m.ts, false)} · ${m.tipe}</div></div>
+        <div class="skor">${m.skor}</div></div>`).join('');
+  return html;
+}
+
+/* ── PROFIL TIM (0–100) ── */
+const lin = (v, lo, hi) => v == null || isNaN(v) ? null : Math.max(0, Math.min(100, (v - lo) / (hi - lo) * 100));
+function gabungSkor(daftar){
+  let s = 0, w = 0;
+  daftar.forEach(([v, b])=>{ if(v != null){ s += v * b; w += b; } });
+  return w ? Math.round(s / w) : null;
+}
+function profilTim(t){
+  return [
+    { k:'Serangan', v: gabungSkor([[lin(t.golPL,0,4),.5],[lin(t.tembakanPL,2,12),.25],[lin(t.konversi,10,50),.25]]),
+      ket:`${bulat(t.golPL)} gol & ${bulat(t.tembakanPL)} tembakan/laga · konversi ${bulat(t.konversi,0)}%` },
+    { k:'Bertahan', v: gabungSkor([[lin(t.kemasukanPL,4,0),.5],[lin(t.csRate,0,50),.3],[lin(t.tembakanLawanPL,12,2),.2]]),
+      ket:`kebobolan ${bulat(t.kemasukanPL)}/laga · clean sheet ${bulat(t.csRate,0)}%${t.tembakanLawanPL != null ? ` · lawan ${bulat(t.tembakanLawanPL)} tembakan/laga` : ''}` },
+    { k:'Kontrol Bola', v: gabungSkor([[lin(t.passAkurasi,65,90),.6],[lin(t.passPL,40,160),.4]]),
+      ket:`akurasi pass ${bulat(t.passAkurasi,0)}% · ${bulat(t.passPL,0)} pass sukses/laga` },
+    { k:'Duel', v: gabungSkor([[lin(t.tekelAkurasi,20,60),.5],[lin(t.tekelPL,3,15),.5]]),
+      ket:`${bulat(t.tekelPL)} tekel sukses/laga · akurasi ${bulat(t.tekelAkurasi,0)}%` },
+    { k:'Hasil', v: gabungSkor([[lin(t.ppg,0,3),.6],[lin(t.rating,5.5,8),.4]]),
+      ket:`${bulat(t.ppg,2)} poin/laga · win rate ${bulat(t.winRate,0)}% · rating ${bulat(t.rating)}` },
+  ];
+}
+function radarSVG(seri){
+  const W = 380, H = 280, cx = W/2, cy = 146, r = 96, n = seri[0].nilai.length;
+  const titik = (i, v) => { const a = -Math.PI/2 + i * 2*Math.PI/n; return [cx + Math.cos(a) * r * v/100, cy + Math.sin(a) * r * v/100]; };
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="radar" role="img" aria-label="Radar profil tim">`;
+  [25,50,75,100].forEach(v=>{ svg += `<polygon points="${seri[0].nilai.map((_,i)=>titik(i,v).join(',')).join(' ')}" fill="none" stroke="rgba(255,255,255,${v===100?.16:.07})"/>`; });
+  seri[0].nilai.forEach((x,i)=>{
+    const [x2,y2] = titik(i,100), [lx,ly] = titik(i,122);
+    svg += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="rgba(255,255,255,.07)"/>`;
+    svg += `<text x="${lx}" y="${ly + 4}" text-anchor="${Math.abs(lx-cx) < 5 ? 'middle' : lx > cx ? 'start' : 'end'}" font-size="11" font-weight="700" fill="#9a9aa8">${x.k}</text>`;
+  });
+  seri.forEach(s=>{
+    const pts = s.nilai.map((x,i)=>titik(i, x.v ?? 0).join(',')).join(' ');
+    svg += `<polygon points="${pts}" fill="${s.warna}" fill-opacity="${s.isi}" stroke="${s.warna}" stroke-width="2" stroke-linejoin="round"/>`;
+  });
+  return svg + `</svg>`;
+}
+function tampilProfil(laga){
+  const semua = statTim(laga), nBaru = Math.min(10, laga.length), baru = statTim(laga.slice(0, nBaru));
+  const pS = profilTim(semua), pB = profilTim(baru);
+  const nilaiAda = pB.filter(x=>x.v != null);
+  const kuat = [...nilaiAda].sort((a,b)=>b.v-a.v)[0], lemah = [...nilaiAda].sort((a,b)=>a.v-b.v)[0];
+  const rata = arr => { const a = arr.filter(x=>x.v != null); return a.length ? Math.round(a.reduce((s,x)=>s+x.v,0)/a.length) : '–'; };
+  let html = `<div class="profil-atas">
+      <div class="tbl-wrap profil-radar">${radarSVG([
+        { nilai:pS, warna:'#9a9aa8', isi:.12 },
+        { nilai:pB, warna:'#ff3b52', isi:.22 },
+      ])}
+        <div class="legenda-radar"><span><i style="background:#ff3b52"></i>${nBaru} laga terakhir</span><span><i style="background:#9a9aa8"></i>Semua (${semua.main} laga)</span></div>
+      </div>
+      <div class="profil-ringkas">
+        <div class="profil-kpi"><div class="kpi"><b>${rata(pB)}</b><span>Skor ${nBaru} laga terakhir</span></div>
+        <div class="kpi"><b>${rata(pS)}</b><span>Skor semua laga</span></div></div>
+        ${kuat ? `<div class="profil-poin bagus">💪 Kekuatan: <b>${kuat.k}</b> (${kuat.v})</div>` : ''}
+        ${lemah && lemah !== kuat ? `<div class="profil-poin buruk">⚠️ Titik lemah: <b>${lemah.k}</b> (${lemah.v})</div>` : ''}
+      </div>
+    </div>
+    <div class="daftar-profil">` + pB.map((x,i)=>{
+      const lama = pS[i].v, d = x.v != null && lama != null ? x.v - lama : null;
+      return `<div class="profil-baris">
+        <div class="pb-atas"><b>${x.k}</b><span>${x.v ?? '–'}${d ? ` <em class="${d > 0 ? 'naik' : 'turun'}">${d > 0 ? '▲' : '▼'} ${Math.abs(d)}</em>` : ''}</span></div>
+        <div class="pb-bar"><i style="width:${x.v ?? 0}%"></i><u style="left:${lama ?? 0}%" title="Semua laga: ${lama ?? '–'}"></u></div>
+        <div class="pb-ket">${x.ket}</div>
+      </div>`;
+    }).join('') + `</div>
+    <p class="catatan-rekor">Skor 0–100 memakai patokan tetap (bukan dibanding klub lain): Serangan dari gol, tembakan & konversi; Bertahan dari kebobolan, clean sheet & tembakan lawan; Kontrol Bola dari akurasi dan jumlah passing; Duel dari tekel; Hasil dari poin per laga & rating. Garis putih di bar = nilai semua laga.</p>`;
+  return html;
+}
+
+/* ── PENGHARGAAN ── */
+function bulanWIB(ms){ return new Date(ms + 7*3600000).toISOString().slice(0,7); }
+function tampilPenghargaan(laga){
+  const bulan = [...new Set(laga.map(m=>bulanWIB(m.ts)))];
+  if(ANALISIS.periode !== 'semua' && !bulan.includes(ANALISIS.periode)) ANALISIS.periode = 'semua';
+  const L = ANALISIS.periode === 'semua' ? laga : laga.filter(m=>bulanWIB(m.ts) === ANALISIS.periode);
+  const namaBulan = b => new Date(b + '-15T00:00:00Z').toLocaleDateString('id-ID', { month:'long', year:'numeric', timeZone:'UTC' });
+  const P = agregatPemain(L);
+  const minMain = Math.min(Math.max(...P.map(p=>p.main), 1), Math.max(2, Math.round(L.length * 0.25)));
+  const cukup = p => p.main >= minMain;
+
+  // [ikon, judul, filter, nilai urut, teks nilai, keterangan]
+  const AWARD = [
+    ['👑','Pemain Terbaik', cukup, p=>p.ratingKor*100 + p.motm, p=>bulat(p.ratingKor,2), p=>`rating disetarakan · ${p.main} laga`],
+    ['⚽','Golden Boot', p=>p.gol > 0, p=>p.gol*1000 - p.main, p=>`${p.gol} gol`, p=>`${p.main} laga · ${bulat(p.gol/p.main,2)}/laga`],
+    ['🅰️','Raja Assist', p=>p.assist > 0, p=>p.assist*1000 - p.main, p=>`${p.assist} assist`, p=>`${p.main} laga`],
+    ['🔥','Kontribusi Gol', p=>cukup(p) && p.gol + p.assist > 0, p=>(p.gol+p.assist)/p.main, p=>`${bulat((p.gol+p.assist)/p.main,2)}/laga`, p=>`${p.gol}G ${p.assist}A dari ${p.main} laga`],
+    ['⭐','Raja MOTM', p=>p.motm > 0, p=>p.motm*1000 - p.main, p=>`${p.motm}× MOTM`, p=>`${p.main} laga`],
+    ['🧠','Maestro Passing', p=>cukup(p) && p.passCoba >= 10 * minMain, p=>p.passAkurasi, p=>`${bulat(p.passAkurasi,0)}%`, p=>`${p.passSukses}/${p.passCoba} pass`],
+    ['🛡️','Tembok', p=>cukup(p) && p.tekel > 0, p=>p.tekel/p.main, p=>`${bulat(p.tekel/p.main)} tekel/laga`, p=>`akurasi ${bulat(p.tekelAkurasi,0)}%`],
+    ['🧤','Sarung Tangan Emas', p=>p.lagaGK > 0, p=>p.csGK*1000 + p.save/p.lagaGK, p=>`${p.csGK} clean sheet`, p=>`${p.lagaGK} laga kiper · ${bulat(p.save/p.lagaGK)} save/laga`],
+    ['🏃','Paling Setia', ()=>true, p=>p.main, p=>`${p.main} laga`, p=>`win rate ${bulat(p.winRate,0)}%`],
+  ];
+  const ISENG = [
+    ['🥄','Sendok Kayu', cukup, p=>-p.ratingKor, p=>bulat(p.ratingKor,2), p=>`rating terendah · ${p.main} laga`],
+    ['🎯','Tukang Tembak Bebas', p=>p.tembakan >= 5, p=>(p.tembakan - p.gol) * 100 - (p.konversi||0), p=>`${p.tembakan - p.gol} tembakan meleset`, p=>`${p.gol} gol dari ${p.tembakan} tembakan`],
+    ['🍀','Jimat Keberuntungan', cukup, p=>p.winRate*100 + p.main, p=>`${bulat(p.winRate,0)}% menang`, p=>`${p.m}M ${p.s}S ${p.k}K`],
+    ['🟥','Si Emosian', p=>p.merah > 0, p=>p.merah, p=>`${p.merah} kartu merah`, p=>`${p.main} laga`],
+  ];
+  const kartu = ([ikon, judul, saring, urut, teks, ket]) => {
+    const top = P.filter(saring).sort((a,b)=>urut(b)-urut(a)).slice(0,3);
+    if(!top.length) return '';
+    const [j, ...sisa] = top, foto = fotoPemain(j.nama);
+    return `<div class="award-kartu">
+      <div class="aw-atas"><span class="aw-ikon">${ikon}</span><span class="aw-judul">${judul}</span></div>
+      <div class="aw-juara">${foto ? `<img src="/${foto.replace(/^\//,'')}" alt="" loading="lazy">` : ''}<div><b>${escapeHtml(j.nama)}</b><strong>${teks(j)}</strong><i>${ket(j)}</i></div></div>
+      ${sisa.length ? `<div class="aw-sisa">${sisa.map((p,i)=>`<span>${['🥈','🥉'][i]} ${escapeHtml(p.nama)} · ${teks(p)}</span>`).join('')}</div>` : ''}
+    </div>`;
+  };
+  let html = `<div class="kontrol-sortir"><label>Periode:</label><select id="anPeriode">
+      <option value="semua"${ANALISIS.periode === 'semua' ? ' selected' : ''}>Semua laga tersimpan</option>
+      ${bulan.map(b=>`<option value="${b}"${ANALISIS.periode === b ? ' selected' : ''}>${namaBulan(b)}</option>`).join('')}
+    </select><span class="an-jumlah">${L.length} laga · min. ${minMain} laga untuk kategori rata-rata</span></div>`;
+  html += `<div class="grid-award">${AWARD.map(kartu).join('')}</div>`;
+  html += `<details class="award-iseng"><summary>😈 Penghargaan iseng</summary><div class="grid-award">${ISENG.map(kartu).join('')}</div></details>`;
+  html += `<p class="catatan-rekor">"Rating disetarakan" = rating EA dikoreksi per posisi yang dimainkan, supaya kiper & bek tidak dirugikan. Kategori rata-rata hanya untuk pemain yang main minimal ${minMain} laga di periode ini.</p>`;
+  return html;
+}
+
+function pasangAnalisis(main){
+  const ulang = () => { const y = window.scrollY; render(); window.scrollTo(0, y); };
+  main.querySelectorAll('.tab-analisis button').forEach(b=>b.addEventListener('click', ()=>{ ANALISIS.tab = b.dataset.tab; ulang(); }));
+  const ikat = (id, kunci, angka) => document.getElementById(id)?.addEventListener('change', e=>{ ANALISIS[kunci] = angka ? +e.target.value : e.target.value; ulang(); });
+  document.getElementById('anJenis')?.addEventListener('change', e=>{ ANALISIS.jenis = e.target.value; ANALISIS.sesi = 0; ulang(); }); ikat('anA', 'a'); ikat('anB', 'b'); ikat('anRentang', 'rentangH2h');
+  ikat('anSesi', 'sesi', true); ikat('anPeriode', 'periode');
+}
 
 /* ══════════════════════════════════════════════════════════
    5a. REKOR — dihitung dari semua laga (data EA + arsip permanen)
