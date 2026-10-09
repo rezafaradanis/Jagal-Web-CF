@@ -8,6 +8,11 @@ export const KUNCI_REKAP = 'rekap-terkirim';
 export const KUNCI_DATA_LAPTOP = 'data-laptop';
 export const MAKS_ID_DIINGAT = 300;
 export const KUNCI_ARSIP = 'arsip-laga';
+// Pemain resmi JAGAL (sama dengan CONFIG.roster di index.html). Rekap mingguan hanya
+// menghitung mereka di tabel & penghargaan pemain. Kosongkan [] untuk semua pemain.
+export const ROSTER = ['Doubleh5435', 'Kngsmn21', 'MyBabyGee', 'KeenArok', 'abuuzayd', 'driftking696911', 'N0oootz', 'critze07', 'fhmdayat', 'Yurdyyy', 'Pumba_brs', 'LeoAwinz', 'revaganteng', 'Dlyvaganza', 'tyhalli', 'Ersya_Rz', 'N3RDGEEKY', 'Bleweh29', 'mekitem13'];
+const SET_ROSTER = new Set(ROSTER.map((n) => n.toLowerCase()));
+export const diRoster = (nama) => !SET_ROSTER.size || SET_ROSTER.has(String(nama || '').toLowerCase().replace(/[\s\u200b-\u200f\u2060\ufeff]/g, ''));
 
 /* ── ARSIP LAGA PERMANEN ──
    EA hanya membagikan ±10 laga terakhir per jenis laga. Setiap laga yang pernah
@@ -338,6 +343,7 @@ export async function dataMingguan(env, minggu) {
     if (a > b) m++; else if (a < b) k++; else s++;
     for (const pl of Object.values(mm.players?.[KLUB_ID] || {})) {
       const nama = pl.playername || 'Pemain';
+      if (!diRoster(nama)) continue;
       const p = (pemain[nama.toLowerCase()] ??= { nama, main: 0, gol: 0, assist: 0, motm: 0, totalRating: 0 });
       p.main++; p.gol += +pl.goals || 0; p.assist += +pl.assists || 0;
       p.motm += String(pl.mom) === '1' ? 1 : 0; p.totalRating += +pl.rating || 0;

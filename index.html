@@ -741,6 +741,10 @@
 const CONFIG = {
   club: { id: '438867', nama: 'JAGAL', platform: 'common-gen5' },
   proxy: '/api/ea',
+  // Pemain resmi JAGAL (nama EA, besar-kecil huruf bebas). Hanya mereka yang tampil di Skuad,
+  // Statistik, Analisis, Rekor, Player of the Season & Kompetisi. Pemain lain (tamu/pinjaman)
+  // tetap tercatat di detail tiap laga, tapi tidak ikut dihitung. Kosongkan [] untuk menampilkan semua.
+  roster: ['Doubleh5435', 'Kngsmn21', 'MyBabyGee', 'KeenArok', 'abuuzayd', 'driftking696911', 'N0oootz', 'critze07', 'fhmdayat', 'Yurdyyy', 'Pumba_brs', 'LeoAwinz', 'revaganteng', 'Dlyvaganza', 'tyhalli', 'Ersya_Rz', 'N3RDGEEKY', 'Bleweh29', 'mekitem13'],
   discordInvite: 'https://discord.gg/tvSBTcgcN',
   instagram: 'https://www.instagram.com/jagalesport24',
   streamers: [
@@ -919,7 +923,7 @@ async function tarikDataEA(){
   hasil.sort((x,y)=>y.ts-x.ts);
 
   if(!squad.length && !hasil.length) return null;
-  return { squad, totals, hasil, divisi };
+  return { squad: squad.filter(p=>diRoster(p.nama)), totals, hasil, divisi };
 }
 
 const LABEL_TIPE_LAGA = { leagueMatch:'Liga', playoffMatch:'Playoff', friendlyMatch:'Friendly' };
@@ -2103,11 +2107,19 @@ function lagaDenganPemain(laga, kunci){
 }
 
 // Total & rata-rata per pemain dari sekumpulan laga (urut baru → lama, nama terbaru dipakai).
+// Nama dinormalisasi: huruf kecil, tanpa spasi/karakter tak terlihat.
+const kunciRoster = n => String(n||'').toLowerCase().replace(/[\s\u200b-\u200f\u2060\ufeff]/g, '');
+let SET_ROSTER = null;
+function diRoster(nama){
+  SET_ROSTER ??= new Set((CONFIG.roster||[]).map(kunciRoster));
+  return !SET_ROSTER.size || SET_ROSTER.has(kunciRoster(nama));
+}
 function agregatPemain(laga){
   const kor = koreksiPosisi();
   const peta = new Map();
   for(const m of laga){
     for(const pl of m.detail){
+      if(!diRoster(pl.nama)) continue;
       const k = pl.nama.toLowerCase();
       let p = peta.get(k);
       if(!p){
@@ -2569,7 +2581,7 @@ function hitungRekor(hasil){
 
   // Rekor pemain dalam satu laga
   const semuaPemain = [];
-  urut.forEach(m=>(m.detail||[]).forEach(pl=>semuaPemain.push({ ...pl, laga:m })));
+  urut.forEach(m=>(m.detail||[]).forEach(pl=>{ if(diRoster(pl.nama)) semuaPemain.push({ ...pl, laga:m }); }));
   const ratingTertinggi = pilih(semuaPemain, p=>p.rating);
   const golPemain = pilih(semuaPemain, p=>p.gol*100 + p.rating);
   const assistPemain = pilih(semuaPemain, p=>p.assist*100 + p.rating);
@@ -2859,6 +2871,7 @@ function olahKompetisi(k){
   // Statistik pemain JAGAL di kompetisi ini
   const pemain = new Map();
   lagaJagal.forEach(m=>(m.detail||[]).forEach(d=>{
+    if(!diRoster(d.nama)) return;
     const kk = d.nama.toLowerCase();
     const p = pemain.get(kk) || { nama:d.nama, main:0, gol:0, assist:0, motm:0, totRating:0, nRating:0 };
     p.main++; p.gol += d.gol||0; p.assist += d.assist||0; if(d.mom) p.motm++;
