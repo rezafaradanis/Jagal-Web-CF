@@ -32,21 +32,90 @@ export function ringkasLaga(mm, tipe) {
   }
   return { matchId: String(mm.matchId), timestamp: mm.timestamp, _tipe: tipe || mm._tipe || '', clubs, players };
 }
+/* Penyimpanan arsip (v3) — dipecah per bulan supaya tidak menjadi satu nilai raksasa:
+     'arsip-indeks'          → { v:3, mulai, bulan:{ 'YYYY-MM': jumlah }, idBulan:{ matchId:'YYYY-MM' }, tanpaPemain:[ids] }
+     'arsip-laga-YYYY-MM'    → { laga:{ matchId: laga } }
+   Arsip lama ('arsip-laga', satu nilai) otomatis dipindah sekali saat indeks belum ada;
+   kuncinya tidak dihapus (cadangan). Bulan dihitung dalam WIB. */
+export const KUNCI_INDEKS_ARSIP = 'arsip-indeks';
+const kunciBulan = (b) => `arsip-laga-${b}`;
+export const bulanLaga = (mm) => new Date((+mm.timestamp || 0) * 1000 + 7 * 3600 * 1000).toISOString().slice(0, 7);
+
+// pindahkan=true hanya dari jalur tulis (kiriman laptop), supaya pemindahan sekali jalan
+// tidak dilakukan bersamaan oleh banyak pengunjung. Jalur baca memakai arsip lama apa adanya.
+export async function bacaIndeksArsip(env, pindahkan = false) {
+  const idx = await env.JAGAL_KV.get(KUNCI_INDEKS_ARSIP, { type: 'json' });
+  if (idx) return idx;
+  const lama = await env.JAGAL_KV.get(KUNCI_ARSIP, { type: 'json' });
+  const baru = { v: 3, mulai: lama?.mulai || null, bulan: {}, idBulan: {}, tanpaPemain: [] };
+  if (!lama?.laga || !Object.keys(lama.laga).length) return baru;
+  if (!pindahkan) {
+    // Belum dipindah: sajikan arsip lama dari memori.
+    for (const [id, mm] of Object.entries(lama.laga)) { const b = bulanLaga(mm); baru.idBulan[id] = b; baru.bulan[b] = (baru.bulan[b] || 0) + 1; }
+    baru._lama = lama.laga;
+    return baru;
+  }
+  const perBulan = {};
+  for (const [id, mm] of Object.entries(lama.laga)) {
+    const b = bulanLaga(mm);
+    (perBulan[b] ??= {})[id] = mm;
+    baru.idBulan[id] = b;
+    if (!Object.keys(mm.players || {}).length) baru.tanpaPemain.push(id);
+  }
+  for (const [b, laga] of Object.entries(perBulan)) {
+    await env.JAGAL_KV.put(kunciBulan(b), JSON.stringify({ laga }));
+    baru.bulan[b] = Object.keys(laga).length;
+  }
+  await env.JAGAL_KV.put(KUNCI_INDEKS_ARSIP, JSON.stringify(baru));
+  return baru;
+}
+async function bacaBulan(env, b, idx) {
+  if (idx?._lama) return { laga: Object.fromEntries(Object.entries(idx._lama).filter(([, mm]) => bulanLaga(mm) === b)) };
+  return (await env.JAGAL_KV.get(kunciBulan(b), { type: 'json' })) || { laga: {} };
+}
+// Semua laga di arsip (opsional: hanya bulan tertentu). Satu baca KV per bulan.
+export async function bacaLagaArsip(env, daftarBulan = null) {
+  const idx = await bacaIndeksArsip(env);
+  const bulan = (daftarBulan || Object.keys(idx.bulan || {})).filter((b) => idx.bulan?.[b]);
+  const isi = await Promise.all(bulan.map((b) => bacaBulan(env, b, idx)));
+  return { indeks: idx, laga: isi.flatMap((x) => Object.values(x.laga || {})) };
+}
+export async function cariArsip(env, matchId) {
+  const idx = await bacaIndeksArsip(env);
+  const b = idx.idBulan?.[String(matchId)];
+  if (!b) return null;
+  return (await bacaBulan(env, b, idx)).laga?.[String(matchId)] || null;
+}
+
 // daftar: [{ mm, tipe }] — hanya menulis KV kalau ada laga baru (hemat kuota tulis).
 export async function perbaruiArsip(env, daftar) {
-  const arsip = (await env.JAGAL_KV.get(KUNCI_ARSIP, { type: 'json' })) || { mulai: new Date().toISOString(), laga: {} };
-  let baru = 0;
+  const idx = await bacaIndeksArsip(env, true);
+  if (!idx.mulai) idx.mulai = new Date().toISOString();
+  const tanpa = new Set(idx.tanpaPemain || []);
+  const ubah = {}; // bulan → daftar laga baru
   for (const { mm, tipe } of daftar) {
     const id = String(mm?.matchId || '');
     if (!id || !mm.clubs?.[KLUB_ID]) continue;
-    const lama = arsip.laga[id];
+    const adaPemain = Object.keys(mm.players || {}).length > 0;
     // Simpan kalau belum ada, atau kalau versi lama belum punya data pemain.
-    if (!lama || (!Object.keys(lama.players || {}).length && Object.keys(mm.players || {}).length)) {
-      arsip.laga[id] = ringkasLaga(mm, tipe); baru++;
-    }
+    if (idx.idBulan[id] && !(tanpa.has(id) && adaPemain)) continue;
+    const b = idx.idBulan[id] || bulanLaga(mm);
+    (ubah[b] ??= []).push([id, ringkasLaga(mm, tipe)]);
+    idx.idBulan[id] = b;
+    if (adaPemain) tanpa.delete(id); else tanpa.add(id);
   }
-  if (baru) await env.JAGAL_KV.put(KUNCI_ARSIP, JSON.stringify(arsip));
-  return { baru, total: Object.keys(arsip.laga).length };
+  let baru = 0;
+  for (const [b, daftarBaru] of Object.entries(ubah)) {
+    const isi = await bacaBulan(env, b);
+    for (const [id, mm] of daftarBaru) { isi.laga[id] = mm; baru++; }
+    idx.bulan[b] = Object.keys(isi.laga).length;
+    await env.JAGAL_KV.put(kunciBulan(b), JSON.stringify(isi));
+  }
+  if (baru) {
+    idx.tanpaPemain = [...tanpa];
+    await env.JAGAL_KV.put(KUNCI_INDEKS_ARSIP, JSON.stringify(idx));
+  }
+  return { baru, total: Object.keys(idx.idBulan).length };
 }
 
 // Nama pemain di EA (huruf kecil) → Discord User ID. Yang tidak terdaftar ditulis nama EA-nya.
@@ -135,7 +204,7 @@ export async function kirimKeDiscord(webhook, mm) {
     allowed_mentions: { users: idMain },
     embeds: [{
       title: `${emoji} ${hasil} — JAGAL VFC ${golKami} – ${golLawan} ${namaLawan}`,
-      description: `**${LABEL_TIPE[mm._tipe] || 'Pro Clubs'}** · ${tanggal.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' })}`,
+      description: `**${LABEL_TIPE[mm._tipe] || 'Pro Clubs'}** · ${tanggal.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' })} · ${tanggal.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Jakarta' }).replace('.', ':')} WIB`,
       color: warna,
       fields,
       footer: { text: 'JAGAL VFC · EA SPORTS FC 27 Pro Clubs · jagal.fun' },
@@ -209,8 +278,7 @@ export async function cariLaga(env, matchId) {
     if (mm) return { ...mm, _tipe: tipe };
   }
   // Tidak ada di data terbaru → cari di arsip permanen.
-  const arsip = await env.JAGAL_KV.get(KUNCI_ARSIP, { type: 'json' });
-  return arsip?.laga?.[String(matchId)] || null;
+  return cariArsip(env, matchId);
 }
 
 export async function bacaCatatan(env) {
@@ -254,9 +322,11 @@ export function rentangMinggu(minggu) {
 }
 
 export async function dataMingguan(env, minggu) {
-  const arsip = (await env.JAGAL_KV.get(KUNCI_ARSIP, { type: 'json' })) || { laga: {} };
   const [awal, akhir] = rentangMinggu(minggu);
-  const laga = Object.values(arsip.laga || {})
+  // Hanya bulan yang tercakup minggu ini (1 atau 2 bulan).
+  const bulan = [...new Set([awal, akhir - 1].map((ms) => new Date(ms + WIB_MS).toISOString().slice(0, 7)))];
+  const { laga: semua } = await bacaLagaArsip(env, bulan);
+  const laga = semua
     .filter((m) => m.timestamp * 1000 >= awal && m.timestamp * 1000 < akhir && m.clubs?.[KLUB_ID])
     .sort((a, b) => a.timestamp - b.timestamp);
   const pemain = {};
@@ -287,11 +357,12 @@ export async function mingguPerluDikirim(env) {
   const mingguLalu = new Date(Date.parse(seninIni + 'T00:00:00Z') - 7 * HARI_MS).toISOString().slice(0, 10);
   const catatan = (await env.JAGAL_KV.get(KUNCI_MINGGUAN, { type: 'json' })) || {};
   if (catatan.terakhir && catatan.terakhir >= mingguLalu) return null;
-  const arsip = await env.JAGAL_KV.get(KUNCI_ARSIP, { type: 'json' });
+  const idx = await bacaIndeksArsip(env);
   const [, akhirLalu] = rentangMinggu(mingguLalu);
-  if (!arsip?.mulai || Date.parse(arsip.mulai) > akhirLalu) return null;
+  if (!idx?.mulai || Date.parse(idx.mulai) > akhirLalu) return null;
   const d = await dataMingguan(env, mingguLalu);
-  if (!d.laga.length) return null;
+  // Minggu tanpa laga: tandai selesai supaya tidak dicek ulang setiap 10 menit.
+  if (!d.laga.length) { await tandaiMingguan(env, mingguLalu); return null; }
   return { minggu: mingguLalu, tinggi: tinggiMingguan(d) };
 }
 export async function tandaiMingguan(env, minggu) {

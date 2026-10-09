@@ -23,13 +23,46 @@ const BATAS_MS = 8000;
 const LAPTOP_SEGAR_MS = 30 * 60 * 1000;
 const CACHE_EA_DETIK = 180;
 const KUNCI_DATA_LAPTOP = 'data-laptop';
+const CACHE_SIAP_DETIK = 60; // data laptop di-cache 60 detik → 1 baca KV per menit, bukan per pengunjung
+const KLUB_ID = '438867';
+const PLATFORM = 'common-gen5';
+const NAMA_KLUB = 'JAGAL';
+const TIPE_LAGA = ['leagueMatch', 'playoffMatch', 'friendlyMatch'];
+// Jalur EA yang boleh, beserta parameter yang wajib cocok.
+const JALUR_IZIN = {
+  'members/stats': (q) => q.get('clubId') === KLUB_ID,
+  'allTimeLeaderboard/search': (q) => (q.get('clubName') || '').toUpperCase() === NAMA_KLUB,
+  'clubs/matches': (q) => q.get('clubIds') === KLUB_ID && TIPE_LAGA.includes(q.get('matchType'))
+    && (!q.get('maxResultCount') || +q.get('maxResultCount') <= 50),
+};
+
+function cekIzin(jalur, q) {
+  const cek = JALUR_IZIN[jalur];
+  if (!cek) return 'Jalur EA ini tidak dilayani.';
+  if (q.get('platform') !== PLATFORM) return 'Platform tidak dilayani.';
+  const boleh = new Set(['platform', 'clubId', 'clubIds', 'clubName', 'matchType', 'maxResultCount', '_']);
+  for (const k of q.keys()) if (!boleh.has(k)) return `Parameter "${k}" tidak dilayani.`;
+  if (!cek(q)) return 'Hanya data klub JAGAL VFC yang dilayani.';
+  return null;
+}
 
 export async function onRequestGet({ request, params, env, waitUntil }) {
   const masuk = new URL(request.url);
   const jalur = (Array.isArray(params.path) ? params.path.join('/') : String(params.path || '')).replace(/^\/+/, '');
   if (!jalur) return balas(400, { galat: 'Jalur EA tidak disebutkan.' });
 
+  // Hanya jalur & klub yang dipakai situs ini. Mencegah /api/ea dipakai orang lain
+  // sebagai proxy EA gratis (yang menghabiskan kuota Cloudflare).
+  const izin = cekIzin(jalur, masuk.searchParams);
+  if (izin) return balas(403, { galat: izin });
+
   const kunci = buatKunciCache(jalur, masuk.search);
+
+  // 0) Cache API: balasan siap pakai beberapa puluh detik terakhir (hemat baca KV).
+  const cache = caches.default;
+  const kunciSiap = new Request(`https://cache.jagal.internal/siap/${kunci}`);
+  const siap = await cache.match(kunciSiap);
+  if (siap) return siap;
 
   // 1) Data kiriman laptop
   let laptop = null;
@@ -41,11 +74,13 @@ export async function onRequestGet({ request, params, env, waitUntil }) {
     console.error('Gagal baca KV —', e.message);
   }
   if (laptop && Date.now() - laptop.waktu < LAPTOP_SEGAR_MS) {
-    return jsonDariTeks(laptop.teks, { 'X-Sumber-Cache': 'laptop', 'X-Data-Waktu': String(laptop.waktu) });
+    const res = jsonDariTeks(laptop.teks, { 'X-Sumber-Cache': 'laptop', 'X-Data-Waktu': String(laptop.waktu),
+      'Cache-Control': `public, max-age=${CACHE_SIAP_DETIK}` });
+    waitUntil(cache.put(kunciSiap, res.clone()));
+    return res;
   }
 
   // 2) Cache API (hasil ambil langsung dari EA beberapa menit terakhir)
-  const cache = caches.default;
   const kunciCache = new Request(`https://cache.jagal.internal/${kunci}`);
   const tersimpan = await cache.match(kunciCache);
   if (tersimpan) return tersimpan;

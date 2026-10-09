@@ -9,7 +9,7 @@
  * GET /api/arsip?id=XXX   → satu laga LENGKAP (dipakai saat laga lama diklik di situs).
  * Keduanya disimpan sebentar di cache Cloudflare supaya hemat kuota baca KV.
  */
-import { KUNCI_ARSIP, KLUB_ID } from './_rekap.js';
+import { KLUB_ID, bacaLagaArsip, cariArsip } from './_rekap.js';
 
 const KOLOM_PEMAIN = ['nama', 'pos', 'arch', 'gol', 'assist', 'tembakan', 'passSukses', 'passCoba',
   'tekel', 'tekelCoba', 'save', 'kebobolan', 'merah', 'rating10', 'mom'];
@@ -21,15 +21,16 @@ export async function onRequestGet({ request, env, waitUntil }) {
   const tersimpan = await cache.match(kunci);
   if (tersimpan) return tersimpan;
 
-  const arsip = env.JAGAL_KV ? await env.JAGAL_KV.get(KUNCI_ARSIP, { type: 'json' }) : null;
+  if (!env.JAGAL_KV) return new Response(JSON.stringify({ galat: 'KV belum dipasang.' }), { status: 500, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
   let isi, detik;
   if (id) {
-    const mm = arsip?.laga?.[id];
+    const mm = await cariArsip(env, id);
     if (!mm) return new Response(JSON.stringify({ galat: 'Laga tidak ada di arsip.' }), { status: 404, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
     isi = mm; detik = 3600; // detail laga lama tidak berubah
   } else {
-    const laga = Object.values(arsip?.laga || {}).sort((a, b) => b.timestamp - a.timestamp).map(ringkas).filter(Boolean);
-    isi = { v: 2, mulai: arsip?.mulai || null, kolom: KOLOM_PEMAIN, laga };
+    const { indeks, laga: semua } = await bacaLagaArsip(env);
+    const laga = semua.sort((a, b) => b.timestamp - a.timestamp).map(ringkas).filter(Boolean);
+    isi = { v: 2, mulai: indeks?.mulai || null, kolom: KOLOM_PEMAIN, laga };
     detik = 120;
   }
   const res = new Response(JSON.stringify(isi), {

@@ -61,6 +61,20 @@
     transition:color .15s, background .15s;}
   nav button:hover{color:var(--teks);background:rgba(255,255,255,.06);}
   nav button.aktif{color:#fff;background:var(--merah);}
+  nav button{min-height:40px;}
+  /* Fokus keyboard terlihat jelas */
+  :focus-visible{outline:2px solid #ff4d63;outline-offset:2px;}
+  [role="button"]{cursor:pointer;}
+  @media (max-width:760px){
+    .bar{flex-direction:column;align-items:stretch;gap:6px;padding:10px 0 8px;}
+    .logo{padding:0 16px;font-size:18px;}
+    .logo img{height:30px;}
+    nav{flex-wrap:nowrap;overflow-x:auto;gap:4px;padding:0 12px 2px;scrollbar-width:none;
+      -webkit-overflow-scrolling:touch;scroll-padding:0 40px;
+      -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent);}
+    nav::-webkit-scrollbar{display:none;}
+    nav button{flex:0 0 auto;padding:10px 14px;min-height:42px;}
+  }
 
   /* Hero strip — panel jersey, di atas tiap halaman */
   .hero-strip{position:relative;height:130px;overflow:hidden;border-bottom:1px solid var(--garis-lembut);}
@@ -469,7 +483,7 @@
     border:1px solid rgba(224,38,60,.3);border-radius:20px;
     box-shadow:0 24px 60px rgba(0,0,0,.55);animation:modalMasuk .2s ease;}
   @keyframes modalMasuk{from{opacity:0;transform:translateY(10px) scale(.98);}to{opacity:1;transform:none;}}
-  .modal-tutup{position:absolute;top:14px;right:14px;width:32px;height:32px;border-radius:50%;
+  .modal-tutup{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;
     background:rgba(255,255,255,.08);border:none;color:var(--teks);font-size:18px;cursor:pointer;
     display:flex;align-items:center;justify-content:center;transition:background .15s;z-index:2;}
   .modal-tutup:hover{background:rgba(255,255,255,.16);}
@@ -673,7 +687,7 @@
 <header>
   <div class="bar">
     <div class="logo"><img src="/ikon/logo.png" alt="Logo JAGAL VFC">JAGAL <span>VFC</span></div>
-    <nav id="nav"></nav>
+    <nav id="nav" aria-label="Menu utama"></nav>
   </div>
 </header>
 
@@ -686,7 +700,7 @@
 <div class="jersey-lightbox" id="jerseyLightbox"><img src="" alt="Jersey JAGAL VFC diperbesar"></div>
 
 <div class="modal-overlay" id="modalPemain">
-  <div class="modal-pemain" id="modalPemainIsi"></div>
+  <div class="modal-pemain" id="modalPemainIsi" role="dialog" aria-modal="true" aria-label="Profil pemain" tabindex="-1"></div>
 </div>
 
 <footer>JAGAL VFC — EA SPORTS FC 27 Pro Clubs · Club #438867 · common-gen5</footer>
@@ -796,6 +810,12 @@ async function tarikDataEA(){
   const { id, platform, nama } = CONFIG.club;
   if(!id) return null;
 
+  // Semua permintaan dimulai bersamaan (bukan satu per satu) supaya data tampil lebih cepat.
+  const TIPE_LAGA = ['leagueMatch','playoffMatch','friendlyMatch'];
+  const janjiLaga = TIPE_LAGA.map(tipe =>
+    eaGet(`/clubs/matches?matchType=${tipe}&platform=${platform}&clubIds=${id}&maxResultCount=50`).catch(()=>null));
+  const janjiArsip = fetch('/api/arsip').then(r=>r.ok ? r.json() : null).catch(()=>null);
+
   const [membersRaw, overallRaw, divisiRaw] = await Promise.all([
     eaGet(`/members/stats?platform=${platform}&clubId=${id}`),
     eaGet(`/allTimeLeaderboard/search?platform=${platform}&clubName=${encodeURIComponent(nama)}`).catch(()=>null),
@@ -850,21 +870,13 @@ async function tarikDataEA(){
   // Sumber laga: data EA terbaru (EA hanya memberi ±10 laga terakhir per jenis) + arsip permanen di server kita.
   // Laga yang sama (matchId sama) hanya dihitung sekali; versi EA diutamakan.
   const sumberLaga = [];
-  for(const tipe of ['leagueMatch','playoffMatch','friendlyMatch']){
-    try{
-      const mt = await eaGet(`/clubs/matches?matchType=${tipe}&platform=${platform}&clubIds=${id}&maxResultCount=50`);
-      (mt||[]).forEach(mm=>sumberLaga.push([mm, tipe]));
-    }catch(e){ /* opsional */ }
+  const [hasilLaga, ar] = await Promise.all([Promise.all(janjiLaga), janjiArsip]);
+  hasilLaga.forEach((mt, i)=> (mt||[]).forEach(mm=>sumberLaga.push([mm, TIPE_LAGA[i]])));
+  if(ar){
+    ARSIP_MULAI = ar.mulai || null;
+    // Format ringkas (v2): array per laga → diubah ke bentuk data EA supaya parser sama.
+    (ar.laga||[]).forEach(x=> Array.isArray(x) ? sumberLaga.push([dariArsipRingkas(x, id), x[2]]) : sumberLaga.push([x, x._tipe]));
   }
-  try{
-    const r = await fetch('/api/arsip');
-    if(r.ok){
-      const ar = await r.json();
-      ARSIP_MULAI = ar.mulai || null;
-      // Format ringkas (v2): array per laga → diubah ke bentuk data EA supaya parser sama.
-      (ar.laga||[]).forEach(x=> Array.isArray(x) ? sumberLaga.push([dariArsipRingkas(x, id), x[2]]) : sumberLaga.push([x, x._tipe]));
-    }
-  }catch(e){ /* arsip opsional */ }
 
   const sudahDilihat = new Set();
   let hasil = [];
@@ -898,7 +910,7 @@ function bentukLaga(mm, tipe, id, LABEL = LABEL_TIPE_LAGA){
     tipeAsli: tipe,
     ringkas: !!mm._ringkas, // dari arsip ringkas: pemain lawan diambil saat laga diklik
     ts: mm.timestamp*1000,
-    tgl: new Date(mm.timestamp*1000).toISOString().slice(0,10),
+    tgl: waktuLagaWIB(mm.timestamp*1000),
     lawan: lawan.details?.name || 'Lawan',
     golKami: a, golLawan: b,
     skor: `${a} – ${b}`,
@@ -1330,11 +1342,11 @@ const FOTO_PEMAIN = {
   'leoawinz': 'aset/leoawinz-card.webp',
   'latern7': 'aset/latern7-card.webp',
   'critze07': 'aset/critze07-card.webp',
-  'yurdyyy': 'aset/yurdyyy-card.webp.png',
-  'n3rdgeeky': 'aset/n3rdgeeky-card.webp.png',
-  'pumba_brs': 'aset/pumba_brs-card.png',
-  'driftking696911': 'aset/driftking696911-card.png',
-  'fhmdayat': 'aset/fhmdayat-card.png',
+  'yurdyyy': 'aset/yurdyyy-card.webp',
+  'n3rdgeeky': 'aset/n3rdgeeky-card.webp',
+  'pumba_brs': 'aset/pumba_brs-card.webp',
+  'driftking696911': 'aset/driftking696911-card.webp',
+  'fhmdayat': 'aset/fhmdayat-card.webp',
 };
 function fotoPemain(nama){
   return FOTO_PEMAIN[(nama||'').trim().toLowerCase()] || null;
@@ -1490,6 +1502,13 @@ function umurTeks(ms){
   if(jam < 48) return `${jam} jam lalu`;
   return `${Math.floor(jam / 24)} hari lalu`;
 }
+// Tanggal + jam laga dalam WIB, mis. "Kam, 9 Okt 2026 · 20:57 WIB".
+function waktuLagaWIB(ms){
+  const d = new Date(ms);
+  const tgl = d.toLocaleDateString('id-ID', { weekday:'short', day:'numeric', month:'short', year:'numeric', timeZone:'Asia/Jakarta' });
+  const jam = d.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Jakarta' }).replace('.', ':');
+  return `${tgl} · ${jam} WIB`;
+}
 function formatWaktuWIB(ms, denganTanggal){
   const opsi = { hour:'2-digit', minute:'2-digit', timeZone:'Asia/Jakarta' };
   if(denganTanggal){ opsi.day = 'numeric'; opsi.month = 'short'; }
@@ -1522,7 +1541,13 @@ function render(){
   const h = HALAMAN[jalur] || HALAMAN['/'];
   document.title = `${h.judul} — JAGAL`;
   document.querySelectorAll('#nav button').forEach(b=>{
-    b.classList.toggle('aktif', b.dataset.jalur === jalur || (jalur==='/'&&b.dataset.jalur==='/'));
+    const aktif = b.dataset.jalur === jalur || (jalur==='/'&&b.dataset.jalur==='/');
+    b.classList.toggle('aktif', aktif);
+    if(aktif){ b.setAttribute('aria-current', 'page'); } else { b.removeAttribute('aria-current'); }
+    if(aktif && innerWidth <= 760){
+      const nav = b.parentElement;
+      nav.scrollTo({ left: b.offsetLeft - (nav.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
+    }
   });
 
   const main = document.getElementById('main');
@@ -1895,6 +1920,7 @@ function render(){
   }
 
   main.innerHTML = isi;
+  bisaKeyboard(main);
 
   if(h.hal === 'jersey'){
     const kotak = document.getElementById('jerseyLightbox');
@@ -2444,13 +2470,16 @@ function tampilPenghargaan(laga){
     ['🅰️','Raja Assist', p=>p.assist > 0, p=>p.assist*1000 - p.main, p=>`${p.assist} assist`, p=>`${p.main} laga`],
     ['🔥','Kontribusi Gol', p=>cukup(p) && p.gol + p.assist > 0, p=>(p.gol+p.assist)/p.main, p=>`${bulat((p.gol+p.assist)/p.main,2)}/laga`, p=>`${p.gol}G ${p.assist}A dari ${p.main} laga`],
     ['⭐','Raja MOTM', p=>p.motm > 0, p=>p.motm*1000 - p.main, p=>`${p.motm}× MOTM`, p=>`${p.main} laga`],
-    ['🧠','Maestro Passing', p=>cukup(p) && p.passCoba >= 10 * minMain, p=>p.passAkurasi, p=>`${bulat(p.passAkurasi,0)}%`, p=>`${p.passSukses}/${p.passCoba} pass`],
+    // Mode EA: EA hanya memberi jumlah pass sukses + persentase (tanpa jumlah percobaan),
+    // jadi yang ditampilkan pass sukses saja. Mode arsip: sukses/percobaan dari arsip.
+    ['🧠','Maestro Passing', p=>cukup(p) && p.passAkurasi != null && (modeEA ? p.passSukses >= 8 * minMain : p.passCoba >= 10 * minMain),
+      p=>p.passAkurasi, p=>`${bulat(p.passAkurasi,0)}%`, p=>modeEA ? `${p.passSukses} pass sukses · ${p.main} laga` : `${p.passSukses}/${p.passCoba} pass`],
     ['🛡️','Tembok', p=>cukup(p) && p.tekel > 0, p=>p.tekel/p.main, p=>`${bulat(p.tekel/p.main)} tekel/laga`, p=>`akurasi ${bulat(p.tekelAkurasi,0)}%`],
     ['🧤','Sarung Tangan Emas', p=>modeEA ? p.csGK > 0 : p.lagaGK > 0, p=>p.csGK*1000 + (p.lagaGK ? p.save/p.lagaGK : 0), p=>`${p.csGK} clean sheet`, p=>p.lagaGK ? `${p.lagaGK} laga kiper (arsip) · ${bulat(p.save/p.lagaGK)} save/laga` : `${p.main} laga`],
     ['🏃','Paling Setia', ()=>true, p=>p.main, p=>`${p.main} laga`, p=>`win rate ${bulat(p.winRate,0)}%`],
   ];
   const ISENG = [
-    ['🥄','Sendok Kayu', cukup, p=>-p.ratingKor, p=>bulat(p.ratingKor,2), p=>`rating terendah · ${p.main} laga`],
+    ['🥄','Sendok Kayu', p=>cukup(p) && p.ratingKor > 0, p=>-p.ratingKor, p=>bulat(p.ratingKor,2), p=>`rating terendah · ${p.main} laga`],
     ['🎯','Tukang Tembak Bebas' + (modeEA ? ' (arsip)' : ''), p=>p.tembakan >= 5, p=>(p.tembakan - p.gol) * 100 - (p.konversi||0), p=>`${p.tembakan - p.gol} tembakan meleset`, p=>`${p.gol} gol dari ${p.tembakan} tembakan`],
     ['🍀','Jimat Keberuntungan', cukup, p=>p.winRate*100 + p.main, p=>`${bulat(p.winRate,0)}% menang`, p=>modeEA ? `${p.main} laga` : `${p.m}M ${p.s}S ${p.k}K`],
     ['🟥','Si Emosian', p=>p.merah > 0, p=>p.merah, p=>`${p.merah} kartu merah`, p=>`${p.main} laga`],
@@ -2470,7 +2499,7 @@ function tampilPenghargaan(laga){
       ${bulan.map(b=>`<option value="${b}"${ANALISIS.periode === b ? ' selected' : ''}>${namaBulan(b)}</option>`).join('')}
     </select><span class="an-jumlah">${modeEA ? 'Total resmi EA' : `${L.length} laga tersimpan`} · min. ${minMain} laga untuk kategori rata-rata</span></div>`;
   html += `<div class="grid-award">${[AWARD[0], ...lini, ...AWARD.slice(1)].map(kartu).join('')}</div>`;
-  html += `<details class="award-iseng"><summary>😈 Penghargaan iseng</summary><div class="grid-award">${ISENG.map(kartu).join('')}</div></details>`;
+  html += `<details class="award-iseng"><summary>😈 Penghargaan iseng <small>(ketuk untuk buka)</small></summary><div class="grid-award">${ISENG.map(kartu).join('')}</div></details>`;
   html += `<p class="catatan-rekor">${modeEA
     ? 'Periode "Semua" memakai total resmi EA, sama dengan profil pemain dan halaman Skuad. Pemain Terbaik = Player of the Season di halaman Skuad. Yang bertanda (arsip) hanya dari laga yang detailnya tersimpan, karena EA tidak menyediakan angkanya. Per bulan dihitung dari laga tersimpan.'
     : '"Rating disetarakan" = rating EA dikoreksi per posisi yang dimainkan, supaya kiper & bek tidak dirugikan.'} Kategori rata-rata hanya untuk pemain yang main minimal ${minMain} laga.</p>`;
@@ -2545,7 +2574,7 @@ function hitungRekor(hasil){
 function tampilRekor(){
   const r = hitungRekor(DATA.hasil);
   if(!r) return '';
-  const tglPendek = m => new Date(m.ts).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+  const tglPendek = m => m.ts ? waktuLagaWIB(m.ts) : (m.tgl || '');
   const kartu = (judul, isi, ket) => isi ? `<div class="rekor-kartu"><span>${judul}</span><b>${isi}</b><i>${ket||''}</i></div>` : '';
   const laga = m => m ? `vs ${escapeHtml(m.lawan)} · ${tglPendek(m)}` : '';
   const labelStreak = { win:'menang', draw:'seri', loss:'kalah' };
@@ -2708,19 +2737,62 @@ function bukaModalPemain(p){
       ${p.gk ? kotakSave : grafikForm(p)}
     </div>`;
 
+  FOKUS_SEBELUM_MODAL = document.activeElement;
   overlay.classList.add('buka');
-  isi.querySelector('.modal-tutup').addEventListener('click', tutupModalPemain);
+  isi.setAttribute('aria-label', `Profil ${p.nama}`);
+  const tombolTutup = isi.querySelector('.modal-tutup');
+  tombolTutup.addEventListener('click', tutupModalPemain);
+  tombolTutup.setAttribute('aria-label', 'Tutup profil');
+  tombolTutup.focus();
 }
 
 function tutupModalPemain(){
-  document.getElementById('modalPemain').classList.remove('buka');
+  const overlay = document.getElementById('modalPemain');
+  if(!overlay.classList.contains('buka')) return;
+  overlay.classList.remove('buka');
+  if(FOKUS_SEBELUM_MODAL && document.contains(FOKUS_SEBELUM_MODAL)) FOKUS_SEBELUM_MODAL.focus();
 }
+let FOKUS_SEBELUM_MODAL = null;
+
+/* Aksesibilitas: kartu pemain, baris laga, judul kolom yang bisa disortir, poster jersey
+   → bisa dipilih dengan Tab dan dibuka dengan Enter/Spasi, plus label untuk pembaca layar. */
+const SELEKTOR_KLIK = '.shield-wrap[data-pemain], .laga.bisa-klik, th.sortir[data-kolom], .jersey-poster';
+function bisaKeyboard(akar){
+  akar.querySelectorAll(SELEKTOR_KLIK).forEach(el=>{
+    if(el.hasAttribute('tabindex')) return;
+    el.setAttribute('tabindex', '0');
+    el.setAttribute('role', 'button');
+    if(!el.getAttribute('aria-label')){
+      if(el.matches('.shield-wrap')){ const p = DATA.squad[+el.dataset.pemain]; if(p) el.setAttribute('aria-label', `Profil ${p.nama}`); }
+      else if(el.matches('.jersey-poster')) el.setAttribute('aria-label', 'Perbesar ' + (el.getAttribute('alt') || 'jersey'));
+      else if(el.matches('th')) el.setAttribute('aria-label', `Urutkan menurut ${el.textContent.trim()}`);
+      else el.setAttribute('aria-label', 'Lihat detail laga: ' + el.textContent.replace(/\s+/g, ' ').trim().slice(0, 80));
+    }
+  });
+  // Label form: hubungkan <label> dengan isian di sebelahnya.
+  akar.querySelectorAll('label').forEach((lab, i)=>{
+    if(lab.htmlFor) return;
+    const wadah = lab.parentElement;
+    const isian = lab.nextElementSibling?.matches('input,select,textarea') ? lab.nextElementSibling
+      : wadah?.querySelector('input,select,textarea');
+    if(!isian) return;
+    if(!isian.id) isian.id = 'isian-' + i + '-' + Math.random().toString(36).slice(2, 7);
+    lab.htmlFor = isian.id;
+  });
+}
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'Enter' && e.key !== ' ') return;
+  const el = e.target.closest?.(SELEKTOR_KLIK);
+  if(!el || e.target !== el) return;
+  e.preventDefault();
+  el.click();
+});
 
 document.getElementById('modalPemain').addEventListener('click', function(e){
   if(e.target === this) tutupModalPemain();
 });
 document.addEventListener('keydown', e=>{
-  if(e.key === 'Escape') tutupModalPemain();
+  if(e.key === 'Escape'){ tutupModalPemain(); document.getElementById('jerseyLightbox')?.classList.remove('buka'); }
 });
 
 function escapeHtml(s){
