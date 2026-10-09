@@ -674,6 +674,35 @@
   .aw-juara i{font-style:normal;font-size:11.5px;color:var(--redup);}
   .aw-sisa{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--redup);border-top:1px solid var(--garis-lembut);padding-top:6px;}
   .award-iseng{margin-bottom:12px;}
+  /* ── KOMPETISI ── */
+  .komp-tab{display:flex;gap:8px;overflow-x:auto;margin:0 0 18px;padding-bottom:4px;scrollbar-width:none;}
+  .komp-tab::-webkit-scrollbar{display:none;}
+  .komp-tab button{flex-shrink:0;display:flex;align-items:center;gap:8px;background:var(--bg2);color:var(--redup);
+    border:1px solid var(--garis-lembut);border-radius:10px;padding:10px 14px;min-height:44px;font-size:13px;font-weight:800;cursor:pointer;}
+  .komp-tab button.aktif{background:var(--merah);border-color:var(--merah);color:#fff;}
+  .komp-tab .titik{width:8px;height:8px;border-radius:50%;background:var(--redup);flex-shrink:0;}
+  .komp-tab .titik.berjalan{background:var(--hijau);box-shadow:0 0 6px rgba(47,191,113,.7);}
+  .komp-tab .titik.selesai{background:#777;}
+  .komp-tab .titik.mendatang{background:var(--kuning);}
+  .komp-kepala{display:flex;gap:16px;align-items:center;flex-wrap:wrap;
+    background:linear-gradient(180deg, var(--bg2-atas), transparent), var(--bg2);border:1px solid var(--garis-lembut);
+    border-radius:16px;padding:18px 20px;margin-bottom:18px;box-shadow:0 4px 16px rgba(0,0,0,.25);}
+  .komp-kepala .bendera{font-size:38px;line-height:1;}
+  .komp-kepala h2{margin:0 0 4px;font-size:21px;}
+  .komp-kepala p{margin:0;color:var(--redup);font-size:13px;}
+  .komp-status{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+    padding:3px 9px;border-radius:999px;margin-left:6px;vertical-align:middle;}
+  .komp-status.berjalan{background:rgba(47,191,113,.15);color:var(--hijau);}
+  .komp-status.mendatang{background:rgba(224,184,35,.15);color:var(--kuning);}
+  .komp-status.selesai{background:rgba(255,255,255,.08);color:var(--redup);}
+  tr.baris-jagal{background:rgba(224,38,60,.12);} tr.baris-jagal td{font-weight:800;}
+  .tbl-klasemen td.poin{font-weight:900;color:#fff;}
+  .tbl-klasemen td.klub{white-space:normal;min-width:120px;}
+  .form-mini{display:inline-flex;gap:3px;} .form-mini i{width:16px;height:16px;border-radius:4px;font-style:normal;font-size:9.5px;
+    font-weight:900;display:inline-flex;align-items:center;justify-content:center;color:#111;}
+  .form-mini i.M{background:var(--hijau);} .form-mini i.S{background:var(--kuning);} .form-mini i.K{background:var(--merah);color:#fff;}
+  .komp-catatan{font-size:12px;color:var(--redup);margin:8px 0 0;}
+  .laga.jadwal .hasil{background:#555;}
   .award-iseng summary{cursor:pointer;font-weight:800;font-size:14px;padding:10px 0;color:var(--redup);}
   @media (max-width:640px){
     .grid-catatan,.profil-atas{grid-template-columns:1fr;}
@@ -1472,7 +1501,7 @@ const HALAMAN = {
   '/analisis': { hal:'analisis',  judul:'Analisis Tim',       label:'ANALISIS',  eyebrow:'Review & Data Klub' },
   '/jersey':   { hal:'jersey',    judul:'Jersey Musim 2026/27', label:'JERSEY',  eyebrow:'Home · Away · Third' },
   '/mitra':    { hal:'mitra',     judul:'Mitra',              label:'MITRA',     eyebrow:'Kerja Sama Resmi' },
-  '/ipl':      { hal:'ipl',       judul:'Indonesia Premier League', label:'IPL', eyebrow:'Kompetisi Mendatang' },
+  '/kompetisi':{ hal:'kompetisi', judul:'Kompetisi',          label:'KOMPETISI', eyebrow:'Liga & Turnamen' },
   '/discord':  { hal:'discord',   judul:'Sosial Media',       label:'SOSMED',    eyebrow:'Gabung Komunitas' },
   '/trial':    { hal:'trial',     judul:'Trial Pemain',       label:'TRIAL',     eyebrow:'Gabung JAGAL VFC' },
 };
@@ -1538,6 +1567,7 @@ function pillSumber(){
 function render(){
   let jalur = location.pathname === '' ? '/' : location.pathname;
   if(jalur === '/divisi'){ jalur = '/hasil'; history.replaceState({}, '', jalur); }
+  if(jalur === '/ipl'){ jalur = '/kompetisi'; history.replaceState({}, '', '/kompetisi?k=ipl'); }
   const h = HALAMAN[jalur] || HALAMAN['/'];
   document.title = `${h.judul} — JAGAL`;
   document.querySelectorAll('#nav button').forEach(b=>{
@@ -1762,20 +1792,9 @@ function render(){
     </div>`;
   }
 
-  if(h.hal === 'ipl'){
-    isi += `<p class="sub-hal">Kompetisi resmi yang diikuti JAGAL VFC.</p>`;
-    isi += `<div class="segera-kartu">
-      <span class="lencana">Coming Soon</span>
-      <h2>Indonesia Premier League</h2>
-      <p>Musim IPL belum dimulai. Begitu kompetisi bergulir, halaman ini akan
-      menampilkan jadwal pertandingan, hasil laga, dan statistik pemain JAGAL VFC
-      di ajang ini.</p>
-    </div>
-    <div class="segera-fitur">
-      <div>📅 Jadwal Pertandingan</div>
-      <div>⚽ Hasil Laga</div>
-      <div>📊 Statistik Pemain</div>
-    </div>`;
+  if(h.hal === 'kompetisi'){
+    isi += `<p class="sub-hal">Liga & turnamen yang diikuti JAGAL VFC: klasemen, hasil, dan statistik pemain di tiap kompetisi.</p>`;
+    isi += tampilKompetisi();
   }
 
   if(h.hal === 'discord'){
@@ -1921,6 +1940,8 @@ function render(){
 
   main.innerHTML = isi;
   bisaKeyboard(main);
+
+  if(h.hal === 'kompetisi') pasangKompetisi(main);
 
   if(h.hal === 'jersey'){
     const kotak = document.getElementById('jerseyLightbox');
@@ -2744,6 +2765,242 @@ function bukaModalPemain(p){
   tombolTutup.addEventListener('click', tutupModalPemain);
   tombolTutup.setAttribute('aria-label', 'Tutup profil');
   tombolTutup.focus();
+}
+
+/* ══════════════════════════════════════════════════════════
+   KOMPETISI — liga/turnamen eksternal (data/kompetisi.json)
+   Laga JAGAL diambil otomatis dari data EA + arsip: lawan harus terdaftar di
+   'peserta' dan tanggalnya di rentang mulai–selesai. Hasil antar-klub lain
+   diisi manual di file JSON. Klasemen dihitung dari gabungan keduanya.
+   ══════════════════════════════════════════════════════════ */
+let KOMPETISI = null;          // null = belum dimuat, [] = kosong/gagal
+let KOMP_MEMUAT = false;
+let KOMP_SORT = { kolom:'ga', arah:'desc' };
+function muatKompetisi(){
+  if(KOMPETISI || KOMP_MEMUAT) return;
+  KOMP_MEMUAT = true;
+  fetch('/data/kompetisi.json', { cache:'no-cache' }).then(r=>r.ok ? r.json() : null).then(j=>{
+    KOMPETISI = Array.isArray(j?.kompetisi) ? j.kompetisi : [];
+  }).catch(()=>{ KOMPETISI = []; }).finally(()=>{
+    KOMP_MEMUAT = false;
+    if(location.pathname === '/kompetisi'){ const y = window.scrollY; render(); window.scrollTo(0, y); }
+  });
+}
+const normNama = s => String(s||'').toLowerCase().replace(/[^a-z0-9]/g, '');
+// "2026-10-05" (WIB) → ms awal hari; akhirHari=true → ms akhir hari.
+function msTanggalWIB(t, akhirHari){
+  if(!t) return null;
+  const ms = Date.parse(String(t).slice(0,10) + 'T00:00:00+07:00');
+  return isNaN(ms) ? null : ms + (akhirHari ? 86400000 - 1 : 0);
+}
+function msJadwal(j){ return Date.parse(`${j.tgl}T${j.jam || '00:00'}:00+07:00`); }
+function parseSkor(sk){ const m = String(sk||'').match(/(\d+)\s*[-–:]\s*(\d+)/); return m ? [+m[1], +m[2]] : null; }
+
+// Semua data yang dibutuhkan halaman untuk satu kompetisi.
+function olahKompetisi(k){
+  const peserta = (k.peserta || []).map(p=>({ ...p, kunci: normNama(p.nama) }));
+  const jagal = peserta.find(p=>p.jagal) || { nama:'JAGAL', kunci: normNama('JAGAL'), jagal:true };
+  if(!peserta.includes(jagal)) peserta.unshift(jagal);
+  const peta = new Map();          // nama/alias (dinormalisasi) → peserta
+  peserta.forEach(p=>{ peta.set(p.kunci, p); (p.alias||[]).forEach(a=>peta.set(normNama(a), p)); });
+  const cariPeserta = nama => peta.get(normNama(nama));
+
+  const awal = msTanggalWIB(k.mulai), akhir = msTanggalWIB(k.selesai, true);
+  const abaikan = new Set((k.abaikanLaga||[]).map(String)), tambah = new Set((k.tambahLaga||[]).map(String));
+  const jenis = Array.isArray(k.jenisLaga) && k.jenisLaga.length ? new Set(k.jenisLaga) : null;
+  // Laga JAGAL dari EA/arsip.
+  const lagaJagal = (DATA.hasil||[]).filter(m=>{
+    if(m.golKami == null || !m.ts) return false;
+    const id = String(m.id || '');
+    if(abaikan.has(id)) return false;
+    if(tambah.has(id)) return true;
+    if(!awal) return false;                       // kompetisi tanpa tanggal mulai: belum ada laga otomatis
+    if(m.ts < awal || (akhir && m.ts > akhir)) return false;
+    if(jenis && m.tipeAsli && !jenis.has(m.tipeAsli)) return false;
+    const p = cariPeserta(m.lawan);
+    return p && !p.jagal;
+  }).map(m=>({ ...m, pesertaLawan: cariPeserta(m.lawan) }));
+  // Laga JAGAL manual (tidak tercatat di EA) — tanpa statistik pemain.
+  (k.lagaJagalManual||[]).forEach((x, i)=>{
+    const s = parseSkor(x.skor); if(!s) return;
+    const ts = msJadwal(x);
+    const sudah = lagaJagal.some(m=>Math.abs(m.ts - ts) < 86400000 && normNama(m.lawan) === normNama(x.lawan));
+    if(sudah) return;
+    const [a, b] = s;
+    lagaJagal.push({ id:'manual-'+i, ts, tgl: waktuLagaWIB(ts), lawan:x.lawan, golKami:a, golLawan:b, skor:`${a} – ${b}`,
+      hasil: a>b ? 'win' : a<b ? 'loss' : 'draw', tipe:'Manual', detail:[], manual:true, pesertaLawan: cariPeserta(x.lawan) });
+  });
+  lagaJagal.sort((x,y)=>y.ts-x.ts);
+
+  // Klasemen
+  const [pM, pS, pK] = Array.isArray(k.poin) ? k.poin : [3,1,0];
+  const baris = new Map(peserta.map(p=>[p, { p, main:0, m:0, s:0, k:0, gm:0, gk:0, poin:0, hasil:[] }]));
+  const catat = (p, gm, gk, ts) => {
+    const b = baris.get(p); if(!b) return;
+    b.main++; b.gm += gm; b.gk += gk;
+    const h = gm > gk ? 'M' : gm < gk ? 'K' : 'S';
+    b[h.toLowerCase()]++; b.poin += h === 'M' ? pM : h === 'S' ? pS : pK;
+    b.hasil.push([ts, h]);
+  };
+  lagaJagal.forEach(m=>{ catat(jagal, m.golKami, m.golLawan, m.ts); if(m.pesertaLawan) catat(m.pesertaLawan, m.golLawan, m.golKami, m.ts); });
+  const lagaLain = [];
+  (k.laga||[]).forEach(x=>{
+    const s = parseSkor(x.skor), A = cariPeserta(x.kandang), B = cariPeserta(x.tandang);
+    if(!s || !A || !B) return;
+    const ts = x.tgl ? msJadwal(x) : 0;
+    catat(A, s[0], s[1], ts); catat(B, s[1], s[0], ts);
+    lagaLain.push({ ...x, ts, A, B, s });
+  });
+  lagaLain.sort((x,y)=>y.ts-x.ts);
+  const klasemen = [...baris.values()].map(b=>({ ...b, sg: b.gm - b.gk,
+      form: b.hasil.sort((x,y)=>y[0]-x[0]).slice(0,5).map(x=>x[1]) }))
+    .sort((x,y)=> y.poin-x.poin || y.sg-x.sg || y.gm-x.gm || x.p.nama.localeCompare(y.p.nama));
+
+  // Statistik pemain JAGAL di kompetisi ini
+  const pemain = new Map();
+  lagaJagal.forEach(m=>(m.detail||[]).forEach(d=>{
+    const kk = d.nama.toLowerCase();
+    const p = pemain.get(kk) || { nama:d.nama, main:0, gol:0, assist:0, motm:0, totRating:0, nRating:0 };
+    p.main++; p.gol += d.gol||0; p.assist += d.assist||0; if(d.mom) p.motm++;
+    if(d.rating > 0){ p.totRating += d.rating; p.nRating++; }
+    pemain.set(kk, p);
+  }));
+  const daftarPemain = [...pemain.values()].map(p=>({ ...p, ga: p.gol + p.assist, rating: p.nRating ? p.totRating/p.nRating : 0 }));
+
+  const jadwal = (k.jadwal||[]).map(j=>({ ...j, ts: msJadwal(j) })).filter(j=>!isNaN(j.ts) && j.ts > Date.now() - 3*3600000)
+    .sort((a,b)=>a.ts-b.ts);
+  return { k, jagal, klasemen, lagaJagal, lagaLain, daftarPemain, jadwal, posisi: klasemen.findIndex(b=>b.p === jagal) + 1 };
+}
+
+function tampilKompetisi(){
+  muatKompetisi();
+  if(KOMPETISI === null) return `<p class="sub-hal">Memuat daftar kompetisi…</p>`;
+  if(!KOMPETISI.length) return `<div class="segera-kartu"><span class="lencana">Coming Soon</span>
+      <h2>Kompetisi segera diumumkan</h2>
+      <p>JAGAL VFC sedang bersiap untuk musim kompetitif. Begitu jadwalnya resmi, halaman ini akan menampilkan
+      klasemen, hasil laga, serta gol, assist & rating pemain JAGAL di tiap kompetisi.</p>
+    </div>
+    <div class="segera-fitur">
+      <div>🏆 Klasemen</div>
+      <div>⚽ Hasil & Jadwal</div>
+      <div>📊 Statistik Pemain</div>
+    </div>`;
+  const urutStatus = { berjalan:0, mendatang:1, selesai:2 };
+  const daftar = [...KOMPETISI].sort((a,b)=>(urutStatus[a.status] ?? 3) - (urutStatus[b.status] ?? 3));
+  const dipilih = new URLSearchParams(location.search).get('k');
+  const k = daftar.find(x=>x.id === dipilih) || daftar[0];
+  const labelStatus = { berjalan:'Berjalan', mendatang:'Mendatang', selesai:'Selesai' };
+  const st = k.status || 'mendatang';
+
+  let html = `<div class="komp-tab" role="tablist" aria-label="Pilih kompetisi">${daftar.map(x=>
+    `<button type="button" role="tab" data-komp="${escapeHtml(x.id)}" class="${x === k ? 'aktif' : ''}" aria-selected="${x === k}">
+      <span class="titik ${escapeHtml(x.status||'mendatang')}"></span>${escapeHtml(x.negara||'')} ${escapeHtml(x.singkat || x.nama)}</button>`).join('')}</div>`;
+
+  const o = olahKompetisi(k);
+  const periode = k.mulai ? `${tglWIB(msTanggalWIB(k.mulai), { day:'numeric', month:'short', year:'numeric' })}${k.selesai ? ' – ' + tglWIB(msTanggalWIB(k.selesai), { day:'numeric', month:'short', year:'numeric' }) : ' – sekarang'}` : 'Tanggal belum ditentukan';
+  const nKlub = o.klasemen.length;
+  html += `<div class="komp-kepala"><div class="bendera">${escapeHtml(k.negara||'🏆')}</div><div>
+      <h2>${escapeHtml(k.nama)}<span class="komp-status ${escapeHtml(st)}">${labelStatus[st] || escapeHtml(st)}</span></h2>
+      <p>${escapeHtml(k.format === 'turnamen' ? 'Turnamen' : 'Liga')} · ${periode}${nKlub > 1 ? ` · ${nKlub} klub` : ''}</p>
+      ${k.info ? `<p>${escapeHtml(k.info)}</p>` : ''}
+    </div></div>`;
+
+  const adaData = o.lagaJagal.length || o.lagaLain.length;
+  if(!adaData){
+    html += `<div class="segera-kartu"><span class="lencana">${st === 'selesai' ? 'Arsip' : 'Coming Soon'}</span>
+      <h2>${st === 'mendatang' ? 'Kompetisi belum dimulai' : 'Belum ada hasil tercatat'}</h2>
+      <p>Begitu laga bergulir, halaman ini menampilkan klasemen, hasil laga JAGAL, serta gol, assist & rating pemain JAGAL di ${escapeHtml(k.nama)}.</p>
+    </div>`;
+    if(o.jadwal.length) html += tampilJadwalKomp(o);
+    return html;
+  }
+
+  // Ringkasan JAGAL
+  const bj = o.klasemen.find(b=>b.p === o.jagal);
+  html += `<div class="grid-kpi">
+    <div class="kpi"><b>${o.posisi ? '#' + o.posisi : '–'}</b><span>Posisi${nKlub > 1 ? ' / ' + nKlub : ''}</span></div>
+    <div class="kpi"><b>${bj.main}</b><span>Main</span></div>
+    <div class="kpi"><b>${bj.m}-${bj.s}-${bj.k}</b><span>M-S-K</span></div>
+    <div class="kpi"><b>${bj.gm}–${bj.gk}</b><span>Gol</span></div>
+    <div class="kpi"><b>${bj.poin}</b><span>Poin</span></div>
+  </div>`;
+
+  // Klasemen
+  html += `<h2 class="subjudul">Klasemen</h2>
+  <div class="tbl-wrap"><table class="tbl-klasemen"><thead><tr><th>#</th><th>Klub</th><th>Main</th><th>M</th><th>S</th><th>K</th><th>GM</th><th>GK</th><th>SG</th><th>Poin</th><th>5 Terakhir</th></tr></thead><tbody>
+  ${o.klasemen.map((b, i)=>`<tr class="${b.p === o.jagal ? 'baris-jagal' : ''}"><td>${i+1}</td><td class="klub">${escapeHtml(b.p.nama)}</td>
+    <td>${b.main}</td><td>${b.m}</td><td>${b.s}</td><td>${b.k}</td><td>${b.gm}</td><td>${b.gk}</td><td>${b.sg > 0 ? '+' : ''}${b.sg}</td><td class="poin">${b.poin}</td>
+    <td><span class="form-mini">${b.form.map(f=>`<i class="${f}">${f}</i>`).join('')}</span></td></tr>`).join('')}
+  </tbody></table></div>
+  <p class="komp-catatan">Poin: menang ${(k.poin||[3])[0]}, seri ${(k.poin||[3,1])[1]}, kalah ${(k.poin||[3,1,0])[2]}. Urutan: poin → selisih gol → gol dicetak. Laga JAGAL otomatis dari data EA; hasil klub lain diperbarui admin.</p>`;
+
+  // Statistik pemain
+  const P = o.daftarPemain;
+  if(P.length){
+    const nLaga = o.lagaJagal.filter(m=>m.detail?.length).length;
+    const minMain = Math.max(1, Math.ceil(nLaga / 3));
+    const top = (f, syarat=()=>true) => [...P].filter(syarat).sort((a,b)=>f(b)-f(a) || b.rating-a.rating)[0];
+    const kartuTop = [
+      ['⚽ Top Skor', top(p=>p.gol, p=>p.gol > 0), p=>`${p.gol} gol`],
+      ['🅰️ Top Assist', top(p=>p.assist, p=>p.assist > 0), p=>`${p.assist} assist`],
+      ['📈 Rating Terbaik', top(p=>p.rating, p=>p.main >= minMain && p.nRating), p=>`${bulat(p.rating,2)} · ${p.main} laga`],
+      ['⭐ MOTM Terbanyak', top(p=>p.motm, p=>p.motm > 0), p=>`${p.motm}× MOTM`],
+    ];
+    html += `<h2 class="subjudul">Pemain JAGAL di ${escapeHtml(k.singkat || k.nama)} <small>${nLaga} laga dengan statistik</small></h2>
+    <div class="grid-award">${kartuTop.map(([judul, p, teks])=>{
+      const foto = p && fotoPemain(p.nama);
+      return `<div class="award-kartu"><div class="aw-atas"><span class="aw-judul">${judul}</span></div>
+        ${p ? `<div class="aw-juara">${foto ? `<img src="/${foto.replace(/^\//,'')}" alt="" loading="lazy">` : ''}<div><b>${escapeHtml(p.nama)}</b><strong>${teks(p)}</strong></div></div>` : '<div class="aw-juara"><div><i>Belum ada</i></div></div>'}
+      </div>`; }).join('')}</div>`;
+    const KOL = [['nama','Pemain'],['main','Main'],['gol','Gol'],['assist','Assist'],['ga','G+A'],['rating','Rating'],['motm','MOTM']];
+    const {kolom, arah} = KOMP_SORT, fak = arah === 'desc' ? -1 : 1;
+    const urut = [...P].sort((a,b)=> kolom === 'nama' ? fak*a.nama.localeCompare(b.nama) : fak*((a[kolom]||0)-(b[kolom]||0)) || b.rating-a.rating);
+    html += `<div class="tbl-wrap"><table><thead><tr>${KOL.map(([kk,l])=>`<th class="sortir${kk === kolom ? ' aktif' : ''}" data-komp-kolom="${kk}">${l}<span class="panah-sortir">${kk === kolom ? (arah === 'desc' ? '▼' : '▲') : '▼'}</span></th>`).join('')}</tr></thead><tbody>
+      ${urut.map(p=>`<tr><td><b>${escapeHtml(p.nama)}</b></td><td>${p.main}</td><td>${p.gol}</td><td>${p.assist}</td><td>${p.ga}</td><td>${p.nRating ? bulat(p.rating,2) : '–'}</td><td>${p.motm || '–'}</td></tr>`).join('')}
+    </tbody></table></div>`;
+  }
+
+  if(o.jadwal.length) html += tampilJadwalKomp(o);
+
+  // Hasil JAGAL
+  if(o.lagaJagal.length){
+    html += `<h2 class="subjudul">Hasil JAGAL <small>${o.lagaJagal.length} laga</small></h2>` + o.lagaJagal.map(m=>`
+      <div class="laga ${m.hasil}"><div class="hasil"></div>
+        ${imgLogo(m.logoLawan, 'logo-lawan')}
+        <div class="info"><div class="lawan">vs ${escapeHtml(m.lawan)}</div><div class="tgl">${m.tgl}${m.manual ? ' · dicatat manual' : ''}</div></div>
+        <div class="skor">${m.golKami} – ${m.golLawan}</div></div>`).join('');
+  }
+  // Hasil klub lain
+  if(o.lagaLain.length){
+    html += `<details class="award-iseng"><summary>Hasil klub lain <small>(${o.lagaLain.length} laga · ketuk untuk buka)</small></summary>
+      <div class="tbl-wrap"><table><thead><tr><th>Tanggal</th><th>Kandang</th><th>Skor</th><th>Tandang</th></tr></thead><tbody>
+      ${o.lagaLain.map(x=>`<tr><td>${x.ts ? tglWIB(x.ts, { day:'numeric', month:'short' }) : '–'}</td><td>${escapeHtml(x.A.nama)}</td><td><b>${x.s[0]} – ${x.s[1]}</b></td><td>${escapeHtml(x.B.nama)}</td></tr>`).join('')}
+      </tbody></table></div></details>`;
+  }
+  return html;
+}
+function tampilJadwalKomp(o){
+  return `<h2 class="subjudul">Jadwal JAGAL</h2>` + o.jadwal.map(j=>`
+    <div class="laga jadwal"><div class="hasil"></div>
+      <div class="info"><div class="lawan">vs ${escapeHtml(j.lawan || '?')}</div><div class="tgl">${waktuLagaWIB(j.ts)}${j.catatan ? ' · ' + escapeHtml(j.catatan) : ''}</div></div>
+      <div class="skor" style="font-size:13px;color:var(--redup)">Akan datang</div></div>`).join('');
+}
+function pasangKompetisi(main){
+  main.querySelectorAll('.komp-tab button[data-komp]').forEach(b=>b.addEventListener('click', ()=>{
+    history.replaceState({}, '', '/kompetisi?k=' + encodeURIComponent(b.dataset.komp));
+    KOMP_SORT = { kolom:'ga', arah:'desc' };
+    render();
+  }));
+  main.querySelectorAll('th[data-komp-kolom]').forEach(th=>{
+    th.setAttribute('tabindex', '0'); th.setAttribute('role', 'button');
+    th.addEventListener('click', ()=>{
+      const kk = th.dataset.kompKolom;
+      if(KOMP_SORT.kolom === kk) KOMP_SORT.arah = KOMP_SORT.arah === 'desc' ? 'asc' : 'desc';
+      else KOMP_SORT = { kolom:kk, arah: kk === 'nama' ? 'asc' : 'desc' };
+      const y = window.scrollY; render(); window.scrollTo(0, y);
+    });
+    th.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); th.click(); } });
+  });
 }
 
 function tutupModalPemain(){

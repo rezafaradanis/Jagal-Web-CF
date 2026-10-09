@@ -1,0 +1,40 @@
+{
+  "_petunjuk": [
+    "Daftar liga/turnamen yang diikuti JAGAL VFC, dipakai halaman /kompetisi.",
+    "Daftar 'kompetisi' masih kosong, jadi halaman menampilkan 'Coming Soon'. Salin '_contoh_satu_kompetisi' ke dalam 'kompetisi' untuk menambah.",
+    "status: berjalan | mendatang | selesai.  format: liga | turnamen.  poin: [menang, seri, kalah].",
+    "mulai/selesai: tanggal WIB (YYYY-MM-DD). Laga JAGAL dari EA otomatis masuk kalau lawannya ada di 'peserta' dan tanggalnya di rentang mulai-selesai.",
+    "peserta: nama klub persis seperti di EA. 'alias' untuk nama lain klub yang sama. Tandai JAGAL dengan \"jagal\": true.",
+    "laga: hasil antar-klub LAIN (bukan JAGAL), skor ditulis \"kandang-tandang\", mis. \"2-1\".",
+    "jadwal: laga JAGAL yang akan datang. lagaJagalManual: laga JAGAL yang tidak tercatat di EA (tanpa statistik pemain).",
+    "abaikanLaga / tambahLaga: matchId EA yang dikeluarkan / dimasukkan paksa ke kompetisi ini."
+  ],
+  "kompetisi": [],
+  "_contoh_satu_kompetisi": {
+    "id": "contoh",
+    "nama": "Nama Kompetisi",
+    "singkat": "SINGKAT",
+    "negara": "🏆",
+    "status": "mendatang",
+    "format": "liga",
+    "mulai": null,
+    "selesai": null,
+    "poin": [
+      3,
+      1,
+      0
+    ],
+    "info": "",
+    "peserta": [
+      {
+        "nama": "JAGAL",
+        "jagal": true
+      }
+    ],
+    "laga": [],
+    "jadwal": [],
+    "lagaJagalManual": [],
+    "abaikanLaga": [],
+    "tambahLaga": []
+  }
+}
