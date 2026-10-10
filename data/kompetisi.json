@@ -1,15 +1,114 @@
 {
   "_petunjuk": [
     "Daftar liga/turnamen yang diikuti JAGAL VFC, dipakai halaman /kompetisi.",
-    "Daftar 'kompetisi' masih kosong, jadi halaman menampilkan 'Coming Soon'. Salin '_contoh_satu_kompetisi' ke dalam 'kompetisi' untuk menambah.",
+    "'grup': nama grup yang diikuti JAGAL (opsional). Klasemen yang ditampilkan = klasemen grup itu.",
+    "skuad: pemain JAGAL yang terdaftar di kompetisi ini (opsional). Statistik pemain kompetisi hanya menghitung mereka.",
     "status: berjalan | mendatang | selesai.  format: liga | turnamen.  poin: [menang, seri, kalah].",
     "mulai/selesai: tanggal WIB (YYYY-MM-DD). Laga JAGAL dari EA otomatis masuk kalau lawannya ada di 'peserta' dan tanggalnya di rentang mulai-selesai.",
     "peserta: nama klub persis seperti di EA. 'alias' untuk nama lain klub yang sama. Tandai JAGAL dengan \"jagal\": true.",
     "laga: hasil antar-klub LAIN (bukan JAGAL), skor ditulis \"kandang-tandang\", mis. \"2-1\".",
-    "jadwal: laga JAGAL yang akan datang. lagaJagalManual: laga JAGAL yang tidak tercatat di EA (tanpa statistik pemain).",
+    "jadwal: laga JAGAL yang akan datang ({babak, tgl, jam WIB, lawan, kandang: true = JAGAL tuan rumah / false = tandang}); tgl null = belum ditentukan. lagaJagalManual: laga JAGAL yang tidak tercatat di EA (tanpa statistik pemain).",
     "abaikanLaga / tambahLaga: matchId EA yang dikeluarkan / dimasukkan paksa ke kompetisi ini."
   ],
-  "kompetisi": [],
+  "kompetisi": [
+    {
+      "id": "sgvp",
+      "nama": "SGVP FC27 Clubs Regular Season 1",
+      "singkat": "SGVP",
+      "negara": "🇸🇬",
+      "status": "mendatang",
+      "format": "liga",
+      "grup": "Group D",
+      "mulai": "2026-10-15",
+      "selesai": null,
+      "poin": [
+        3,
+        1,
+        0
+      ],
+      "info": "Fase grup — JAGAL di Group D. Data resmi turnamen di aplikasi Tournament V (kode 154999).",
+      "peserta": [
+        {
+          "nama": "JAGAL",
+          "jagal": true
+        },
+        {
+          "nama": "G9 Bros"
+        },
+        {
+          "nama": "Gungnir"
+        },
+        {
+          "nama": "NOCTURNE"
+        }
+      ],
+      "laga": [],
+      "jadwal": [
+        {
+          "babak": "Round 1",
+          "tgl": "2026-10-15",
+          "jam": "22:00",
+          "lawan": "NOCTURNE",
+          "kandang": true
+        },
+        {
+          "babak": "Round 2",
+          "tgl": "2026-10-15",
+          "jam": "22:30",
+          "lawan": "Gungnir",
+          "kandang": false
+        },
+        {
+          "babak": "Round 3",
+          "tgl": "2026-10-22",
+          "jam": "22:00",
+          "lawan": "G9 Bros",
+          "kandang": true
+        },
+        {
+          "babak": "Round 4",
+          "tgl": "2026-10-22",
+          "jam": "22:30",
+          "lawan": "NOCTURNE",
+          "kandang": false
+        },
+        {
+          "babak": "Round 5",
+          "tgl": "2026-10-29",
+          "jam": "22:00",
+          "lawan": "Gungnir",
+          "kandang": true
+        },
+        {
+          "babak": "Round 6",
+          "tgl": "2026-10-29",
+          "jam": "22:30",
+          "lawan": "G9 Bros",
+          "kandang": false
+        }
+      ],
+      "lagaJagalManual": [],
+      "abaikanLaga": [],
+      "tambahLaga": [],
+      "skuad": [
+        "abuuzayd",
+        "critze07",
+        "Dlyvaganza",
+        "Doubleh5435",
+        "driftking696911",
+        "Ersya_Rz",
+        "KeenArok",
+        "Kngsmn21",
+        "LeoAwinz",
+        "MyBabyGee",
+        "N3RDGEEKY",
+        "Pumba_brs",
+        "revaganteng",
+        "tyhalli",
+        "Yurdyyy"
+      ]
+    }
+  ],
   "_contoh_satu_kompetisi": {
     "id": "contoh",
     "nama": "Nama Kompetisi",

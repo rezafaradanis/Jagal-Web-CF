@@ -10,7 +10,7 @@ export const MAKS_ID_DIINGAT = 300;
 export const KUNCI_ARSIP = 'arsip-laga';
 // Pemain resmi JAGAL (sama dengan CONFIG.roster di index.html). Rekap mingguan hanya
 // menghitung mereka di tabel & penghargaan pemain. Kosongkan [] untuk semua pemain.
-export const ROSTER = ['Doubleh5435', 'Kngsmn21', 'MyBabyGee', 'KeenArok', 'abuuzayd', 'driftking696911', 'N0oootz', 'critze07', 'fhmdayat', 'Yurdyyy', 'Pumba_brs', 'LeoAwinz', 'revaganteng', 'Dlyvaganza', 'tyhalli', 'Ersya_Rz', 'N3RDGEEKY', 'Bleweh29', 'mekitem13'];
+export const ROSTER = ['Doubleh5435', 'Kngsmn21', 'MyBabyGee', 'KeenArok', 'abuuzayd', 'driftking696911', 'N0oootz', 'critze07', 'fhmdayat', 'Yurdyyy', 'Pumba_brs', 'LeoAwinz', 'revaganteng', 'Dlyvaganza', 'tyhalli', 'Ersya_Rz', 'N3RDGEEKY', 'Bleweh29', 'mekitem13', 'andhikaabas'];
 const SET_ROSTER = new Set(ROSTER.map((n) => n.toLowerCase()));
 export const diRoster = (nama) => !SET_ROSTER.size || SET_ROSTER.has(String(nama || '').toLowerCase().replace(/[\s\u200b-\u200f\u2060\ufeff]/g, ''));
 

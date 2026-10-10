@@ -703,6 +703,17 @@
   .form-mini i.M{background:var(--hijau);} .form-mini i.S{background:var(--kuning);} .form-mini i.K{background:var(--merah);color:#fff;}
   .komp-catatan{font-size:12px;color:var(--redup);margin:8px 0 0;}
   .laga.jadwal .hasil{background:#555;}
+  .lencana-ha{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:999px;margin-left:4px;vertical-align:middle;white-space:nowrap;}
+  .lencana-ha.kandang{background:rgba(47,191,113,.15);color:var(--hijau);}
+  .lencana-ha.tandang{background:rgba(120,160,255,.15);color:#8fb0ff;}
+  .skuad-komp{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;}
+  .skuad-komp-item{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--garis-lembut);
+    border-radius:12px;padding:8px 10px;min-width:0;}
+  .skuad-komp-item img{width:38px;height:44px;object-fit:cover;object-position:top;border-radius:8px;flex-shrink:0;}
+  .skuad-komp-item .tanpa-foto{width:38px;height:44px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;
+    align-items:center;justify-content:center;font-weight:900;color:var(--redup);flex-shrink:0;}
+  .skuad-komp-item b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;}
+  .skuad-komp-item i{font-style:normal;font-size:11px;font-weight:800;color:var(--merah2);}
   .award-iseng summary{cursor:pointer;font-weight:800;font-size:14px;padding:10px 0;color:var(--redup);}
   @media (max-width:640px){
     .grid-catatan,.profil-atas{grid-template-columns:1fr;}
@@ -744,7 +755,7 @@ const CONFIG = {
   // Pemain resmi JAGAL (nama EA, besar-kecil huruf bebas). Hanya mereka yang tampil di Skuad,
   // Statistik, Analisis, Rekor, Player of the Season & Kompetisi. Pemain lain (tamu/pinjaman)
   // tetap tercatat di detail tiap laga, tapi tidak ikut dihitung. Kosongkan [] untuk menampilkan semua.
-  roster: ['Doubleh5435', 'Kngsmn21', 'MyBabyGee', 'KeenArok', 'abuuzayd', 'driftking696911', 'N0oootz', 'critze07', 'fhmdayat', 'Yurdyyy', 'Pumba_brs', 'LeoAwinz', 'revaganteng', 'Dlyvaganza', 'tyhalli', 'Ersya_Rz', 'N3RDGEEKY', 'Bleweh29', 'mekitem13'],
+  roster: ['Doubleh5435', 'Kngsmn21', 'MyBabyGee', 'KeenArok', 'abuuzayd', 'driftking696911', 'N0oootz', 'critze07', 'fhmdayat', 'Yurdyyy', 'Pumba_brs', 'LeoAwinz', 'revaganteng', 'Dlyvaganza', 'tyhalli', 'Ersya_Rz', 'N3RDGEEKY', 'Bleweh29', 'mekitem13', 'andhikaabas'],
   discordInvite: 'https://discord.gg/tvSBTcgcN',
   instagram: 'https://www.instagram.com/jagalesport24',
   streamers: [
@@ -2831,7 +2842,12 @@ function olahKompetisi(k){
     if(jenis && m.tipeAsli && !jenis.has(m.tipeAsli)) return false;
     const p = cariPeserta(m.lawan);
     return p && !p.jagal;
-  }).map(m=>({ ...m, pesertaLawan: cariPeserta(m.lawan) }));
+  }).map(m=>{
+    const tglM = tglWIB(m.ts, { year:'numeric', month:'2-digit', day:'2-digit' });
+    const j = (k.jadwal||[]).find(x=>x.tgl && typeof x.kandang === 'boolean' && cariPeserta(x.lawan) === cariPeserta(m.lawan)
+      && tglWIB(msJadwal(x), { year:'numeric', month:'2-digit', day:'2-digit' }) === tglM);
+    return { ...m, pesertaLawan: cariPeserta(m.lawan), kandang: j ? j.kandang : null, babak: j?.babak || null };
+  });
   // Laga JAGAL manual (tidak tercatat di EA) — tanpa statistik pemain.
   (k.lagaJagalManual||[]).forEach((x, i)=>{
     const s = parseSkor(x.skor); if(!s) return;
@@ -2840,7 +2856,8 @@ function olahKompetisi(k){
     if(sudah) return;
     const [a, b] = s;
     lagaJagal.push({ id:'manual-'+i, ts, tgl: waktuLagaWIB(ts), lawan:x.lawan, golKami:a, golLawan:b, skor:`${a} – ${b}`,
-      hasil: a>b ? 'win' : a<b ? 'loss' : 'draw', tipe:'Manual', detail:[], manual:true, pesertaLawan: cariPeserta(x.lawan) });
+      hasil: a>b ? 'win' : a<b ? 'loss' : 'draw', tipe:'Manual', detail:[], manual:true, pesertaLawan: cariPeserta(x.lawan),
+      kandang: typeof x.kandang === 'boolean' ? x.kandang : null, babak: x.babak || null });
   });
   lagaJagal.sort((x,y)=>y.ts-x.ts);
 
@@ -2870,8 +2887,10 @@ function olahKompetisi(k){
 
   // Statistik pemain JAGAL di kompetisi ini
   const pemain = new Map();
+  const skuadKomp = Array.isArray(k.skuad) && k.skuad.length ? new Set(k.skuad.map(kunciRoster)) : null;
+  const ikutKomp = nama => skuadKomp ? skuadKomp.has(kunciRoster(nama)) : diRoster(nama);
   lagaJagal.forEach(m=>(m.detail||[]).forEach(d=>{
-    if(!diRoster(d.nama)) return;
+    if(!ikutKomp(d.nama)) return;
     const kk = d.nama.toLowerCase();
     const p = pemain.get(kk) || { nama:d.nama, main:0, gol:0, assist:0, motm:0, totRating:0, nRating:0 };
     p.main++; p.gol += d.gol||0; p.assist += d.assist||0; if(d.mom) p.motm++;
@@ -2880,8 +2899,10 @@ function olahKompetisi(k){
   }));
   const daftarPemain = [...pemain.values()].map(p=>({ ...p, ga: p.gol + p.assist, rating: p.nRating ? p.totRating/p.nRating : 0 }));
 
-  const jadwal = (k.jadwal||[]).map(j=>({ ...j, ts: msJadwal(j) })).filter(j=>!isNaN(j.ts) && j.ts > Date.now() - 3*3600000)
-    .sort((a,b)=>a.ts-b.ts);
+  // Jadwal tanpa tanggal tetap tampil (di akhir); yang sudah lewat >3 jam disembunyikan.
+  const jadwal = (k.jadwal||[]).map((j, i)=>({ ...j, i, ts: j.tgl ? msJadwal(j) : null }))
+    .filter(j=>j.ts === null || (!isNaN(j.ts) && j.ts > Date.now() - 3*3600000))
+    .sort((a,b)=>(a.ts ?? Infinity) - (b.ts ?? Infinity) || a.i - b.i);
   return { k, jagal, klasemen, lagaJagal, lagaLain, daftarPemain, jadwal, posisi: klasemen.findIndex(b=>b.p === jagal) + 1 };
 }
 
@@ -2910,11 +2931,14 @@ function tampilKompetisi(){
       <span class="titik ${escapeHtml(x.status||'mendatang')}"></span>${escapeHtml(x.negara||'')} ${escapeHtml(x.singkat || x.nama)}</button>`).join('')}</div>`;
 
   const o = olahKompetisi(k);
-  const periode = k.mulai ? `${tglWIB(msTanggalWIB(k.mulai), { day:'numeric', month:'short', year:'numeric' })}${k.selesai ? ' – ' + tglWIB(msTanggalWIB(k.selesai), { day:'numeric', month:'short', year:'numeric' }) : ' – sekarang'}` : 'Tanggal belum ditentukan';
+  const fTgl = t => tglWIB(msTanggalWIB(t), { day:'numeric', month:'short', year:'numeric' });
+  const periode = !k.mulai ? 'Tanggal belum ditentukan'
+    : msTanggalWIB(k.mulai) > Date.now() ? `Mulai ${fTgl(k.mulai)}`
+    : `${fTgl(k.mulai)}${k.selesai ? ' – ' + fTgl(k.selesai) : ' – sekarang'}`;
   const nKlub = o.klasemen.length;
   html += `<div class="komp-kepala"><div class="bendera">${escapeHtml(k.negara||'🏆')}</div><div>
       <h2>${escapeHtml(k.nama)}<span class="komp-status ${escapeHtml(st)}">${labelStatus[st] || escapeHtml(st)}</span></h2>
-      <p>${escapeHtml(k.format === 'turnamen' ? 'Turnamen' : 'Liga')} · ${periode}${nKlub > 1 ? ` · ${nKlub} klub` : ''}</p>
+      <p>${escapeHtml(k.format === 'turnamen' ? 'Turnamen' : 'Liga')}${k.grup ? ' · ' + escapeHtml(k.grup) : ''} · ${periode}${nKlub > 1 ? ` · ${nKlub} klub` : ''}</p>
       ${k.info ? `<p>${escapeHtml(k.info)}</p>` : ''}
     </div></div>`;
 
@@ -2924,7 +2948,9 @@ function tampilKompetisi(){
       <h2>${st === 'mendatang' ? 'Kompetisi belum dimulai' : 'Belum ada hasil tercatat'}</h2>
       <p>Begitu laga bergulir, halaman ini menampilkan klasemen, hasil laga JAGAL, serta gol, assist & rating pemain JAGAL di ${escapeHtml(k.nama)}.</p>
     </div>`;
+    if(nKlub > 1) html += tabelKlasemenKomp(o);
     if(o.jadwal.length) html += tampilJadwalKomp(o);
+    html += tampilSkuadKomp(k);
     return html;
   }
 
@@ -2938,14 +2964,7 @@ function tampilKompetisi(){
     <div class="kpi"><b>${bj.poin}</b><span>Poin</span></div>
   </div>`;
 
-  // Klasemen
-  html += `<h2 class="subjudul">Klasemen</h2>
-  <div class="tbl-wrap"><table class="tbl-klasemen"><thead><tr><th>#</th><th>Klub</th><th>Main</th><th>M</th><th>S</th><th>K</th><th>GM</th><th>GK</th><th>SG</th><th>Poin</th><th>5 Terakhir</th></tr></thead><tbody>
-  ${o.klasemen.map((b, i)=>`<tr class="${b.p === o.jagal ? 'baris-jagal' : ''}"><td>${i+1}</td><td class="klub">${escapeHtml(b.p.nama)}</td>
-    <td>${b.main}</td><td>${b.m}</td><td>${b.s}</td><td>${b.k}</td><td>${b.gm}</td><td>${b.gk}</td><td>${b.sg > 0 ? '+' : ''}${b.sg}</td><td class="poin">${b.poin}</td>
-    <td><span class="form-mini">${b.form.map(f=>`<i class="${f}">${f}</i>`).join('')}</span></td></tr>`).join('')}
-  </tbody></table></div>
-  <p class="komp-catatan">Poin: menang ${(k.poin||[3])[0]}, seri ${(k.poin||[3,1])[1]}, kalah ${(k.poin||[3,1,0])[2]}. Urutan: poin → selisih gol → gol dicetak. Laga JAGAL otomatis dari data EA; hasil klub lain diperbarui admin.</p>`;
+  html += tabelKlasemenKomp(o);
 
   // Statistik pemain
   const P = o.daftarPemain;
@@ -2974,14 +2993,15 @@ function tampilKompetisi(){
   }
 
   if(o.jadwal.length) html += tampilJadwalKomp(o);
+  html += tampilSkuadKomp(k);
 
   // Hasil JAGAL
   if(o.lagaJagal.length){
     html += `<h2 class="subjudul">Hasil JAGAL <small>${o.lagaJagal.length} laga</small></h2>` + o.lagaJagal.map(m=>`
       <div class="laga ${m.hasil}"><div class="hasil"></div>
         ${imgLogo(m.logoLawan, 'logo-lawan')}
-        <div class="info"><div class="lawan">vs ${escapeHtml(m.lawan)}</div><div class="tgl">${m.tgl}${m.manual ? ' · dicatat manual' : ''}</div></div>
-        <div class="skor">${m.golKami} – ${m.golLawan}</div></div>`).join('');
+        <div class="info"><div class="lawan">${m.kandang === null || m.kandang === undefined ? 'vs ' + escapeHtml(m.lawan) : judulLagaKomp(m.lawan, m.kandang)} ${labelKandang(m.kandang)}</div><div class="tgl">${m.babak ? escapeHtml(m.babak) + ' · ' : ''}${m.tgl}${m.manual ? ' · dicatat manual' : ''}</div></div>
+        <div class="skor">${m.kandang === false ? `${m.golLawan} – ${m.golKami}` : `${m.golKami} – ${m.golLawan}`}</div></div>`).join('');
   }
   // Hasil klub lain
   if(o.lagaLain.length){
@@ -2992,10 +3012,33 @@ function tampilKompetisi(){
   }
   return html;
 }
+function tampilSkuadKomp(k){
+  if(!Array.isArray(k.skuad) || !k.skuad.length) return '';
+  const urut = [...k.skuad].sort((a,b)=>a.localeCompare(b, 'id', { sensitivity:'base' }));
+  return `<h2 class="subjudul">Skuad Terdaftar <small>${urut.length} pemain</small></h2>
+    <div class="skuad-komp">${urut.map(n=>{
+      const sq = (DATA.squad||[]).find(p=>kunciRoster(p.nama) === kunciRoster(n));
+      const foto = fotoPemain(sq?.nama || n);
+      return `<div class="skuad-komp-item">${foto ? `<img src="/${foto.replace(/^\//,'')}" alt="" loading="lazy">` : `<span class="tanpa-foto">${escapeHtml(n.charAt(0).toUpperCase())}</span>`}
+        <b>${escapeHtml(sq?.nama || n)}</b>${sq ? `<i>${escapeHtml(ovrPemain(sq).pos)}</i>` : ''}</div>`; }).join('')}</div>`;
+}
+function tabelKlasemenKomp(o){
+  const k = o.k;
+  return `<h2 class="subjudul">Klasemen${k.grup ? ' ' + escapeHtml(k.grup) : ''}</h2>
+  <div class="tbl-wrap"><table class="tbl-klasemen"><thead><tr><th>#</th><th>Klub</th><th>Main</th><th>M</th><th>S</th><th>K</th><th>GM</th><th>GK</th><th>SG</th><th>Poin</th><th>5 Terakhir</th></tr></thead><tbody>
+  ${o.klasemen.map((b, i)=>`<tr class="${b.p === o.jagal ? 'baris-jagal' : ''}"><td>${i+1}</td><td class="klub">${escapeHtml(b.p.nama)}</td>
+    <td>${b.main}</td><td>${b.m}</td><td>${b.s}</td><td>${b.k}</td><td>${b.gm}</td><td>${b.gk}</td><td>${b.sg > 0 ? '+' : ''}${b.sg}</td><td class="poin">${b.poin}</td>
+    <td><span class="form-mini">${b.form.map(f=>`<i class="${f}">${f}</i>`).join('')}</span></td></tr>`).join('')}
+  </tbody></table></div>
+  <p class="komp-catatan">Poin: menang ${(k.poin||[3])[0]}, seri ${(k.poin||[3,1])[1]}, kalah ${(k.poin||[3,1,0])[2]}. Urutan: poin → selisih gol → gol dicetak. Laga JAGAL otomatis dari data EA; hasil klub lain diperbarui admin.</p>`;
+}
+const labelKandang = v => v === true ? '<span class="lencana-ha kandang">🏠 Kandang</span>' : v === false ? '<span class="lencana-ha tandang">✈️ Tandang</span>' : '';
+// Urutan nama sesuai tuan rumah: "JAGAL vs X" (kandang) atau "X vs JAGAL" (tandang).
+const judulLagaKomp = (lawan, kandang) => kandang === false ? `${escapeHtml(lawan)} vs JAGAL` : `JAGAL vs ${escapeHtml(lawan)}`;
 function tampilJadwalKomp(o){
   return `<h2 class="subjudul">Jadwal JAGAL</h2>` + o.jadwal.map(j=>`
     <div class="laga jadwal"><div class="hasil"></div>
-      <div class="info"><div class="lawan">vs ${escapeHtml(j.lawan || '?')}</div><div class="tgl">${waktuLagaWIB(j.ts)}${j.catatan ? ' · ' + escapeHtml(j.catatan) : ''}</div></div>
+      <div class="info"><div class="lawan">${judulLagaKomp(j.lawan || '?', j.kandang)} ${labelKandang(j.kandang)}</div><div class="tgl">${j.babak ? escapeHtml(j.babak) + ' · ' : ''}${j.ts ? waktuLagaWIB(j.ts) : 'Jadwal belum ditentukan'}${j.catatan ? ' · ' + escapeHtml(j.catatan) : ''}</div></div>
       <div class="skor" style="font-size:13px;color:var(--redup)">Akan datang</div></div>`).join('');
 }
 function pasangKompetisi(main){
