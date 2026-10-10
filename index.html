@@ -713,7 +713,11 @@
   .skuad-komp-item .tanpa-foto{width:38px;height:44px;border-radius:8px;background:rgba(255,255,255,.06);display:flex;
     align-items:center;justify-content:center;font-weight:900;color:var(--redup);flex-shrink:0;}
   .skuad-komp-item b{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;}
+  .skuad-komp-item .pos-komp{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;line-height:1.15;}
   .skuad-komp-item i{font-style:normal;font-size:11px;font-weight:800;color:var(--merah2);}
+  .skuad-komp-item small{font-size:9.5px;color:var(--redup);font-weight:700;}
+  .lini-komp{font-size:12px;font-weight:800;color:var(--redup);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;}
+  .lini-komp small{font-weight:700;opacity:.7;}
   .award-iseng summary{cursor:pointer;font-weight:800;font-size:14px;padding:10px 0;color:var(--redup);}
   @media (max-width:640px){
     .grid-catatan,.profil-atas{grid-template-columns:1fr;}
@@ -987,10 +991,13 @@ function dariArsipRingkas(x, id){
 }
 
 // Statistik tiap pemain di satu laga (dipakai untuk JAGAL maupun lawan).
+// Akun yang ganti nama EA: nama lama → nama baru, supaya riwayat laganya tergabung.
+const NAMA_BARU = { youngcrowheart: 'abuuzayd', 'gee-zoneplay': 'MyBabyGee' };
+const namaTerkini = n => NAMA_BARU[String(n||'').toLowerCase()] || n;
 function bacaPemainLaga(raw){
   if(!raw) return null;
   return Object.values(raw).map(pl=>({
-    nama: pl.playername || 'Pemain',
+    nama: namaTerkini(pl.playername || 'Pemain'),
     posLaga: pl.pos || '',
     archetype: pl.archetypeid != null && pl.archetypeid !== '' ? +pl.archetypeid : null,
     gol: +pl.goals || 0,
@@ -1382,6 +1389,7 @@ const FOTO_PEMAIN = {
   'kngsmn21': 'aset/kngsmn21-card.webp',
   'doubleh5435': 'aset/doubleh5435-card.webp',
   'youngcrowheart': 'aset/youngcrowheart-card.webp',
+  'abuuzayd': 'aset/youngcrowheart-card.webp', // akun yang sama, ganti nama EA
   'n0oootz': 'aset/n0oootz-card.webp',
   'leoawinz': 'aset/leoawinz-card.webp',
   'latern7': 'aset/latern7-card.webp',
@@ -2984,11 +2992,14 @@ function tampilKompetisi(){
       return `<div class="award-kartu"><div class="aw-atas"><span class="aw-judul">${judul}</span></div>
         ${p ? `<div class="aw-juara">${foto ? `<img src="/${foto.replace(/^\//,'')}" alt="" loading="lazy">` : ''}<div><b>${escapeHtml(p.nama)}</b><strong>${teks(p)}</strong></div></div>` : '<div class="aw-juara"><div><i>Belum ada</i></div></div>'}
       </div>`; }).join('')}</div>`;
-    const KOL = [['nama','Pemain'],['main','Main'],['gol','Gol'],['assist','Assist'],['ga','G+A'],['rating','Rating'],['motm','MOTM']];
+    const KOL = [['nama','Pemain'],['pos','Pos'],['main','Main'],['gol','Gol'],['assist','Assist'],['ga','G+A'],['rating','Rating'],['motm','MOTM']];
     const {kolom, arah} = KOMP_SORT, fak = arah === 'desc' ? -1 : 1;
-    const urut = [...P].sort((a,b)=> kolom === 'nama' ? fak*a.nama.localeCompare(b.nama) : fak*((a[kolom]||0)-(b[kolom]||0)) || b.rating-a.rating);
+    const URUT_POS = { GK:0, CB:1, LB:2, RB:3, LWB:4, RWB:5, CDM:6, CM:7, LM:8, RM:9, CAM:10, LW:11, RW:12, CF:13, ST:14 };
+    const nilaiPos = p => URUT_POS[posisiKomp(k, p.nama)[0]] ?? 99;
+    const urut = [...P].sort((a,b)=> kolom === 'nama' ? fak*a.nama.localeCompare(b.nama)
+      : kolom === 'pos' ? fak*(nilaiPos(a)-nilaiPos(b)) : fak*((a[kolom]||0)-(b[kolom]||0)) || b.rating-a.rating);
     html += `<div class="tbl-wrap"><table><thead><tr>${KOL.map(([kk,l])=>`<th class="sortir${kk === kolom ? ' aktif' : ''}" data-komp-kolom="${kk}">${l}<span class="panah-sortir">${kk === kolom ? (arah === 'desc' ? '▼' : '▲') : '▼'}</span></th>`).join('')}</tr></thead><tbody>
-      ${urut.map(p=>`<tr><td><b>${escapeHtml(p.nama)}</b></td><td>${p.main}</td><td>${p.gol}</td><td>${p.assist}</td><td>${p.ga}</td><td>${p.nRating ? bulat(p.rating,2) : '–'}</td><td>${p.motm || '–'}</td></tr>`).join('')}
+      ${urut.map(p=>`<tr><td><b>${escapeHtml(p.nama)}</b></td><td>${escapeHtml(posisiKomp(k, p.nama).join('/') || '–')}</td><td>${p.main}</td><td>${p.gol}</td><td>${p.assist}</td><td>${p.ga}</td><td>${p.nRating ? bulat(p.rating,2) : '–'}</td><td>${p.motm || '–'}</td></tr>`).join('')}
     </tbody></table></div>`;
   }
 
@@ -3012,15 +3023,34 @@ function tampilKompetisi(){
   }
   return html;
 }
+// Posisi detail (LB, CDM, CAM, LW, ...) → kelompok lini untuk pengelompokan skuad kompetisi.
+const LINI_POSISI = { GK:'Kiper', CB:'Bertahan', LB:'Bertahan', RB:'Bertahan', LWB:'Bertahan', RWB:'Bertahan',
+  CDM:'Gelandang', CM:'Gelandang', CAM:'Gelandang', LM:'Gelandang', RM:'Gelandang', LW:'Penyerang', RW:'Penyerang', CF:'Penyerang', ST:'Penyerang' };
+const URUT_LINI = ['Kiper','Bertahan','Gelandang','Penyerang','Lainnya'];
+// Posisi pemain di kompetisi ini (dari data/kompetisi.json → "posisi"), mis. ['CAM','LM'].
+function posisiKomp(k, nama){
+  const peta = k.posisi || {};
+  const kunci = Object.keys(peta).find(x=>kunciRoster(x) === kunciRoster(nama));
+  return kunci ? String(peta[kunci]).toUpperCase().split(/[\/,\s]+/).filter(Boolean) : [];
+}
 function tampilSkuadKomp(k){
   if(!Array.isArray(k.skuad) || !k.skuad.length) return '';
-  const urut = [...k.skuad].sort((a,b)=>a.localeCompare(b, 'id', { sensitivity:'base' }));
-  return `<h2 class="subjudul">Skuad Terdaftar <small>${urut.length} pemain</small></h2>
-    <div class="skuad-komp">${urut.map(n=>{
-      const sq = (DATA.squad||[]).find(p=>kunciRoster(p.nama) === kunciRoster(n));
-      const foto = fotoPemain(sq?.nama || n);
-      return `<div class="skuad-komp-item">${foto ? `<img src="/${foto.replace(/^\//,'')}" alt="" loading="lazy">` : `<span class="tanpa-foto">${escapeHtml(n.charAt(0).toUpperCase())}</span>`}
-        <b>${escapeHtml(sq?.nama || n)}</b>${sq ? `<i>${escapeHtml(ovrPemain(sq).pos)}</i>` : ''}</div>`; }).join('')}</div>`;
+  const item = k.skuad.map(n=>{
+    const sq = (DATA.squad||[]).find(p=>kunciRoster(p.nama) === kunciRoster(n));
+    const pos = posisiKomp(k, n);
+    return { n, sq, pos, lini: LINI_POSISI[pos[0]] || (pos.length ? 'Lainnya' : (sq ? (LINI_POSISI[ovrPemain(sq).pos] || 'Lainnya') : 'Lainnya')) };
+  });
+  const kartu = x=>{
+    const foto = fotoPemain(x.sq?.nama || x.n);
+    const posTeks = x.pos.length ? `<i>${escapeHtml(x.pos[0])}</i>${x.pos.length > 1 ? `<small>${escapeHtml(x.pos.slice(1).join('/'))}</small>` : ''}`
+      : (x.sq ? `<i>${escapeHtml(ovrPemain(x.sq).pos)}</i>` : '');
+    return `<div class="skuad-komp-item">${foto ? `<img src="/${foto.replace(/^\//,'')}" alt="" loading="lazy">` : `<span class="tanpa-foto">${escapeHtml(x.n.charAt(0).toUpperCase())}</span>`}
+      <b>${escapeHtml(x.sq?.nama || x.n)}</b><span class="pos-komp">${posTeks}</span></div>`;
+  };
+  const grup = URUT_LINI.map(l=>[l, item.filter(x=>x.lini === l).sort((a,b)=>a.n.localeCompare(b.n, 'id', { sensitivity:'base' }))]).filter(([,d])=>d.length);
+  return `<h2 class="subjudul">Skuad Terdaftar <small>${item.length} pemain</small></h2>
+    <p class="komp-catatan" style="margin:-6px 0 4px">Posisi utama + alternatif. Saat main, posisi fleksibel sesuai kebutuhan tim.</p>
+    ${grup.map(([l, d])=>`<div class="lini-komp">${l} <small>${d.length}</small></div><div class="skuad-komp">${d.map(kartu).join('')}</div>`).join('')}`;
 }
 function tabelKlasemenKomp(o){
   const k = o.k;
@@ -3052,7 +3082,7 @@ function pasangKompetisi(main){
     th.addEventListener('click', ()=>{
       const kk = th.dataset.kompKolom;
       if(KOMP_SORT.kolom === kk) KOMP_SORT.arah = KOMP_SORT.arah === 'desc' ? 'asc' : 'desc';
-      else KOMP_SORT = { kolom:kk, arah: kk === 'nama' ? 'asc' : 'desc' };
+      else KOMP_SORT = { kolom:kk, arah: kk === 'nama' || kk === 'pos' ? 'asc' : 'desc' };
       const y = window.scrollY; render(); window.scrollTo(0, y);
     });
     th.addEventListener('keydown', e=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); th.click(); } });

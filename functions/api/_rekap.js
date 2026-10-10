@@ -127,9 +127,11 @@ export async function perbaruiArsip(env, daftar) {
 // Cara dapat ID: Discord → Settings → Advanced → Developer Mode → klik kanan orangnya → Copy User ID.
 export const DISCORD_ID = {
   'keenarok': '1036305251487191070', // KeenArok
-  'gee-zoneplay': '558576386529427457', // GEE-ZONEPLAY
+  'gee-zoneplay': '558576386529427457', // GEE-ZONEPLAY (nama lama MyBabyGee)
+  'mybabygee': '558576386529427457', // MyBabyGee (dulu GEE-ZONEPLAY)
   'latern7': '396025684876853249', // laTern7
-  'youngcrowheart': '1141025280534781973', // youngcrowheart
+  'youngcrowheart': '1141025280534781973', // youngcrowheart (nama lama abuuzayd)
+  'abuuzayd': '1141025280534781973', // abuuzayd (dulu youngcrowheart)
   'n0oootz': '396806701199654950', // N0oootz
   'driftking696911': '1088073183531388989', // driftking696911
   'kngsmn21': '275966698782195714', // Kngsmn21
