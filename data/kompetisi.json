@@ -33,7 +33,14 @@
       ],
       "catatanPoin": "Menang 3 poin (termasuk menang di perpanjangan waktu / adu penalti), kalah 0. Tim yang kalah setelah imbang di menit 90 dapat +1 poin lewat klaim screenshot (maks. 24 jam).",
       "tiebreak": "h2h",
-      "bonusPoin": [],
+      "bonusPoin": [
+        {
+          "klub": "JAGAL",
+          "lawan": "NOCTURNE",
+          "poin": 1,
+          "catatan": "Round 1 — imbang di menit 90, kalah di extra time"
+        }
+      ],
       "info": "Fase grup — JAGAL di Group D. Data resmi turnamen di aplikasi Tournament V (kode 154999).",
       "peserta": [
         {
