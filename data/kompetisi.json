@@ -9,7 +9,10 @@
     "peserta: nama klub persis seperti di EA. 'alias' untuk nama lain klub yang sama. Tandai JAGAL dengan \"jagal\": true.",
     "laga: hasil antar-klub LAIN (bukan JAGAL), skor ditulis \"kandang-tandang\", mis. \"2-1\".",
     "jadwal: laga JAGAL yang akan datang ({babak, tgl, jam WIB, lawan, kandang: true = JAGAL tuan rumah / false = tandang}); tgl null = belum ditentukan. lagaJagalManual: laga JAGAL yang tidak tercatat di EA (tanpa statistik pemain).",
-    "abaikanLaga / tambahLaga: matchId EA yang dikeluarkan / dimasukkan paksa ke kompetisi ini."
+    "abaikanLaga / tambahLaga: matchId EA yang dikeluarkan / dimasukkan paksa ke kompetisi ini.",
+    "tournamentV: id turnamen di vpclubs11.com (mis. 42). Kalau diisi, hasil resmi SEMUA laga grup diambil otomatis dari Tournament V (peserta perlu 'clubId'); 'laga' & 'abaikanLaga' hanya dipakai kalau Tournament V sedang tidak bisa diakses.",
+    "bonusPoin: poin klaim yang disetujui SGVP, mis. {\"klub\":\"JAGAL\",\"lawan\":\"NOCTURNE\",\"poin\":1,\"catatan\":\"R1 imbang 90'\"}. Ikut dihitung di head-to-head.",
+    "tiebreak: 'h2h' (default: poin → head-to-head poin/selisih gol/gol → selisih gol → gol) atau 'umum' (poin → selisih gol → gol)."
   ],
   "kompetisi": [
     {
@@ -17,9 +20,10 @@
       "nama": "SGVP FC27 Clubs Regular Season 1",
       "singkat": "SGVP",
       "negara": "🇸🇬",
-      "status": "mendatang",
+      "status": "berjalan",
       "format": "liga",
       "grup": "Group D",
+      "tournamentV": 42,
       "mulai": "2026-10-15",
       "selesai": null,
       "poin": [
@@ -27,23 +31,47 @@
         1,
         0
       ],
+      "catatanPoin": "Menang 3 poin (termasuk menang di perpanjangan waktu / adu penalti), kalah 0. Tim yang kalah setelah imbang di menit 90 dapat +1 poin lewat klaim screenshot (maks. 24 jam).",
+      "tiebreak": "h2h",
+      "bonusPoin": [],
       "info": "Fase grup — JAGAL di Group D. Data resmi turnamen di aplikasi Tournament V (kode 154999).",
       "peserta": [
         {
           "nama": "JAGAL",
-          "jagal": true
+          "jagal": true,
+          "clubId": 438867
         },
         {
-          "nama": "G9 Bros"
+          "nama": "G9 Bros",
+          "clubId": 94180
         },
         {
-          "nama": "Gungnir"
+          "nama": "Gungnir",
+          "clubId": 99152
         },
         {
-          "nama": "NOCTURNE"
+          "nama": "NOCTURNE",
+          "clubId": 120027
         }
       ],
-      "laga": [],
+      "laga": [
+        {
+          "babak": "Round 1",
+          "tgl": "2026-10-15",
+          "jam": "22:31",
+          "kandang": "G9 Bros",
+          "tandang": "Gungnir",
+          "skor": "1-0"
+        },
+        {
+          "babak": "Round 2",
+          "tgl": "2026-10-15",
+          "jam": "23:13",
+          "kandang": "G9 Bros",
+          "tandang": "NOCTURNE",
+          "skor": "0-2"
+        }
+      ],
       "jadwal": [
         {
           "babak": "Round 1",
@@ -89,7 +117,10 @@
         }
       ],
       "lagaJagalManual": [],
-      "abaikanLaga": [],
+      "abaikanLaga": [
+        "100976814950179",
+        "101202177600390"
+      ],
       "tambahLaga": [],
       "skuad": [
         "Doubleh5435",
