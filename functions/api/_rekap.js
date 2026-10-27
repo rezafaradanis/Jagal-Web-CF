@@ -10,10 +10,27 @@ export const MAKS_ID_DIINGAT = 300;
 export const KUNCI_ARSIP = 'arsip-laga';
 // Pemain resmi JAGAL (sama dengan CONFIG.roster di index.html). Rekap mingguan hanya
 // menghitung mereka di tabel & penghargaan pemain. Kosongkan [] untuk semua pemain.
-// Kosong = semua pemain klub JAGAL ikut dihitung di rekap. Isi nama untuk membatasi.
+// Kosong = hanya anggota klub saat ini (daftar member EA dari kiriman laptop) yang dihitung di rekap.
 export const ROSTER = [];
 const SET_ROSTER = new Set(ROSTER.map((n) => n.toLowerCase()));
-export const diRoster = (nama) => !SET_ROSTER.size || SET_ROSTER.has(String(nama || '').toLowerCase().replace(/[\s\u200b-\u200f\u2060\ufeff]/g, ''));
+const kunciNama = (n) => String(n || '').toLowerCase().replace(/[\s\u200b-\u200f\u2060\ufeff]/g, '');
+// Akun yang ganti nama: nama lama di arsip → nama sekarang.
+const NAMA_BARU = { youngcrowheart: 'abuuzayd', 'gee-zoneplay': 'MyBabyGee' };
+export const namaTerkini = (n) => NAMA_BARU[kunciNama(n)] || n;
+export const diRoster = (nama, anggota) => SET_ROSTER.size ? SET_ROSTER.has(kunciNama(nama))
+  : (!anggota?.size || anggota.has(kunciNama(namaTerkini(nama))));
+// Daftar anggota klub saat ini dari data EA terakhir yang dikirim laptop (members/stats).
+export async function anggotaKlub(env) {
+  try {
+    const semua = await env.JAGAL_KV.get(KUNCI_DATA_LAPTOP, { type: 'json' });
+    for (const [kunci, teks] of Object.entries(semua?.entri || {})) {
+      if (!kunci.startsWith('members-stats__')) continue;
+      const nama = (JSON.parse(teks)?.members || []).map((m) => kunciNama(namaTerkini(m.name)));
+      if (nama.length) return new Set(nama);
+    }
+  } catch (e) { console.error('Gagal baca daftar anggota —', e.message); }
+  return null;
+}
 
 /* ── ARSIP LAGA PERMANEN ──
    EA hanya membagikan ±10 laga terakhir per jenis laga. Setiap laga yang pernah
@@ -333,7 +350,7 @@ export async function dataMingguan(env, minggu) {
   const [awal, akhir] = rentangMinggu(minggu);
   // Hanya bulan yang tercakup minggu ini (1 atau 2 bulan).
   const bulan = [...new Set([awal, akhir - 1].map((ms) => new Date(ms + WIB_MS).toISOString().slice(0, 7)))];
-  const { laga: semua } = await bacaLagaArsip(env, bulan);
+  const [{ laga: semua }, anggota] = await Promise.all([bacaLagaArsip(env, bulan), anggotaKlub(env)]);
   const laga = semua
     .filter((m) => m.timestamp * 1000 >= awal && m.timestamp * 1000 < akhir && m.clubs?.[KLUB_ID])
     .sort((a, b) => a.timestamp - b.timestamp);
@@ -345,8 +362,8 @@ export async function dataMingguan(env, minggu) {
     gol += a; kemasukan += b;
     if (a > b) m++; else if (a < b) k++; else s++;
     for (const pl of Object.values(mm.players?.[KLUB_ID] || {})) {
-      const nama = pl.playername || 'Pemain';
-      if (!diRoster(nama)) continue;
+      const nama = namaTerkini(pl.playername || 'Pemain');
+      if (!diRoster(nama, anggota)) continue;
       const p = (pemain[nama.toLowerCase()] ??= { nama, main: 0, gol: 0, assist: 0, motm: 0, totalRating: 0 });
       p.main++; p.gol += +pl.goals || 0; p.assist += +pl.assists || 0;
       p.motm += String(pl.mom) === '1' ? 1 : 0; p.totalRating += +pl.rating || 0;
