@@ -759,7 +759,8 @@ const CONFIG = {
   // Pemain resmi JAGAL (nama EA, besar-kecil huruf bebas). Hanya mereka yang tampil di Skuad,
   // Statistik, Analisis, Rekor, Player of the Season & Kompetisi. Pemain lain (tamu/pinjaman)
   // tetap tercatat di detail tiap laga, tapi tidak ikut dihitung. Kosongkan [] untuk menampilkan semua.
-  roster: ['Doubleh5435', 'Kngsmn21', 'MyBabyGee', 'KeenArok', 'abuuzayd', 'driftking696911', 'N0oootz', 'critze07', 'fhmdayat', 'Yurdyyy', 'Pumba_brs', 'LeoAwinz', 'revaganteng', 'Dlyvaganza', 'tyhalli', 'Ersya_Rz', 'N3RDGEEKY', 'Bleweh29', 'mekitem13', 'andhikaabas'],
+  // Kosong = semua pemain klub JAGAL di EA ikut dihitung. Isi nama untuk membatasi.
+  roster: [],
   discordInvite: 'https://discord.gg/tvSBTcgcN',
   instagram: 'https://www.instagram.com/jagalesport24',
   streamers: [
@@ -1524,7 +1525,8 @@ const HALAMAN = {
   '/analisis': { hal:'analisis',  judul:'Analisis Tim',       label:'ANALISIS',  eyebrow:'Review & Data Klub' },
   '/jersey':   { hal:'jersey',    judul:'Jersey Musim 2026/27', label:'JERSEY',  eyebrow:'Home · Away · Third' },
   '/mitra':    { hal:'mitra',     judul:'Mitra',              label:'MITRA',     eyebrow:'Kerja Sama Resmi' },
-  '/kompetisi':{ hal:'kompetisi', judul:'Kompetisi',          label:'KOMPETISI', eyebrow:'Liga & Turnamen' },
+  // sembunyi:true = halaman disembunyikan dari menu & dialihkan ke Skuad. Hapus 'sembunyi:true' untuk menampilkan lagi.
+  '/kompetisi':{ hal:'kompetisi', judul:'Kompetisi',          label:'KOMPETISI', eyebrow:'Liga & Turnamen', sembunyi:true },
   '/discord':  { hal:'discord',   judul:'Sosial Media',       label:'SOSMED',    eyebrow:'Gabung Komunitas' },
   '/trial':    { hal:'trial',     judul:'Trial Pemain',       label:'TRIAL',     eyebrow:'Gabung JAGAL VFC' },
 };
@@ -1536,7 +1538,7 @@ function navigasi(jalur, dorong=true){
 
 function pasangNav(){
   const nav = document.getElementById('nav');
-  nav.innerHTML = Object.entries(HALAMAN).map(([jalur,h])=>
+  nav.innerHTML = Object.entries(HALAMAN).filter(([,h])=>!h.sembunyi).map(([jalur,h])=>
     `<button data-jalur="${jalur}">${h.label}</button>`).join('');
   nav.querySelectorAll('button').forEach(b=>{
     b.addEventListener('click', ()=> navigasi(b.dataset.jalur));
@@ -1591,6 +1593,7 @@ function render(){
   let jalur = location.pathname === '' ? '/' : location.pathname;
   if(jalur === '/divisi'){ jalur = '/hasil'; history.replaceState({}, '', jalur); }
   if(jalur === '/ipl'){ jalur = '/kompetisi'; history.replaceState({}, '', '/kompetisi?k=ipl'); }
+  if(HALAMAN[jalur]?.sembunyi){ jalur = '/'; history.replaceState({}, '', '/'); }
   const h = HALAMAN[jalur] || HALAMAN['/'];
   document.title = `${h.judul} — JAGAL`;
   document.querySelectorAll('#nav button').forEach(b=>{
@@ -2862,8 +2865,10 @@ function olahKompetisi(k){
           && (cariPeserta(m.lawan) === lawanP || Math.abs(m.ts - x.ts) < 3*60000))
         .sort((p,q)=>Math.abs(p.ts - x.ts) - Math.abs(q.ts - x.ts))[0];
       if(ea) terpakai.add(ea.id);
-      const dasar = ea || { id:'tv-'+x.id, ts:x.ts, tgl:waktuLagaWIB(x.ts), lawan:lawanP.nama, tipe:k.singkat || 'Kompetisi', detail:[], tanpaStat:true };
-      lagaTV.jagal.push({ ...dasar, pesertaLawan:lawanP, golKami:a, golLawan:b, skor:`${a} – ${b}`, hasil: a>b ? 'win' : a<b ? 'loss' : 'draw' });
+      // Statistik pemain resmi dari Tournament V (yang tidak sempat main / 0 detik tidak dihitung).
+      const statTV = Array.isArray(x.pemain) ? x.pemain.filter(d=>d.detik > 0).map(d=>({ ...d, nama: namaTerkini(d.nama) })) : null;
+      const dasar = ea || { id:'tv-'+x.id, ts:x.ts, tgl:waktuLagaWIB(x.ts), lawan:lawanP.nama, tipe:k.singkat || 'Kompetisi', detail:[], tanpaStat:!statTV };
+      lagaTV.jagal.push({ ...dasar, statTV, pesertaLawan:lawanP, golKami:a, golLawan:b, skor:`${a} – ${b}`, hasil: a>b ? 'win' : a<b ? 'loss' : 'draw' });
     });
   }
   // Laga JAGAL dari Tournament V, atau (cadangan) dari EA/arsip.
@@ -2959,7 +2964,7 @@ function olahKompetisi(k){
   const pemain = new Map();
   const skuadKomp = Array.isArray(k.skuad) && k.skuad.length ? new Set(k.skuad.map(kunciRoster)) : null;
   const ikutKomp = nama => skuadKomp ? skuadKomp.has(kunciRoster(nama)) : diRoster(nama);
-  lagaJagal.forEach(m=>(m.detail||[]).forEach(d=>{
+  lagaJagal.forEach(m=>(m.statTV || m.detail || []).forEach(d=>{
     if(!ikutKomp(d.nama)) return;
     const kk = d.nama.toLowerCase();
     const p = pemain.get(kk) || { nama:d.nama, main:0, gol:0, assist:0, motm:0, totRating:0, nRating:0 };
@@ -3124,7 +3129,7 @@ function tabelKlasemenKomp(o){
     <td>${b.main}</td><td>${b.m}</td><td>${b.s}</td><td>${b.k}</td><td>${b.gm}</td><td>${b.gk}</td><td>${b.sg > 0 ? '+' : ''}${b.sg}</td><td class="poin">${b.poin}${b.bonus ? `<sup title="Termasuk ${b.bonus} poin klaim (imbang di menit 90)">*</sup>` : ''}</td>
     <td><span class="form-mini">${b.form.map(f=>`<i class="${f}">${f}</i>`).join('')}</span></td></tr>`).join('')}
   </tbody></table></div>
-  <p class="komp-catatan">${k.catatanPoin ? escapeHtml(k.catatanPoin) : `Poin: menang ${(k.poin||[3])[0]}, seri ${(k.poin||[3,1])[1]}, kalah ${(k.poin||[3,1,0])[2]}.`}${o.klasemen.some(b=>b.bonus) ? ' * = termasuk poin klaim.' : ''} Urutan: ${k.tiebreak === 'umum' ? 'poin → selisih gol → gol dicetak' : 'poin → head-to-head (poin, selisih gol, gol) → selisih gol → gol dicetak'}. ${o.sumberTV ? 'Hasil resmi otomatis dari Tournament V (vpclubs11.com); statistik pemain dari data EA.' : 'Laga JAGAL otomatis dari data EA; hasil klub lain diperbarui admin.'}</p>`;
+  <p class="komp-catatan">${k.catatanPoin ? escapeHtml(k.catatanPoin) : `Poin: menang ${(k.poin||[3])[0]}, seri ${(k.poin||[3,1])[1]}, kalah ${(k.poin||[3,1,0])[2]}.`}${o.klasemen.some(b=>b.bonus) ? ' * = termasuk poin klaim.' : ''} Urutan: ${k.tiebreak === 'umum' ? 'poin → selisih gol → gol dicetak' : 'poin → head-to-head (poin, selisih gol, gol) → selisih gol → gol dicetak'}. ${o.sumberTV ? 'Hasil resmi otomatis dari Tournament V (vpclubs11.com); statistik pemain dari Tournament V.' : 'Laga JAGAL otomatis dari data EA; hasil klub lain diperbarui admin.'}</p>`;
 }
 const labelKandang = v => v === true ? '<span class="lencana-ha kandang">🏠 Kandang</span>' : v === false ? '<span class="lencana-ha tandang">✈️ Tandang</span>' : '';
 // Urutan nama sesuai tuan rumah: "JAGAL vs X" (kandang) atau "X vs JAGAL" (tandang).

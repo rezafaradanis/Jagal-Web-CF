@@ -6,7 +6,8 @@
  * (punya "clubId") yang diambil. Hasil disimpan 5 menit di cache Cloudflare —
  * tidak memakai KV sama sekali.
  *
- * Balasan: { waktu, laga: [ { id, ts, klub: [ {id, nama, gol}, {id, nama, gol} ] } ] }
+ * Balasan: { waktu, laga: [ { id, ts, klub: [ {id, nama, gol}, {id, nama, gol} ], pemain?: [...] } ] }
+ * 'pemain' = statistik pemain JAGAL di laga itu (hanya laga JAGAL).
  */
 const API = 'https://api.proclubs.tournamentv.com/api/v1/public/tournaments';
 const CACHE_DETIK = 300;
@@ -25,12 +26,13 @@ export async function onRequestGet({ request, env, waitUntil }) {
   if (tersimpan) return tersimpan;
 
   // Hanya turnamen & klub yang terdaftar di data/kompetisi.json yang dilayani.
-  let klub = [];
+  let klub = [], klubJagal = null;
   try {
     const r = await env.ASSETS.fetch(new URL('/data/kompetisi.json', url));
     const j = await r.json();
     const k = (j.kompetisi || []).find(x => String(x.tournamentV || '') === id);
     if (!k) return balas(404, { galat: 'Turnamen ini tidak terdaftar di situs JAGAL.' });
+    klubJagal = String((k.peserta || []).find(p => p.jagal)?.clubId || '') || null;
     klub = [...new Set((k.peserta || []).map(p => String(p.clubId || '')).filter(c => /^\d{1,10}$/.test(c)))].slice(0, MAKS_KLUB);
   } catch (e) {
     return balas(500, { galat: 'Gagal membaca data kompetisi.' });
@@ -59,10 +61,35 @@ export async function onRequestGet({ request, env, waitUntil }) {
     return balas(502, { galat: 'Data Tournament V tidak tersedia saat ini.' });
   }
 
+  // Statistik pemain JAGAL per laga (rincian laga; disimpan 1 jam per laga).
+  if (klubJagal) {
+    const lagaKami = [...semua.values()].filter(m => m.klub.some(x => x.id === klubJagal));
+    await Promise.all(lagaKami.map(async m => {
+      try { m.pemain = await rincianPemain(cache, waitUntil, id, m.id, klubJagal); } catch (e) { console.error('Rincian laga', m.id, e.message); }
+    }));
+  }
+
   const res = balas(200, { waktu: Date.now(), laga: [...semua.values()].sort((a, b) => a.ts - b.ts) },
     { 'Cache-Control': `public, max-age=${CACHE_DETIK}` });
   waitUntil(cache.put(kunci, res.clone()));
   return res;
+}
+
+async function rincianPemain(cache, waitUntil, idTurnamen, idLaga, klubJagal) {
+  const kunci = new Request(`https://cache.jagal.internal/turnamen-v1/${idTurnamen}/laga/${idLaga}`);
+  const ada = await cache.match(kunci);
+  if (ada) return ada.json();
+  const j = await ambil(`${API}/${idTurnamen}/matches/${idLaga}`);
+  const angka = v => +v || 0;
+  const pemain = (j.data?.players || []).filter(p => String(p.clubId) === klubJagal).map(p => ({
+    nama: String(p.playerName || '').slice(0, 40),
+    pos: String(p.position || ''),
+    rating: angka(p.rating), gol: angka(p.goals), assist: angka(p.assists), tembakan: angka(p.shots),
+    pass: angka(p.passesMade), passCoba: angka(p.passAttempts), tekel: angka(p.tacklesMade), tekelCoba: angka(p.tackleAttempts),
+    save: angka(p.saves), merah: angka(p.redCards), mom: !!p.mom, detik: angka(p.secondsPlayed),
+  }));
+  waitUntil(cache.put(kunci, new Response(JSON.stringify(pemain), { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' } })));
+  return pemain;
 }
 
 async function ambil(u) {
