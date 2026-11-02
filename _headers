@@ -1,0 +1,22 @@
+# Aturan cache Cloudflare Pages untuk jagal.fun
+# Gambar & ikon jarang berubah: browser simpan 7 hari, lalu boleh pakai versi lama
+# sambil memeriksa versi baru di belakang layar. Kalau mengganti gambar dan ingin
+# langsung terlihat, beri nama file baru (mis. kartu-emas-v2.webp).
+/aset/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+/ikon/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+
+# app.js dipanggil dengan ?v=TANGGAL dari index.html. Setiap kali app.js diubah,
+# ganti angka v= di index.html (2 tempat) supaya pengunjung langsung dapat versi baru.
+/app.js
+  Cache-Control: public, max-age=31536000, immutable
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=86400
+
+# Halaman utama: selalu dicek ulang supaya perubahan langsung tampil,
+# tapi versi lama boleh dipakai sebentar selagi versi baru diambil.
+/
+  Cache-Control: public, max-age=0, must-revalidate, stale-while-revalidate=300
