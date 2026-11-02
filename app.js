@@ -1055,9 +1055,9 @@ function render(){
   if(h.hal === 'jersey'){
     isi += `<p class="sub-hal">Home, Away, dan Third kit JAGAL VFC untuk mengarungi musim di EA SPORTS FC 27. Klik gambar untuk memperbesar.</p>`;
     const KIT = [
-      { file:'jersey-home-2026.webp', label:'Home Kit' },
-      { file:'jersey-away-2026.webp', label:'Away Kit' },
-      { file:'jersey-third-2026.webp', label:'Third Kit' },
+      { file:'jersey-home-2026-v2.webp', label:'Home Kit' },
+      { file:'jersey-away-2026-v2.webp', label:'Away Kit' },
+      { file:'jersey-third-2026-v2.webp', label:'Third Kit' },
     ];
     isi += `<div class="grid-jersey">` + KIT.map(k=>`
       <div class="jersey-item">
