@@ -24,9 +24,9 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <!-- Aset yang tampil pertama di layar: diminta sejak awal, tidak menunggu JS selesai render -->
 <link rel="preload" as="image" href="/aset/kartu-onfire.webp" fetchpriority="high">
-<link rel="preload" as="image" href="/aset/bg-hero-jersey.webp"
-  imagesrcset="/aset/bg-hero-jersey-800.webp 800w, /aset/bg-hero-jersey-1280.webp 1280w, /aset/bg-hero-jersey.webp 2000w" imagesizes="100vw">
-<link rel="preload" as="script" href="/app.js?v=20261103b">
+<link rel="preload" as="image" href="/aset/banner-v2.webp"
+  imagesrcset="/aset/banner-v2-800.webp 800w, /aset/banner-v2-1280.webp 1280w, /aset/banner-v2.webp 1672w" imagesizes="100vw">
+<link rel="preload" as="script" href="/app.js?v=20261103c">
 <style>
   :root{
     --bg:#08080a; --bg2:#131318; --bg2-atas: rgba(255,255,255,.02); --garis:#242430;
@@ -39,19 +39,19 @@
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
     -webkit-font-smoothing:antialiased;position:relative;}
 
-  /* Background global — panel logo JG, tetap (fixed) di belakang seluruh konten */
+  /* Background global — kain jersey dengan logo JG, tetap (fixed) di belakang seluruh konten */
   body::before{
     content:"";position:fixed;inset:0;z-index:-2;
     background:
-      linear-gradient(180deg, rgba(8,8,10,.88) 0%, rgba(8,8,10,.80) 40%, rgba(8,8,10,.94) 100%),
-      url('/aset/bg-global-logo.webp');
-    background-size:cover;background-position:center 30%;background-repeat:no-repeat;
-    background-attachment:fixed;
+      linear-gradient(180deg, rgba(8,8,10,.72) 0%, rgba(8,8,10,.62) 40%, rgba(8,8,10,.86) 100%),
+      url('/aset/bg-global-v2.webp');
+    background-size:cover;background-position:center center;background-repeat:no-repeat;
   }
   @media (max-width:760px){
     body::before{background-image:
-      linear-gradient(180deg, rgba(8,8,10,.88) 0%, rgba(8,8,10,.80) 40%, rgba(8,8,10,.94) 100%),
-      url('/aset/bg-global-logo-800.webp');}
+      linear-gradient(180deg, rgba(8,8,10,.74) 0%, rgba(8,8,10,.64) 40%, rgba(8,8,10,.88) 100%),
+      url('/aset/bg-global-v2-900.webp');
+      background-position:78% center;}
   }
   body::after{
     content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
@@ -89,9 +89,9 @@
   }
 
   /* Hero strip — panel jersey, di atas tiap halaman */
-  .hero-strip{position:relative;height:130px;overflow:hidden;border-bottom:1px solid var(--garis-lembut);}
+  .hero-strip{position:relative;height:200px;overflow:hidden;border-bottom:1px solid var(--garis-lembut);}
   .hero-strip img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-    object-position:center 35%;}
+    object-position:center 22%;}
   .hero-strip::after{content:"";position:absolute;inset:0;
     background:linear-gradient(180deg, rgba(8,8,10,.35) 0%, rgba(8,8,10,.55) 60%, var(--bg) 100%);}
   .hero-strip .hero-teks{position:relative;z-index:1;max-width:1100px;margin:0 auto;
@@ -339,22 +339,6 @@
   .jersey-lightbox.buka{display:flex;}
   .jersey-lightbox img{max-width:100%;max-height:100%;border-radius:8px;}
 
-  .mitra-hero{position:relative;height:220px;border-radius:18px;overflow:hidden;
-    margin-bottom:22px;border:1px solid var(--garis-lembut);box-shadow:0 8px 28px rgba(0,0,0,.35);}
-  .mitra-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-    object-position:center 40%;}
-  .mitra-hero::after{content:"";position:absolute;inset:0;
-    background:linear-gradient(180deg, rgba(8,8,10,.15) 0%, rgba(8,8,10,.75) 100%);}
-  .mitra-kartu{position:relative;background:linear-gradient(180deg, var(--bg2-atas), transparent), var(--bg2);
-    border:1px solid var(--garis-lembut);border-radius:16px;
-    padding:32px;text-align:center;max-width:560px;margin:0 auto;box-shadow:0 4px 20px rgba(0,0,0,.3);}
-  .mitra-kartu h2{margin:0 0 10px;font-size:20px;}
-  .mitra-kartu p{color:var(--redup);font-size:14px;line-height:1.6;margin:0 0 20px;}
-  .mitra-ig{display:inline-flex;align-items:center;gap:8px;background:var(--merah);
-    color:#fff;font-weight:700;font-size:14px;padding:10px 18px;border-radius:999px;
-    box-shadow:0 4px 14px rgba(224,38,60,.35);}
-  .mitra-ig:hover{opacity:.9;}
-
   .segera-kartu{background:linear-gradient(180deg, var(--bg2-atas), transparent), var(--bg2);
     border:1px solid var(--garis-lembut);border-radius:16px;
     padding:48px 32px;text-align:center;max-width:560px;margin:0 auto;box-shadow:0 4px 20px rgba(0,0,0,.3);}
@@ -594,8 +578,8 @@
     .shield .stat-baris span{font-size:7px;}
   }
   @media (max-width:640px){
-    .hero-strip{height:100px;}
-    .mitra-hero{height:170px;}
+    .hero-strip{height:140px;}
+    .hero-strip img{object-position:62% 22%;}
     .judul-hal{font-size:30px;}
     .sorot-angka{font-size:40px;}
     .sorot-foto{height:140px;}
@@ -748,7 +732,7 @@
 </header>
 
 <div class="hero-strip">
-  <img src="/aset/bg-hero-jersey.webp" srcset="/aset/bg-hero-jersey-800.webp 800w, /aset/bg-hero-jersey-1280.webp 1280w, /aset/bg-hero-jersey.webp 2000w" sizes="100vw" width="2000" height="374" alt="" fetchpriority="high" decoding="async">
+  <img src="/aset/banner-v2.webp" srcset="/aset/banner-v2-800.webp 800w, /aset/banner-v2-1280.webp 1280w, /aset/banner-v2.webp 1672w" sizes="100vw" width="1672" height="941" alt="" fetchpriority="high" decoding="async">
   <div class="hero-teks"><span class="eyebrow">More Than A Game</span></div>
 </div>
 
@@ -761,6 +745,6 @@
 
 <footer>JAGAL VFC — EA SPORTS FC 27 Pro Clubs · Club #438867 · common-gen5</footer>
 
-<script src="/app.js?v=20261103b" defer></script>
+<script src="/app.js?v=20261103c" defer></script>
 </body>
 </html>
