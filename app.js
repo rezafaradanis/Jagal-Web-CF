@@ -786,7 +786,6 @@ const HALAMAN = {
   '/hasil':    { hal:'hasil',     judul:'Divisi & Hasil Laga', label:'HASIL LAGA', eyebrow:'EA Pro Clubs' },
   '/analisis': { hal:'analisis',  judul:'Analisis Tim',       label:'ANALISIS',  eyebrow:'Review & Data Klub' },
   '/jersey':   { hal:'jersey',    judul:'Jersey Musim 2026/27', label:'JERSEY',  eyebrow:'Home · Away · Third' },
-  '/mitra':    { hal:'mitra',     judul:'Mitra',              label:'MITRA',     eyebrow:'Kerja Sama Resmi' },
   // sembunyi:true = halaman disembunyikan dari menu & dialihkan ke Skuad. Hapus 'sembunyi:true' untuk menampilkan lagi.
   '/kompetisi':{ hal:'kompetisi', judul:'Kompetisi',          label:'KOMPETISI', eyebrow:'Liga & Turnamen', sembunyi:true },
   '/discord':  { hal:'discord',   judul:'Sosial Media',       label:'SOSMED',    eyebrow:'Gabung Komunitas' },
@@ -1064,20 +1063,6 @@ function render(){
         <img class="jersey-poster" loading="lazy" decoding="async" src="/aset/${k.file}" alt="JAGAL VFC ${k.label} musim 2026/27">
         <div class="jersey-label">${k.label}</div>
       </div>`).join('') + `</div>`;
-  }
-
-  if(h.hal === 'mitra'){
-    isi += `<p class="sub-hal">Kerja sama resmi JAGAL VFC.</p>`;
-    isi += `<div class="mitra-hero"><img src="/aset/bg-hero-mitra.webp" srcset="/aset/bg-hero-mitra-800.webp 800w, /aset/bg-hero-mitra-1280.webp 1280w, /aset/bg-hero-mitra.webp 2000w" sizes="(max-width:1100px) 100vw, 1100px" width="2000" height="375" loading="lazy" decoding="async" alt="Partnership Nocturne VFC dan JAGAL VFC"></div>`;
-    isi += `<div class="mitra-kartu">
-      <h2>Nocturne VFC × JAGAL VFC</h2>
-      <p>JAGAL VFC merupakan tim akademi dari Nocturne VFC. Kedua klub telah
-      menjalin kerja sama resmi (partnership) sebagai bagian dari pengembangan
-      pemain menuju jenjang yang lebih tinggi.</p>
-      <a class="mitra-ig" href="https://instagram.com/nocturnevfc" target="_blank" rel="noopener">
-        @nocturnevfc — Instagram
-      </a>
-    </div>`;
   }
 
   if(h.hal === 'kompetisi'){
