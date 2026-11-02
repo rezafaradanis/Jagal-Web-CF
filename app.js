@@ -635,20 +635,33 @@ const SVG_BENDERA_ID = `<svg width="22" height="15" viewBox="0 0 3 2" xmlns="htt
 // Foto pemain untuk kartu shield di Skuad — kunci pakai nama EA (huruf kecil semua)
 // supaya cocok baik dengan data manual maupun data live dari EA.
 const FOTO_PEMAIN = {
-  'keenarok': 'aset/keenarok-card.webp',
-  'kngsmn21': 'aset/kngsmn21-card.webp',
-  'doubleh5435': 'aset/doubleh5435-card.webp',
-  'youngcrowheart': 'aset/youngcrowheart-card.webp',
-  'abuuzayd': 'aset/youngcrowheart-card.webp', // akun yang sama, ganti nama EA
+  // Foto baru (poster resmi, Nov 2026) — nama file = nama EA huruf kecil
+  'abuuzayd': 'aset/pemain/abuuzayd.webp',
+  'avfas': 'aset/pemain/avfas.webp',
+  'bleweh29': 'aset/pemain/bleweh29.webp',
+  'cr4yze': 'aset/pemain/cr4yze.webp',
+  'critze07': 'aset/pemain/critze07.webp',
+  'doubleh5435': 'aset/pemain/doubleh5435.webp',
+  'driftking696911': 'aset/pemain/driftking696911.webp',
+  'ersya_rz': 'aset/pemain/ersya_rz.webp',
+  'fhmdayat': 'aset/pemain/fhmdayat.webp',
+  'guychrimson': 'aset/pemain/guychrimson.webp',
+  'keenarok': 'aset/pemain/keenarok.webp',
+  'kngsmn21': 'aset/pemain/kngsmn21.webp',
+  'laflame_108': 'aset/pemain/laflame_108.webp',
+  'leoawinz': 'aset/pemain/leoawinz.webp',
+  'mj_garciaa': 'aset/pemain/mj_garciaa.webp',
+  'mybabygee': 'aset/pemain/mybabygee.webp',
+  'n3rdgeeky': 'aset/pemain/n3rdgeeky.webp',
+  'paceliar': 'aset/pemain/paceliar.webp',
+  'pumba_brs': 'aset/pemain/pumba_brs.webp',
+  'shopeean': 'aset/pemain/shopeean.webp',
+  'tyhalli': 'aset/pemain/tyhalli.webp',
+  'yurdyyy': 'aset/pemain/yurdyyy.webp',
+  // Foto lama (belum ada poster baru)
+  'youngcrowheart': 'aset/pemain/abuuzayd.webp', // akun yang sama dengan abuuzayd
   'n0oootz': 'aset/n0oootz-card.webp',
-  'leoawinz': 'aset/leoawinz-card.webp',
   'latern7': 'aset/latern7-card.webp',
-  'critze07': 'aset/critze07-card.webp',
-  'yurdyyy': 'aset/yurdyyy-card.webp',
-  'n3rdgeeky': 'aset/n3rdgeeky-card.webp',
-  'pumba_brs': 'aset/pumba_brs-card.webp',
-  'driftking696911': 'aset/driftking696911-card.webp',
-  'fhmdayat': 'aset/fhmdayat-card.webp',
 };
 function fotoPemain(nama){
   return FOTO_PEMAIN[(nama||'').trim().toLowerCase()] || null;
